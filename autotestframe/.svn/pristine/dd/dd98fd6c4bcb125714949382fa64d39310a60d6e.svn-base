@@ -1,0 +1,13 @@
+package com.globalegrow.util;
+
+public class MyExcepiton extends Exception {
+	
+	private static final long serialVersionUID = 8987774792173175293L;
+	
+	public MyExcepiton(){
+        super();
+    }
+    public MyExcepiton(String msg){
+        super(msg);
+    }
+}

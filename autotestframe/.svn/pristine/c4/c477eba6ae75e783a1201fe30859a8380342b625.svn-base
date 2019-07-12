@@ -1,0 +1,177 @@
+package com.globalegrow.base;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.testng.ITestContext;
+import org.testng.ITestResult;
+import org.testng.TestListenerAdapter;
+
+import com.globalegrow.util.CreateHtmlFile;
+import com.globalegrow.util.Log;
+import com.globalegrow.util.PublicFun;
+
+
+/**
+ *  
+ * testng监听
+ * @author linchaojiang
+ * 创建时间：2016-08-23
+ * 更新时间：2016-08-30
+ *
+ */ 
+public class TestngListener extends TestListenerAdapter {
+	
+		static Logger logger  =  Logger.getLogger(TestngListener.class );
+		static Date  startDate;//测试运行开始时间
+		static Date  endDate;//测试运行结束时间
+		static int runSummaryTime = 0;//总运行次数
+		static int runSuccessTime = 0;//运行成功数
+		static int runFailureTime = 0;//运行失败数据
+		String hours;//运行时长
+		String throughputRate;//通过率（runSuccessTime/runSummaryTime）
+		String osName;//操作系统		
+		static String dateSign = "19720101000000";
+		StringBuffer msg = new StringBuffer();
+		Properties props=System.getProperties();
+		
+		@Override
+		public void onTestFailure(ITestResult tr) {
+			super.onTestFailure(tr);
+			
+			runFailureTime++;
+			runSummaryTime++;
+			String testCaseName=tr.getName();
+			//String[] className = tr.getTestClass().getName().replace(".", ",").split(",");
+			//String testClassCaseName = className[className.length-1]+"."+tr.getName();
+			
+			String captureScreenPathName="";
+			captureScreenPathName = Startbrowser.captureScreenAll(Startbrowser.projectName,testCaseName+"_fail");
+			Log.logInfo("...Test Result: "+tr.getName()+"------------------failure");	
+			String imgName = captureScreenPathName.split("/")[captureScreenPathName.split("/").length-1];
+			msg.append(CreateHtmlFile.testBodyFailure(testCaseName, imgName));
+			
+			Startbrowser.correFail = true;
+		}
+
+		@Override
+		public void onTestSkipped(ITestResult tr) {
+			super.onTestSkipped(tr);
+			Log.logInfo("...Test Result: "+tr.getName()+"------------------Skipped");
+			
+//			Startbrowser.correFail = true;
+		}
+
+	@Override
+	public void onTestSuccess(ITestResult tr) {
+		super.onTestSuccess(tr);
+
+		runSuccessTime++;
+		runSummaryTime++;
+		String testCaseName = tr.getName();
+		//String[] className = tr.getTestClass().getName().replace(".", ",").split(",");
+		//String testClassCaseName = className[className.length - 1] + "." + tr.getName();
+		
+		String captureScreenPathName="";
+		String imgName = "";
+		if (Startbrowser.screenShotWhilePassFlag) {
+			captureScreenPathName = Startbrowser.captureScreen(Startbrowser.projectName, testCaseName + "_pass");
+			imgName = captureScreenPathName.split("/")[captureScreenPathName.split("/").length-1];
+		}
+
+		Log.logInfo("...Test Result: "+tr.getName() + "------------------Success");
+
+		msg.append(CreateHtmlFile.testBodySuccess(testCaseName, imgName));
+	}
+
+	@Override
+	public void onTestStart(ITestResult tr) {
+		super.onTestStart(tr);
+		if(Startbrowser.firstTestRunFlag && Startbrowser.beforeTestRunFlag ){
+			Startbrowser.firstTestRunFlag = false;
+			
+			String browserNameLable=Startbrowser.browserName +" &lt;&lt;&lt;";
+			String osNameLable=osName + " &lt;&lt;&lt;";
+			msg.insert(msg.indexOf(browserNameLable)+browserNameLable.length(), Startbrowser.testBrowserInfo);
+			msg.insert(msg.indexOf(osNameLable)+osNameLable.length(), "IP: "+ PublicFun.getIPv4()[0]+"; HOST: "+PublicFun.getIPv4()[1]);
+		}
+	}
+
+	@Override
+	public void onStart(ITestContext testContext) {
+		super.onStart(testContext);
+		startDate = testContext.getStartDate();
+		//Startbrowser.projectName = testContext.getSuite().getName();// 获取项目名称
+		Startbrowser.browserName = testContext.getSuite().getParameter("browserName");// 获取浏览器名称		
+		osName = props.getProperty("os.name");// 获取操作系统名称	
+
+		msg.append(CreateHtmlFile.testHead(osName));		
+	}
+
+	@Override
+	public void onFinish(ITestContext testContext) {
+		super.onFinish(testContext);
+		
+		//获取测试执行的总时间
+		endDate = testContext.getEndDate();   
+		int runTimeSeconds = (int) (endDate.getTime() - startDate.getTime()) / 1000;// 总运行时间（毫秒）
+		String runTimeStr = PublicFun.getRunTimeStr(runTimeSeconds);
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String SDate = formatter.format(startDate);//格式化运行开始时间
+	    String EDate = formatter.format(endDate);//格式化运行结束时间
+	    
+	    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+	    String fileDate = formatter1.format(endDate);//拼接文件名称
+	    
+	    new DecimalFormat("######0.00").format(((double)runSuccessTime/runSummaryTime)*100); 
+	    throughputRate = new DecimalFormat("######0.00").format(((double)runSuccessTime/runSummaryTime)*100);
+	    
+	    msg.append(CreateHtmlFile.testEnd(SDate,EDate,runSummaryTime,runSuccessTime,runTimeStr,throughputRate));
+	    
+	    String projectPath = System.getProperty("user.dir");
+	    CreateHtmlFile report = new CreateHtmlFile();
+	    
+	    String id = testContext.getSuite().getParameter("id");
+	    if(id.equals("${id}")){
+	    	id = "00";
+	    }
+	    try {
+	    	//创建报告
+	    	if(getSkippedTests().size()==getAllTestMethods().length){
+	    		report.htmlReport(msg, "#"+id+"_"+Startbrowser.projectName+"_"+fileDate+"_red.html",projectPath+"\\"+Startbrowser.reportPath);
+	    	}
+	    	if(getFailedTests().size()==getAllTestMethods().length){
+	    		report.htmlReport(msg, "#"+id+"_"+Startbrowser.projectName+"_"+fileDate+"_red.html",projectPath+"\\"+Startbrowser.reportPath);
+	    	}
+	    	if((getFailedTests().size()!=getAllTestMethods().length)&&(getFailedTests().size()>0)){
+	    		report.htmlReport(msg, "#"+id+"_"+Startbrowser.projectName+"_"+fileDate+"_yellow.html",projectPath+"\\"+Startbrowser.reportPath);
+	    	}
+	    	if(getPassedTests().size()==getAllTestMethods().length){
+	    		report.htmlReport(msg, "#"+id+"_"+Startbrowser.projectName+"_"+fileDate+"_blue.html",projectPath+"\\"+Startbrowser.reportPath);
+	    	} 	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	    
+	    if(CreateHtmlFile.deleteFile(projectPath+"\\"+Startbrowser.reportPath+"index.html")){
+	    	CreateHtmlFile.createFile(projectPath+"\\"+Startbrowser.reportPath,"index.html");
+	    	CreateHtmlFile.writeMsgToFile(projectPath+"\\"+Startbrowser.reportPath+"index.html",CreateHtmlFile.index(projectPath+"\\"+Startbrowser.reportPath));
+		}else {
+			Log.logInfo("删除index.html文件异常！！！");
+		}		
+
+		if(CreateHtmlFile.deleteFile(projectPath+"\\"+Startbrowser.reportPath+"left.html")){
+			CreateHtmlFile.createFile(projectPath+"\\"+Startbrowser.reportPath,"left.html");
+			CreateHtmlFile.writeMsgToFile(projectPath+"\\"+Startbrowser.reportPath+"left.html",CreateHtmlFile.left(projectPath+"\\"+Startbrowser.reportPath,testContext));
+		}else {
+			Log.logInfo("删除left.html文件异常！！！");
+		}
+	    
+	}   
+		 
+}

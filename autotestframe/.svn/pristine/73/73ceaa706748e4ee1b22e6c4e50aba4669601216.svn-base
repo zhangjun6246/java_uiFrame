@@ -1,0 +1,41 @@
+package com.globalegrow.interfacetest;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.globalegrow.util.DBhandle;
+import com.google.common.base.Preconditions;
+
+public class TestDataUtils {
+
+	public static List<Map<String, String>> allTestData;
+	public static Map<String, String> testData;
+	public static List<Map<String, String>> allTestReportData;
+	public static Map<String, String> testReportData;
+	public TestDataUtils() {
+		// TODO Auto-generated constructor stub
+	}
+	@SuppressWarnings("unchecked")
+	public static List<Map<String, String>> getAllTestData(){
+		List<Map<String, String>> list = new ArrayList<>();
+		String sql = "select * from auto_interfacetestcase where projectId = \"b81b56de5948622695f6c9342d567509\";";
+		list = new DBhandle().query(sql);
+		return list;
+	}
+	public static Map<String, Object> getTestData(int linenum){
+		return null;
+	}
+	public static List<Map<String, Object>> getAllTestReportData(){
+		return null;
+	}
+	public static Map<String, Object> getTestReportData(int linenum){
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		allTestData = getAllTestData();
+		System.out.println(allTestData);
+	}
+}

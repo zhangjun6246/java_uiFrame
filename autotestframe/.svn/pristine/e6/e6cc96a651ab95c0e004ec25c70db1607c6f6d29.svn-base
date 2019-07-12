@@ -1,0 +1,712 @@
+package com.globalegrow.code;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.ho.yaml.Yaml;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import com.globalegrow.base.Startbrowser;
+import com.globalegrow.code.Page;
+import com.globalegrow.util.Log;
+
+public class LocatorNew {
+
+	protected static WebDriver driver;
+
+	public WebDriver getDriver() {
+		return driver;
+	}
+
+	public void setDriver(WebDriver driver) {
+		this.driver = driver;
+	}
+
+	protected Robot robot = null;
+
+	private Map<String, Map<String, String>> ml = new HashMap<String, Map<String, String>>();// 存放对象
+	
+	public Map<String, Map<String, String>> getMl() {
+		return ml;
+	}
+
+	public void setMl(Map<String, Map<String, String>> ml) {
+		this.ml = ml;
+	}
+
+	public LocatorNew(WebDriver driver, String moduleName) {
+		// this.driver = driver;
+		this.driver = Startbrowser.getDriver();
+		getYamlFile(moduleName);
+	}
+
+	/**
+	 * 重写一个构造函数，不需要初始化driver的，以方便我在测试类中调用 
+	 * @param moduleName 测试模块名称
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public LocatorNew(String moduleName) {
+		try {
+			File file = new File("locator/" + moduleName + "/");
+			File[] yamlfileList=file.listFiles();
+			for(int i=0;i<yamlfileList.length;i++)
+			{
+				if(yamlfileList[i].toString().contains("yaml")){
+					Log.logInfo(yamlfileList[i].getAbsolutePath());
+					ml.putAll(Yaml.loadType(new FileInputStream(yamlfileList[i].getAbsolutePath()), HashMap.class));
+				}
+				
+			}
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+	}
+
+	
+	public LocatorNew() {
+		// this.driver = driver;
+		try {
+			File file = new File("locator/" + Startbrowser.projectName + "/");
+			File[] yamlfileList=file.listFiles();
+			for(int i=0;i<yamlfileList.length;i++)
+			{
+				if(yamlfileList[i].toString().contains("yaml")){
+					Log.logInfo(yamlfileList[i].getAbsolutePath());
+					ml.putAll(Yaml.loadType(new FileInputStream(yamlfileList[i].getAbsolutePath()), HashMap.class));
+				}
+				
+			}
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+	}
+	/**
+	 * 获取yaml文件，转换为map
+	 * @param fileName
+	 * @return Map
+	 * @author linchaojiang
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<String, String>> getYamlFile(String moduleName) {
+
+		try {
+			File yamlfile = new File("locator/" + Startbrowser.projectName + "/" + moduleName + ".yaml");
+			ml = Yaml.loadType(new FileInputStream(yamlfile.getAbsolutePath()), HashMap.class);
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+		return ml;
+	}
+	
+	/**
+	 * 获取yaml文件，转换为map
+	 * @param projectName 项目名，约定为和项目包名相同
+	 * @param moduleName yaml文件名，约定为和测试类名相同
+	 * @author yuyang 创建时间:2016-11-15 更新时间:2016-11-15
+	 * 备注：重载该方法，由使用静态变量改为参数传递的方式
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<String, String>> getYamlFile(String projectName, String moduleName) {
+
+		try {
+			File yamlfile = new File("locator/" + projectName + "/" + moduleName + ".yaml");
+			ml = Yaml.loadType(new FileInputStream(yamlfile.getAbsolutePath()), HashMap.class);
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+		return ml;
+	}
+	
+	/**
+	 * 重写一个构造函数，不需要初始化driver的，以方便我在测试类中调用 
+	 * @param projectName 项目名，约定为和项目包名相同
+	 * @param moduleName 测试模块名称
+	 * @author yuyang 创建时间:2016-10-15新时间:2016-10-15
+	 * 备注：重载该方法，由使用静态变量改为参数传递的方式
+	 */
+	public LocatorNew(String projectName, String moduleName) {
+		getYamlFile(projectName, moduleName);
+	}
+
+	/**
+	 * 通过传入对象名称，返回by对象
+	 * @param type,value
+	 * @return By
+	 * @author linchaojiang
+	 */
+	private By getBy(String type, String value) {
+		By by = null;
+		if (type.equals("id")) {
+			by = By.id(value);
+		} else if (type.equals("name")) {
+			by = By.name(value);
+		} else if (type.equals("xpath")) {
+			by = By.xpath(value);
+		} else if (type.equals("className")) {
+			by = By.className(value);
+		} else if (type.equals("linkText")) {
+			by = By.linkText(value);
+		} else if (type.equals("css")) {
+			by = By.cssSelector(value);
+		} else {
+			Log.logInfo("根据属性:" + type + "=" + value + ",查找不到对象!!!");
+		}
+		return by;
+	}
+
+	/**
+	 * 传入yaml中的标识，返回by对象
+	 * @param identification
+	 * @return By
+	 * @author linchaojiang
+	 */
+	
+	public By getBy(String identification) {
+		By by = null;
+		String type;
+		String value;
+		if (ml.containsKey(identification)) {
+			Map<String, String> m = ml.get(identification);
+			type = m.get("type");
+			value = m.get("value");
+			if (type.equals("id")) {
+				by = By.id(value);
+			} else if (type.equals("name")) {
+				by = By.name(value);
+			} else if (type.equals("xpath")) {
+				by = By.xpath(value);
+			} else if (type.equals("className")) {
+				by = By.className(value);
+			} else if (type.equals("linkText")) {
+				by = By.linkText(value);
+			} else if (type.equals("css")) {
+				by = By.cssSelector(value);
+			} else {
+				Log.logInfo("返回by对象出错！！！");
+			}
+			Log.logInfo("查找元素："+identification+" 查找方式为："+type+" 查找值为："+value);
+		} else {
+			Log.logInfo("对象管理文件yaml中，不存在标识为" + identification + "的对象!!!");
+		}
+		return by;
+	}
+
+	/**
+	 * 获取对象，超时20秒
+	 * @param by
+	 * @return WebElement
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private WebElement watiForElement(final By by) {
+		
+		WebElement element = null;
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, 30); // 定义等待时间
+			element = wait.until(ExpectedConditions.presenceOfElementLocated(by));
+		} catch (Exception e) {
+			element = null;
+		}
+		return element;
+	}
+	
+	/**
+	 * 获取对象，自定义超时时间
+	 * @param by
+	 * @param timeout
+	 * @return WebElement
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private WebElement watiForElement(By by,int timeout) {
+				
+		WebElement element = null;
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, timeout); // 定义等待时间
+			element = wait.until(ExpectedConditions.presenceOfElementLocated(by));
+		} catch (Exception e) {
+			element = null;
+		}
+		return element;
+	}
+
+	/**
+	 * 判断元素是否可操作或可见，超时15秒
+	 * @param element
+	 * @param by
+	 * @return boolean
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private boolean waitElementToBeDisplayed(final WebElement element,By by) {
+		
+		boolean wait = false;
+		if (element == null)
+			return wait;		
+		try {
+			WebDriverWait waitUntil = new WebDriverWait(driver, 20);
+			waitUntil.until(ExpectedConditions.elementToBeClickable(by));
+			wait = true;
+		} catch (Exception e) {
+			Log.logInfo("等待15秒对象:"+by.toString()+",不可操作或者任然未可见！！！");
+			return wait;
+		}
+		return wait;
+	}
+	
+	/**
+	 * 判断元素是否可操作或可见，自定义超时时间
+	 * @param element
+	 * @param by
+	 * @param timeout
+	 * @return boolean
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private boolean waitElementToBeDisplayed(final WebElement element,By by,int timeout) {
+		
+		boolean wait = false;
+		if (element == null)
+			return wait;		
+		try {
+			WebDriverWait waitUntil = new WebDriverWait(driver, timeout);
+			waitUntil.until(ExpectedConditions.elementToBeClickable(by));
+			wait = true;
+		} catch (Exception e) {
+			Log.logInfo("等待"+timeout+"秒对象:"+by.toString()+",不可操作或者任然未可见！！！");
+			return wait;
+		}
+		return wait;
+	}
+
+	/**
+	 * 根据用户传入的yaml中的标识，返回webElement对象
+	 * @param key
+	 * @param wait
+	 * @return WebElement
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private WebElement getLocator(String key, boolean wait) {
+		WebElement element = null;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			if (wait) {
+				element = this.watiForElement(by);//获取对象，超时30秒
+				this.waitElementToBeDisplayed(element,by);//判断对象是否可操作或显示，如果不可操作或未出现等待15秒
+			} else {
+				try {
+					element = driver.findElement(by);
+				} catch (Exception e) {
+					Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+					element = null;
+				}
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return element;
+	}
+	
+	/**
+	 * 根据用户传入的yaml中的标识，返回webElement对象，自定义超时时间
+	 * @param key
+	 * @param wait
+	 * @param timeout
+	 * @return WebElement
+	 * @author linchaojiang,更新时间:2016-10-25
+	 */
+	private WebElement getLocator(String key, boolean wait,int timeout) {
+		WebElement element = null;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			if (wait) {
+				element = this.watiForElement(by,timeout);
+				this.waitElementToBeDisplayed(element,by,timeout);
+			} else {
+				try {
+					element = driver.findElement(by);
+				} catch (Exception e) {
+					Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+					element = null;
+				}
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return element;
+	}
+	
+	/**
+	 * 根据用户传入的yaml中的标识，返回webElement对象，自定义超时时间
+	 * @param key
+	 * @param wait
+	 * @param timeout :对象是否存在的超时时间
+	 * @param ToBeClickableTimeout : 对象是否可见或可操作的超时时间
+	 * @return WebElement
+	 * @author linchaojiang
+	 */
+	private WebElement getLocator(String key, boolean wait,int timeout,int ToBeClickableTimeout) {
+		WebElement element = null;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			if (wait) {
+				element = this.watiForElement(by,timeout);
+				this.waitElementToBeDisplayed(element,by,ToBeClickableTimeout);
+			} else {
+				try {
+					element = driver.findElement(by);
+				} catch (Exception e) {
+					Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+					element = null;
+				}
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return element;
+	}
+
+	/**
+	 * 获取对象，若对象未出现，等待对象出现
+	 * @param key
+	 * @return WebElement
+	 */
+	public WebElement getElement(String key) {
+		return this.getLocator(key, true);
+	}
+	
+	/**
+	 * 获取对象，若对象未出现，等待对象出现
+	 * @param key
+	 * @return WebElement
+	 */
+	public WebElement getElement(String key,int timeout) {
+		return this.getLocator(key, true,timeout);
+	}
+
+	/**
+	 * 获取对象，若对象未出现，等待对象出现
+	 * @param key
+	 * @return WebElement
+	 */
+	public WebElement getElement(String key,int timeout,int ToBeClickableTimeout) {
+		return this.getLocator(key, true,timeout,ToBeClickableTimeout);
+	}
+	
+	/**
+	 * 获取对象，若对象不可操作，等待isDisplayed属性变为可操作
+	 * @param key
+	 * @return WebElement
+	 */
+	public WebElement getElementNoWait(String key) {
+		return this.getLocator(key, false);
+	}
+
+	/**
+	 * 模拟单击，首先把焦点移动到对象上，在进行单击
+	 * @param driver
+	 * @param locator
+	 * @author linchaojiang，创建时间：2016-09-13，更新时间：2016-09-13
+	 */
+	public void Singleclick(String key) {
+		WebElement element = getElement(key);// 查找对象
+		Actions action = new Actions(driver);
+		Page.pause(1);
+		action.moveToElement(element).click().perform();
+	}
+
+	/**
+	 * 模拟右击，在执行点击操作
+	 * @param driver
+	 * @param locator
+	 * @author linchaojiang， 创建时间：2016-09-03，更新时间：2016-09-03
+	 */
+	public void RightClick(String key) {
+		try {// 模拟右键操作需要用到
+			robot = new Robot();
+		} catch (AWTException e) {
+			e.printStackTrace();
+			Log.logInfo(e.getMessage());
+		}
+		Actions action = new Actions(driver);
+		WebElement button = getElement(key);// 查找对象
+		Page.pause(1);
+		action.contextClick(button).perform();// 对该元素进行右击操作
+		Page.pause(3);
+		robot.keyPress(KeyEvent.VK_ESCAPE);
+		Page.pause(3);
+		button.click();
+	}
+
+	/**
+	 * 判断元素是否存在
+	 * @param key
+	 * @return boolean
+	 * @author linchaojiang
+	 */
+	public boolean ElementExist(String key) {
+		
+		boolean flag = false;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			if(!(watiForElement(by) == null)){
+				 flag = true;
+			}
+		}else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return flag;
+	}
+
+	/**
+	 * 判断元素是否存在,自定义超时时间
+	 * @param key
+	 * @return boolean
+	 * @author linchaojiang
+	 */
+	public boolean ElementExist(String key, int timeout) {
+		
+		boolean flag = false;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			if(!(watiForElement(by,timeout) == null)){
+				 flag = true;
+			}
+		}else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return flag;
+	}
+
+	/**
+	 * 获取下拉选择对象
+	 * @param key
+	 * @return Select
+	 * @author linchaojiang
+	 */
+	public Select getSelect(String key) {
+		Select sel = null;
+		try {
+			sel = new Select(getElement(key));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.logInfo(e.getMessage());
+		}
+		return sel;
+	}
+
+	/**
+	 * 获取取相同属性的所有对象
+	 * @param key
+	 * @return List
+	 * @author linchaojiang
+	 */
+	public List<WebElement> getElements(String key) {
+
+		List<WebElement> elementList = new ArrayList<WebElement>();
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			try {				
+				elementList = driver.findElements(by);
+			} catch (Exception e) {
+				Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return elementList;
+	}
+	
+	/**
+	 * 等待元素为可操作状态，自定义设置超时时间
+	 * @param key
+	 * @param timeout
+	 * @return WebElement
+	 * @author linchaojiang
+	 */
+	public WebElement findElementToBeClickable(String key, int timeout) {
+
+		WebElement element = null;
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			WebDriverWait wait = new WebDriverWait(driver, timeout); // 定义等待时间
+			try {
+				element = wait.until(ExpectedConditions.elementToBeClickable(by));
+			} catch (Exception e) {
+				Log.logInfo(e.getMessage());
+				Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+				return element;
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return element;
+	}
+
+	/**
+	 * 更新locator中变量的值，使用新字符串替换值中的变量字符串
+	 * @param itemName 变量名
+	 * @param replaceStr 待替换的字符串，或者叫变量字符串
+	 * @param newStr 新字符串
+	 * @throws Exception 执出全部异常
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public void renewLocatorValue(String itemName, String replaceStr, String newStr) throws Exception {
+		String OldVal = ml.get(itemName).get("value");
+		String newVal = OldVal.replaceFirst(replaceStr, newStr);
+		ml.get(itemName).put("value", newVal);
+	}
+
+	/**
+	 * 打印出locator中指定项的值，主要用来调试代码
+	 * @param itemName 项
+	 * @throws Exception 执出全部异常
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public void printLocatorItemValue(String itemName) throws Exception {
+		Log.logInfo(ml.get(itemName).get("value"));
+	}
+
+	/**
+	 * 从locator0复制locator的元素ml
+	 * @param locator0 用来复制的对象
+	 * @throws Exception
+	 * @author yuyang 创建时间:2016-10-13新时间:2016-10-13
+	 */
+	public void copy(LocatorNew locator0) {
+		try {
+			for (String key : ml.keySet()) {
+				ml.get(key).put("value", locator0.ml.get(key).get("value"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("Error occured while restoring locator.");
+			Assert.fail();
+		}
+	}
+	
+	/**
+	 * 获取取相同属性的所有对象，自定义超时时间
+	 * @param key
+	 * @param timeout
+	 * @return List
+	 * @author linchaojiang
+	 */
+	public List<WebElement> getElements(String key,int timeout) {
+
+		List<WebElement> elementList = new ArrayList<WebElement>();
+		if (ml.containsKey(key)) {
+			Map<String, String> m = ml.get(key);
+			String type = m.get("type");
+			String value = m.get("value");
+			By by = this.getBy(type, value);
+			try {
+				int exitWhile = 0;
+				while(true){
+					elementList = driver.findElements(by);
+					if(elementList.size()>0){//如果找到则返回
+						break;
+					}
+					if(exitWhile>timeout){//超时退出
+						Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+						break;
+					}
+					exitWhile++;
+					Page.pause(1);
+				}
+			} catch (Exception e) {
+				Log.logInfo("根据" + type + "=" + value + ",未找到对象！！！");
+			}
+		} else {
+			Log.logInfo("Locator [" + key + "] is not exist in yaml");
+		}
+		return elementList;
+	}
+	
+	/**
+	 * 在页面对象中是否包含特定的文本
+	 * @param key
+	 * @param text
+	 * @return boolean
+	 * @author linchaojiang,创建时间:2016-10-25
+	 */
+	public boolean elementContainsText(String key,String text){	
+		
+		boolean flag = false;
+		try {			
+			WebDriverWait wait = new WebDriverWait(driver, 5);
+			wait.until(ExpectedConditions.textToBePresentInElement(getElement(key), text));
+			flag = true;
+		} catch (Exception e) {		
+			return false;
+		}
+	    return flag;
+	}
+	
+	// test
+	public static void main(String[] args) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		Startbrowser.projectName = "Sammydress";
+//		Startbrowser.moduleName = "LocatorTest";
+//		WebDriver driver = null;   
+//		Locator locator = new Locator(driver);
+		LocatorNew locator0 = new LocatorNew("SD_cart");
+		LocatorNew locator = new LocatorNew("SD_cart");
+		String clearanceProductURL = "222222222";
+		try {
+			locator.renewLocatorValue("CartPage_ProductItemNumInput", "ProductItemHtml", clearanceProductURL);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		for (String key : locator.ml.keySet()) {
+			System.out.println("key= " + key + " and value= " + locator.ml.get(key));
+		}
+		try {
+			locator.copy(locator0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for (String key : locator.ml.keySet()) {
+			System.out.println("keyafter= " + key + " and value= " + locator.ml.get(key));
+		}
+	}
+
+}

@@ -1,0 +1,145 @@
+#登录链接
+Signin:
+  type: linkText
+  value: Sign in
+#邮箱输入框
+email:
+  type: id
+  value: email  
+#密码输入框
+passwordsign:
+  type: id
+  value: passwordsign
+#验证码输入框
+code:
+  type: id
+  value: code
+#登录按钮
+loginButton:
+  type: id
+  value: js_signInBtn
+#我的订单
+MyOrders:
+  type: linkText
+  value: My Orders
+#退出链接
+Logout:
+  type: linkText
+  value: Logout
+#提示信息
+PrompMsg:
+  type: xpath
+  value: "//*[@id='xubox_layer1']/div[1]/div/span[2]"
+#提示框ok按钮
+Ok:
+  type: linkText
+  value: Ok
+#忘记密码链接
+ForgotPassword:
+  type: linkText
+  value: Forgot your password?
+#忘记密码页面邮箱输入框:
+reg_email:
+  type: id
+  value: reg_email
+#忘记密码页面验证码输入框:
+access_code:
+  type: id
+  value: access_code
+#忘记密码页面发送电子邮件按钮:
+js_sendEmial:
+  type: id
+  value: js_sendEmial
+#忘记密码页面输入错误信息发送邮件提示信息:
+forgotPrompMsg:
+  type: xpath
+  value: "//*[@id='mainWrap']/section/div/p"
+#输入正确邮箱提示信息:
+CorrectMailPrompMsg:
+  type: xpath
+  value: "//*[@id='signBox']/section/div/p"
+#重置密码框:
+password:
+  type: id
+  value: password
+#重置密码确认框:
+password_confirm:
+  type: id
+  value: password_confirm
+#提交按钮:
+js_changePaw:
+  type: id
+  value: js_changePaw
+#重置密码成功提示信息:
+resetpasswordmsg:
+  type: xpath
+  value: "//*[@id='mainWrap']/section/div/p"
+#注册按钮:
+REGISTER:
+  type: linkText
+  value: REGISTER
+#字符串1:
+String1:
+  type: xpath
+  value: "//*[@id='signBox']/section/div/section[2]/h3"
+#字符串2:
+String2:
+  type: xpath
+  value: "//*[@id='signBox']/section/div/section[2]/p"
+#*********************************
+#PayPal链接按钮:
+PayPalButtom:
+  type: xpath
+  value: ".//*[@class='LIwPP PPBlue']"
+#PayPale登录账号:
+PayPalemail:
+  type: id
+  value: email
+#PayPale登录密码:
+PayPalPwd:
+  type: id
+  value: password  
+#PayPale登录提交按钮:
+PayPalLoginButtom:
+  type: id
+  value: btnLogin
+#Facebook链接按钮:
+FacebookButtom:
+  type: xpath
+  value: ".//*[@id='signBox']/section/header/div[2]/a"
+#Facebook登录账号:
+FacebookEmail:
+  type: id
+  value: email
+#Facebook登录密码:
+FacebookPwd:
+  type: id
+  value: pass
+#Facebook提交按钮:
+FacebookLoginButtom:
+  type: id
+  value: u_0_2
+#Google跳转按钮:
+GoogleButtom:
+  type: id
+  value: customBtn
+#Google登录账号:
+GoogleEmail:
+  type: id
+  value: Email
+#Google下一步按钮:
+nextButtom:
+  type: id
+  value: next
+#Google登录密码:
+GooglePwd:
+  type: id
+  value: Passwd
+#Google登录提交按钮:
+GoogleLoginButtom:
+  type: id
+  value: signIn
+#运行获取权限按钮:
+accessButtom:
+  type: id
+  value: submit_approve_access

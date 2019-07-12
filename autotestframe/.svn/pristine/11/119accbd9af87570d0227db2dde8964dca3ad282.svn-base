@@ -1,0 +1,316 @@
+package com.globalegrow.util;
+
+import java.io.FileNotFoundException;  
+import java.io.FileOutputStream;  
+import java.io.IOException;  
+import java.io.InputStream;  
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;  
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Flags;
+import javax.mail.Folder;  
+import javax.mail.Message;  
+import javax.mail.MessagingException;  
+import javax.mail.Multipart;  
+import javax.mail.NoSuchProviderException;  
+import javax.mail.Part;  
+import javax.mail.Session;  
+import javax.mail.Store;  
+import javax.mail.URLName;  
+import javax.mail.internet.InternetAddress;  
+import javax.mail.internet.MimeUtility;
+import javax.mail.search.SearchTerm;
+import javax.mail.search.SubjectTerm;
+import javax.mail.search.AndTerm;
+import javax.mail.search.FromStringTerm;
+
+/** 
+* 邮件接收及解析
+* @author linchaojiang
+* 创建时间 2016-08-29
+* 更新时间 2016-08-29
+*  
+*/  
+public class MailReceiver {
+			
+	/**
+	 * @author linchaojiang
+	 * @param
+	 * 
+	 */
+	
+  public  MailReceiver() {  } 
+  
+  /**
+   * 
+   * @param userName
+   * @param passwrod
+   * @param dress
+   * @param subject
+   * @return 邮件内容
+   * @throws Exception
+   * @author linchaojiang 创建时间:unknown 更新时间:2016-09-26
+   * 更新说明(2016-09-26)：by yuyang,删除了删除邮件的语句，需要删除邮件时可以通过调用del_message_by_sender来作
+   */
+  public String resmg(String userName,String passwrod,String dress,String subject) throws Exception{
+  	  String msg = null; 
+  	  // 1. 设置连接信息, 生成一个 Session  
+      Properties props = new Properties();  
+      props.setProperty("yxhf.smtp.host", "yxhf.globalegrow.com");  
+      props.setProperty("yxhf.smtp.auth", "true");  
+      Session session = Session.getDefaultInstance(props);  
+      // 2. 获取 Store 并连接到服务器    
+      URLName urlname = new URLName("pop3","yxhs.globalegrow.com",110,null,userName,passwrod);  
+      Store store = session.getStore(urlname);  
+      store.connect();  
+      Folder folder = store.getDefaultFolder();// 默认父目录  
+      if (folder == null) {  
+          Log.logInfo("邮件服务器不可用");  
+      } 
+      //3.获取收件箱并以可读可删方式打开
+      Folder popFolder = folder.getFolder("INBOX");// 获取收件箱  
+      popFolder.open(Folder.READ_WRITE);// 可读邮件,可以删邮件的模式打开目录  
+              
+      //4.根据发送地址和主题进行邮件过滤
+      SearchTerm st = new AndTerm(
+      		new FromStringTerm(dress),//发送地址
+      		new SubjectTerm(subject));//发送主题
+      Message[] messages = popFolder.search(st);           
+
+      // 5. 解析邮件
+      if(messages.length>0){          	
+      	msg = reMultipart(messages[messages.length-1]);
+      	//messages[messages.length-1].setFlag(Flags.Flag.DELETED, true);//设置删除标识，关闭Folder的时候，若Folder的参数为true则删除邮件
+      }
+      // 6. 关闭 Folder 会真正删除邮件, false 不删除  
+      popFolder.close(true);  
+      // 7. 关闭 store, 断开网络连接  
+      store.close(); 
+      
+	  return msg;   	
+  }
+  
+  	/**
+  	 * 
+  	 * @param emailaddress 邮箱地址
+  	 * @param passwrod 邮箱密码
+  	 * @param sender 发件人
+  	 * @throws Exception
+  	 * @author yuyang 创建时间:2016-09-1更新时间:2016-09-1
+  	 */
+	public void del_message_by_sender(String emailaddress, String passwrod, String sender) throws Exception {
+		
+		Long step1time1 = System.currentTimeMillis();
+		
+		// 1. 设置连接信息, 生成一个 Session
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props);
+		// 2. 获取 Store 并连接到服务器
+		URLName urlname = new URLName("pop3", "yxhs.globalegrow.com", 110, null, emailaddress, passwrod);
+		Store store = session.getStore(urlname);
+		store.connect();
+		Folder folder = store.getDefaultFolder();// 默认父目录
+		if (folder == null) {
+			System.out.println("服务器不可用");
+		}
+		Long step1time2 = System.currentTimeMillis();
+		System.out.println("连接到服务器time:"+(step1time2-step1time1));
+		// 3.获取收件箱并以可读可删方式打开
+		Folder popFolder = folder.getFolder("INBOX");// 获取收件箱
+		popFolder.open(Folder.READ_WRITE);// 可读邮件,可以删邮件的模式打开目录
+		
+		Long step2time = System.currentTimeMillis();
+		System.out.println("获取收件箱并以可读可删方式打开time:"+(step2time-step1time2));
+		
+		// 4.根据发送地址过滤
+		SearchTerm st = new FromStringTerm(sender);
+		Message[] messages = popFolder.search(st);
+		
+		Long step3time = System.currentTimeMillis();
+		System.out.println("根据发送地址过滤time:"+(step3time-step2time));
+		
+		// 5.设置删除邮件
+		if (messages.length > 0) {
+			Log.logInfo(messages.length+" emails will be deleted in INBOX.");
+		} else {
+			Log.logInfo("No eamil from " + sender + " in INBOX.");
+		}
+		for (Message m : messages) {
+			m.setFlag(Flags.Flag.DELETED, true);
+		}
+		
+		Long step4time = System.currentTimeMillis();
+		System.out.println("设置删除邮件time:"+(step4time-step3time));
+		
+		// 6. 关闭 Folder 会真正删除邮件, false 不删除
+		popFolder.close(true);
+		
+		// 7. 关闭 store, 断开网络连接
+		store.close();
+	}
+  
+    
+  /** 
+   * 解析邮件 
+   *  
+   * @param messages 邮件对象 
+   * @param i 
+   * @return 
+   * @throws IOException 
+   * @throws MessagingException 
+   * @throws FileNotFoundException 
+   * @throws UnsupportedEncodingException 
+   */  
+  private void mailReceiver(Message msg)throws Exception{  
+      // 发件人信息  
+      Address[] froms = msg.getFrom();  
+      if(froms != null) {  
+          //System.out.println("发件人信息:" + froms[0]);  
+          InternetAddress addr = (InternetAddress)froms[0];  
+          //System.out.println("发件人地址:" + addr.getAddress());  
+          //System.out.println("发件人显示名:" + addr.getPersonal());  
+      }  
+      //System.out.println("邮件主题:" + msg.getSubject());  
+      Object o = msg.getContent();  
+      if(o instanceof Multipart) { 
+      	//reMultipart(msg);
+      } else if (o instanceof Part){  
+          Part part = (Part) o;   
+          rePart(part);  
+      } else { 
+          //System.out.println("类型" + msg.getContentType());  
+          //System.out.println("内容" + msg.getContent());  
+      }
+  }
+  /** 
+   * @param part 解析内容 
+   * @throws Exception 
+   */  
+  private void rePart(Part part) throws MessagingException,  
+          UnsupportedEncodingException, IOException, FileNotFoundException {  
+      if (part.getDisposition() != null) {  
+          String strFileNmae = MimeUtility.decodeText(part.getFileName()); //MimeUtility.decodeText解决附件名乱码问题  
+          /*System.out.println("发现附件: " +  MimeUtility.decodeText(part.getFileName()));  
+          System.out.println("内容类型: " + MimeUtility.decodeText(part.getContentType()));  
+          System.out.println("附件内容:" + part.getContent()); */ 
+          InputStream in = part.getInputStream();// 打开附件的输入流  
+          // 读取附件字节并存储到文件中  
+          java.io.FileOutputStream out = new FileOutputStream(strFileNmae);  
+          int data;  
+          while((data = in.read()) != -1) {
+              out.write(data);  
+          }  
+          in.close();  
+          out.close();
+          
+      } else {  
+          //if(part.getContentType().startsWith("text/plain")) { 
+          if(part.getContentType().startsWith("text/plain")) {
+              //System.out.println("文本内容：" + part.getContent());  
+          } else {  
+              //System.out.println("HTML内容：" + part.getContent());  
+          }  
+      }  
+  }  
+       
+  /**
+   * param message 
+   * @author linchaojiang
+   * @throws MessagingException 
+   * @throws IOException 
+   * 
+   */
+  public String reMultipart(Message message) throws IOException, MessagingException{
+  	String content = "";
+      if(message.getContent() instanceof Multipart)
+      {                                  
+          Multipart mime = (Multipart) message.getContent();
+          for (int i = 0; i < mime.getCount(); i++)
+          {           	
+              BodyPart part = mime.getBodyPart(i);
+              content += part.getContent().toString();
+          }
+      } 
+      //打印邮件的内容
+      //System.out.println(content);       
+      return content;
+  }
+  
+  /**
+   * 返回邮件正文内容
+   * @param userName:邮箱用户名
+   * @param passwrod：邮箱密码
+   * @param dress：发送邮件地址
+   * @param subject：发送邮件主题
+   * @param date：邮件发送时间
+   * @return String
+   * @throws Exception
+   * @author linchaojiang
+   */
+  public String resmg(String userName,String passwrod,String dress,String subject,Date date) throws Exception{
+  	  String msg = "0"; 
+  	  //设置连接信息, 生成一个 Session  
+      Properties props = new Properties();  
+      props.setProperty("yxhf.smtp.host", "yxhf.globalegrow.com");  
+      props.setProperty("yxhf.smtp.auth", "true");  
+      Session session = Session.getDefaultInstance(props);  
+      //获取 Store 并连接到服务器    
+      URLName urlname = new URLName("pop3","yxhs.globalegrow.com",110,null,userName,passwrod);  
+      Store store = session.getStore(urlname);  
+      store.connect();  
+      Folder folder = store.getDefaultFolder();// 默认父目录  
+      if (folder == null) {  
+          Log.logInfo("邮件服务器不可用");  
+      } 
+      //获取收件箱并以可读可删方式打开
+      Folder popFolder = folder.getFolder("INBOX");// 获取收件箱  
+      popFolder.open(Folder.READ_WRITE);// 可读邮件,可以删邮件的模式打开目录  
+              
+      //4.根据发送地址和主题进行邮件过滤
+      SearchTerm st = new AndTerm(
+      		new FromStringTerm(dress),//发送地址
+      		new SubjectTerm(subject));//发送主题
+      Message[] messages = popFolder.search(st);  
+      /*循环处理收到的邮件，找出收到邮件大于等于发送时间的邮件，找到退出*/
+      int i = 0;
+      while(messages.length>i){
+    	  if(messages[i].getSentDate().getTime() >= date.getTime()){
+    		  msg = reMultipart(messages[i]);
+    		  break;
+    	  }
+    	  i++;
+      }
+      //设置删除标识，关闭Folder的时候，若Folder的参数为true则删除邮件    
+      if(messages.length>0){
+    	  for(int j=0;j<messages.length;j++){
+    		  messages[j].setFlag(Flags.Flag.DELETED, true); 
+    	  } 
+      }
+      popFolder.close(true);  
+      store.close();      
+	  return msg;   	
+  }
+  
+  /** 
+   * @param args 
+   * @throws Exception 
+   */  
+  public static void main(String[] args) throws Exception {
+  	String userName = "linchaojiang@globalegrow.com";
+  	String passwrod = "lincj@861107";
+  	String dress = "SammyDress.com";//发送邮件地址
+  	String subject = "Reset your password of SammyDress.com";//发送邮件主题
+  	MailReceiver test = new MailReceiver();
+  	
+  	Date now = new Date();
+	Date now_10 = new Date(now.getTime() - 600000); //10分钟前的时间
+	
+  	//System.out.println(test.resmg(userName,passwrod,dress,subject,now_10));
+	MailReceiver erMailReceiver = new MailReceiver();
+	erMailReceiver.del_message_by_sender("autotest01@globalegrow.com","autotest123456!","SammyDress.com");
+  }  
+  
+} 

@@ -1,0 +1,100 @@
+package com.globalegrow.util;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import com.globalegrow.util.PublicFun;
+
+/**
+ * 
+ * @author linchaojiang
+ * 创建时间：2016-09-06
+ * 更新时间：2016-09-19 by yuyang
+ * 注意:由于原先有空指针问题,导致Jenkins上无法读取到配置文件,所以方法我都重写了一遍.虽然问题解决了,不过仍然没搞清楚,原先有空指针时为什么在本地运行时clean也能正常读到配置!
+ */
+public class PropUtil {
+	public static Properties properties = new Properties();
+	public static String propertiesPath = "config/sammydress/config.properties";
+
+	/**
+	 * 根据Key读取Propery
+	 * @param key
+	 * @return property value
+	 * @author yuyang 创建时间:2016-09-19 更新时间:2016-09-19
+	 * 注意:需要在GetProperties()调用之后使用
+	 */
+	public static String get(String key) {
+		String value = null;
+		if (PublicFun.hasLength(key))
+			value = properties.getProperty(key);
+		return value;
+	}
+
+	/**
+	 * 读取Properties的全部信息,固定为sammydress的配置
+	 * @author yuyang 创建时间:2016-09-19 更新时间:2016-09-19
+	 */
+	public static void GetProperties() {
+		try {
+			propertiesPath="config/sammydress/config.properties";
+			InputStream in = new BufferedInputStream(new FileInputStream(propertiesPath));
+			properties.load(in);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//		Enumeration<?> en = properties.propertyNames(); //debug code
+//		while (en.hasMoreElements()) {
+//			String strKey = (String) en.nextElement();
+//			String strValue = properties.getProperty(strKey);
+//			System.out.println(strKey + "=" + strValue);
+//		}
+	}
+	
+	/**
+	 * 读取Properties的全部信息,按项目读取配置
+	 * @author yuyang 创建时间:2016-09-19 更新时间:2016-09-19
+	 */
+	public static void GetProperties(String projectName,String configName) {
+		try {
+			propertiesPath="config/"+projectName+"/"+configName+".properties";
+//			System.out.println("propertiesPath =" + propertiesPath);
+			InputStream in = new BufferedInputStream(new FileInputStream(propertiesPath));
+			properties.load(in);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 根据Properties文件路径及名称读取文件中全部信息
+	 * @param fileName
+	 * @author linchaojiang
+	 * 创建时间:2016-12-08,最后更新时间:2016-12-08
+	 */
+	public static void GetProperties(String fileName) {
+		try {
+			InputStream in = new BufferedInputStream(new FileInputStream(fileName));
+			properties.load(in);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		String aaString = "resources/devices.properties";
+		GetProperties(aaString);
+		String a = "port";
+		String value = get(a);
+		System.out.println(value);
+	}
+}

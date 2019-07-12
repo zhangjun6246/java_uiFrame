@@ -1,0 +1,897 @@
+2016-09-13-11:44:26(Log.java:38)**************Ready to test (SD_signin)!!!**************
+
+2016-09-13-11:44:26(Log.java:38)...Start to run test(com.globalegrow.sammydress.SD_signin.beforeClass)...
+2016-09-13-11:44:28(Log.java:38)...The end of test(com.globalegrow.sammydress.SD_signin.beforeClass)...
+
+2016-09-13-11:44:28(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_fail1)...
+2016-09-13-11:44:28(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:35(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:35(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:44:35(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:44:35(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_fail1)...
+2016-09-13-11:44:36(Log.java:38)...Test Result: register_fail1------failure
+
+2016-09-13-11:44:36(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_fail2)...
+2016-09-13-11:44:36(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:38(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:38(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:44:42(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:44:44(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_fail2)...
+2016-09-13-11:44:44(Log.java:38)...Test Result: register_fail2------Success
+
+2016-09-13-11:44:44(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_fail3)...
+2016-09-13-11:44:44(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:45(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:45(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:44:46(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:44:47(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_fail3)...
+2016-09-13-11:44:47(Log.java:38)...Test Result: register_fail3------Success
+
+2016-09-13-11:44:47(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_fail4)...
+2016-09-13-11:44:47(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:49(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:49(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:44:50(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:44:51(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_fail4)...
+2016-09-13-11:44:52(Log.java:38)...Test Result: register_fail4------Success
+
+2016-09-13-11:44:52(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_fail5)...
+2016-09-13-11:44:52(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:53(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:53(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:44:54(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:44:55(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_fail5)...
+2016-09-13-11:44:55(Log.java:38)...Test Result: register_fail5------Success
+
+2016-09-13-11:44:55(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_view_terms)...
+2016-09-13-11:44:55(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:44:59(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:44:59(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:45:05(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:45:09(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_view_terms)...
+2016-09-13-11:45:09(Log.java:38)...Test Result: register_view_terms------Success
+
+2016-09-13-11:45:09(Log.java:38)...Start to run test case(com.globalegrow.sammydress.SD_signin.register_view_terms)...
+2016-09-13-11:45:09(Log.java:38)   Start to act(enterIndexPage)
+2016-09-13-11:45:12(Log.java:38)   Test end of action(enterIndexPage)
+2016-09-13-11:45:12(Log.java:38)   Start to act(enterRegisterPage)
+2016-09-13-11:45:13(Log.java:38)   Test end of action(enterRegisterPage)
+2016-09-13-11:45:17(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.register_view_terms)...
+2016-09-13-11:45:18(Log.java:38)...Test Result: register_view_terms------Success
+
+2016-09-13-11:45:18(Log.java:38)...Start to run test(com.globalegrow.sammydress.SD_signin.afterClass)...
+2016-09-13-11:45:22(Log.java:38)...Test end of test(com.globalegrow.sammydress.SD_signin.afterClass)...
+
+2016-09-13-11:45:45(Log.java:38)首页登录链接跳转成功！！！
+2016-09-13-11:45:46(Log.java:38)...Test Result: Signin_linkClickCorrect------Success
+
+2016-09-13-11:45:55(Log.java:38)find webElement:By.id: email
+2016-09-13-11:45:56(Log.java:38)find webElement:By.id: passwordsign
+2016-09-13-11:45:57(Log.java:38)find webElement:By.id: code
+2016-09-13-11:46:02(Log.java:38)cookie找到WEBF-email且值不为空
+2016-09-13-11:46:03(Log.java:38)cookie找到WEBF-user_id且值不为空
+2016-09-13-11:46:03(Log.java:38)登录成功！！！
+2016-09-13-11:46:03(Log.java:38)...Test Result: Signin_Success------Success
+
+2016-09-13-11:46:14(Log.java:38)cookie中不包含WEBF-email
+2016-09-13-11:46:14(Log.java:38)cookie中不包含WEBF-user_id
+2016-09-13-11:46:14(Log.java:38)成功退出！！！
+2016-09-13-11:46:15(Log.java:38)...Test Result: Signout_Success------Success
+
+2016-09-13-11:46:21(Log.java:38)find webElement:By.id: email
+2016-09-13-11:46:21(Log.java:38)find webElement:By.id: passwordsign
+2016-09-13-11:46:21(Log.java:38)find webElement:By.id: code
+2016-09-13-11:46:28(Log.java:38)窗口定位成功！！！
+2016-09-13-11:46:46(Log.java:38)no such element
+  (Session info: chrome=49.0.2623.110)
+  (Driver info: chromedriver=2.9.248315,platform=Windows NT 6.1 SP1 x86_64) (WARNING: The server did not provide any stacktrace information)
+Command duration or timeout: 13 milliseconds
+For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.37.3.146', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+*** Element info: {Using=xpath, value=//*[@id="xubox_layer1"]/div[1]/div/span[2]}
+Session ID: eea396817ff737aff089f242f35b826c
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{platform=XP, acceptSslCerts=true, javascriptEnabled=true, browserName=chrome, chrome={userDataDir=C:\Users\LINCHA~1\AppData\Local\Temp\scoped_dir5596_31349}, rotatable=false, locationContextEnabled=true, version=49.0.2623.110, takesHeapSnapshot=true, cssSelectorsEnabled=true, databaseEnabled=false, handlesAlerts=true, browserConnectionEnabled=false, webStorageEnabled=true, nativeEvents=true, applicationCacheEnabled=false, takesScreenshot=true}]
+2016-09-13-11:46:46(Log.java:44)no find webElement:By.xpath: //*[@id="xubox_layer1"]/div[1]/div/span[2]
+2016-09-13-11:46:47(Log.java:38)...Test Result: Signin_PasswordError------failure
+
+2016-09-13-11:46:50(Log.java:38)成功关闭窗口！！！
+2016-09-13-11:46:54(Log.java:38)find webElement:By.id: reg_email
+2016-09-13-11:46:55(Log.java:38)find webElement:By.id: access_code
+2016-09-13-11:47:01(Log.java:38)find webElement:By.xpath: //*[@id="mainWrap"]/section/div/p
+2016-09-13-11:47:03(Log.java:38)输入无效邮箱，跳转及提示成功！！！
+2016-09-13-11:47:03(Log.java:38)...Test Result: resetpassword_ErrorMail------Success
+
+2016-09-13-11:47:14(Log.java:38)忘记密码，输入有效邮箱，测试成功！！！
+2016-09-13-11:47:15(Log.java:38)...Test Result: resetpassword_CorrectMail------Success
+
+2016-09-13-11:47:20(Log.java:38)收到邮件，已获取到正文信息！！！
+2016-09-13-11:47:23(Log.java:38)find webElement:By.id: reg_email
+2016-09-13-11:47:24(Log.java:38)find webElement:By.id: password
+2016-09-13-11:47:26(Log.java:38)find webElement:By.id: password_confirm
+2016-09-13-11:47:32(Log.java:38)重置密码成功！！！
+2016-09-13-11:47:38(Log.java:38)find webElement:By.id: email
+2016-09-13-11:47:38(Log.java:38)find webElement:By.id: passwordsign
+2016-09-13-11:47:38(Log.java:38)find webElement:By.id: code
+2016-09-13-11:47:44(Log.java:38)重置密码后，登录成功！！！
+2016-09-13-11:47:44(Log.java:38)...Test Result: resetpassword_Success------Success
+
+2016-09-13-11:47:54(Log.java:38)find webElement:By.xpath: //*[@id="signBox"]/section/div/section[2]/h3
+2016-09-13-11:47:54(Log.java:38)find webElement:By.xpath: //*[@id="signBox"]/section/div/section[2]/p
+2016-09-13-11:47:54(Log.java:38)登录切换注册页面成功！！！
+2016-09-13-11:47:55(Log.java:38)...Test Result: signinSwitchRegister------Success
+
+2016-09-13-11:48:07(Log.java:38)注册页面切换登录页面成功！！！
+2016-09-13-11:48:08(Log.java:38)...Test Result: registerSwitchSignin------Success
+
+2016-12-02-14:58:49(Log.java:38)adb命令正常·······
+2016-12-02-14:58:49(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-14:58:49(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-14:58:49(Log.java:38)获取进程Pid信息:8516
+2016-12-02-14:58:49(Log.java:38)kill进程:8516 task ...
+2016-12-02-14:58:49(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-14:58:49(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-14:58:49(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-14:58:53(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-14:58:53(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-14:58:53(Log.java:38)开始启动session··············
+2016-12-02-14:58:53(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-14:58:53(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-14:58:54(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-14:58:54(Log.java:38)开始启动session··············
+2016-12-02-14:58:54(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-14:58:54(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-14:58:54(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(signin_invalidPwd)...
+2016-12-02-14:58:54(Log.java:38)(signin_invalidPwd)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(signin_pwdLessSix)...
+2016-12-02-14:58:54(Log.java:38)(signin_pwdLessSix)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(resetpwd_linkClickCorrect)...
+2016-12-02-14:58:54(Log.java:38)(resetpwd_linkClickCorrect)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(resetpwd_CorrectMail)...
+2016-12-02-14:58:54(Log.java:38)(resetpwd_CorrectMail)Test Result...Skipped
+
+2016-12-02-14:58:54(Log.java:38)...Start to run test(resetpwd_Success)...
+2016-12-02-14:58:55(Log.java:38)(resetpwd_Success)Test Result...Skipped
+
+2016-12-02-14:58:55(Log.java:38)...Start to run test(signin_success)...
+2016-12-02-14:58:55(Log.java:38)(signin_success)Test Result...Skipped
+
+2016-12-02-14:58:55(Log.java:38)开始启动session··············
+2016-12-02-14:58:55(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-14:58:55(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-14:58:56(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-14:58:56(Log.java:38)开始启动session··············
+2016-12-02-14:58:56(Log.java:38)...Start to run test(allFieldIsNull)...
+2016-12-02-14:58:56(Log.java:38)(allFieldIsNull)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(eachFieldIsNull)...
+2016-12-02-14:58:56(Log.java:38)(eachFieldIsNull)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(phoneNumber)...
+2016-12-02-14:58:56(Log.java:38)(phoneNumber)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(editAdressAndSave)...
+2016-12-02-14:58:56(Log.java:38)(editAdressAndSave)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(editAdressAndCancle)...
+2016-12-02-14:58:56(Log.java:38)(editAdressAndCancle)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(adressLessFive)...
+2016-12-02-14:58:56(Log.java:38)(adressLessFive)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(adressEqualsFive)...
+2016-12-02-14:58:56(Log.java:38)(adressEqualsFive)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(deleteAdressSinger)...
+2016-12-02-14:58:56(Log.java:38)(deleteAdressSinger)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)...Start to run test(deleteAdressAall)...
+2016-12-02-14:58:56(Log.java:38)(deleteAdressAall)Test Result...Skipped
+
+2016-12-02-14:58:56(Log.java:38)开始启动session··············
+2016-12-02-14:58:56(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-14:58:56(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-14:58:57(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-14:58:57(Log.java:38)开始启动session··············
+2016-12-02-14:58:57(Log.java:38)...Start to run test(pro_discountMJ)...
+2016-12-02-14:58:57(Log.java:38)(pro_discountMJ)Test Result...Skipped
+
+2016-12-02-14:58:57(Log.java:38)...Start to run test(pro_discountBFB)...
+2016-12-02-14:58:57(Log.java:38)(pro_discountBFB)Test Result...Skipped
+
+2016-12-02-14:58:57(Log.java:38)...Start to run test(pro_discountUser)...
+2016-12-02-14:58:57(Log.java:38)(pro_discountUser)Test Result...Skipped
+
+2016-12-02-14:58:57(Log.java:38)...Start to run test(pro_discountStep)...
+2016-12-02-14:58:57(Log.java:38)(pro_discountStep)Test Result...Skipped
+
+2016-12-02-14:58:57(Log.java:38)开始启动session··············
+2016-12-02-14:58:57(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-14:58:57(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-14:58:58(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-14:58:58(Log.java:38)开始启动session··············
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_pp)...
+2016-12-02-14:58:58(Log.java:38)(pay_pp)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_success_msg)...
+2016-12-02-14:58:58(Log.java:38)(pay_success_msg)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(balance_ShippingMethods)...
+2016-12-02-14:58:58(Log.java:38)(balance_ShippingMethods)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(balance_TrackingNumber)...
+2016-12-02-14:58:58(Log.java:38)(balance_TrackingNumber)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(balance_Insurance)...
+2016-12-02-14:58:58(Log.java:38)(balance_Insurance)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_PPContinuePay)...
+2016-12-02-14:58:58(Log.java:38)(pay_PPContinuePay)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_creditContinuePay)...
+2016-12-02-14:58:58(Log.java:38)(pay_creditContinuePay)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_cancelPay)...
+2016-12-02-14:58:58(Log.java:38)(pay_cancelPay)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...Start to run test(pay_less_300)...
+2016-12-02-14:58:58(Log.java:38)(pay_less_300)Test Result...Skipped
+
+2016-12-02-14:58:58(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:23:37(Log.java:38)adb命令正常·······
+2016-12-02-16:23:37(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:23:37(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:23:38(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:23:38(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:23:38(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:23:45(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:23:45(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:23:45(Log.java:38)开始启动session··············
+2016-12-02-16:23:45(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:23:45(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:23:59(Log.java:38)启动session成功··············
+2016-12-02-16:23:59(Log.java:38)开始启动session··············
+2016-12-02-16:23:59(Log.java:38)初始化项目名称··············
+2016-12-02-16:23:59(Log.java:38)初始化项目成功··············
+2016-12-02-16:23:59(Log.java:38)初始化locator对象··············
+2016-12-02-16:23:59(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:23:59(Log.java:38)初始化测试的url
+2016-12-02-16:24:04(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:24:14(Log.java:38)adb命令正常·······
+2016-12-02-16:24:14(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:24:14(Log.java:38)获取进程Pid信息:10556
+2016-12-02-16:24:14(Log.java:38)kill进程:10556 task ...
+2016-12-02-16:24:14(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:24:14(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:24:14(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:24:19(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:24:19(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:24:19(Log.java:38)开始启动session··············
+2016-12-02-16:24:19(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:24:19(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:24:21(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:24:21(Log.java:38)开始启动session··············
+2016-12-02-16:24:21(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:24:21(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:24:21(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(signin_invalidPwd)...
+2016-12-02-16:24:21(Log.java:38)(signin_invalidPwd)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(signin_pwdLessSix)...
+2016-12-02-16:24:21(Log.java:38)(signin_pwdLessSix)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(resetpwd_linkClickCorrect)...
+2016-12-02-16:24:21(Log.java:38)(resetpwd_linkClickCorrect)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(resetpwd_CorrectMail)...
+2016-12-02-16:24:21(Log.java:38)(resetpwd_CorrectMail)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(resetpwd_Success)...
+2016-12-02-16:24:21(Log.java:38)(resetpwd_Success)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)...Start to run test(signin_success)...
+2016-12-02-16:24:21(Log.java:38)(signin_success)Test Result...Skipped
+
+2016-12-02-16:24:21(Log.java:38)开始启动session··············
+2016-12-02-16:24:21(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:24:21(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:24:22(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:24:22(Log.java:38)开始启动session··············
+2016-12-02-16:24:22(Log.java:38)...Start to run test(allFieldIsNull)...
+2016-12-02-16:24:22(Log.java:38)(allFieldIsNull)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(eachFieldIsNull)...
+2016-12-02-16:24:22(Log.java:38)(eachFieldIsNull)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(phoneNumber)...
+2016-12-02-16:24:22(Log.java:38)(phoneNumber)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(editAdressAndSave)...
+2016-12-02-16:24:22(Log.java:38)(editAdressAndSave)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(editAdressAndCancle)...
+2016-12-02-16:24:22(Log.java:38)(editAdressAndCancle)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(adressLessFive)...
+2016-12-02-16:24:22(Log.java:38)(adressLessFive)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(adressEqualsFive)...
+2016-12-02-16:24:22(Log.java:38)(adressEqualsFive)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(deleteAdressSinger)...
+2016-12-02-16:24:22(Log.java:38)(deleteAdressSinger)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)...Start to run test(deleteAdressAall)...
+2016-12-02-16:24:22(Log.java:38)(deleteAdressAall)Test Result...Skipped
+
+2016-12-02-16:24:22(Log.java:38)开始启动session··············
+2016-12-02-16:24:22(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:24:22(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:24:23(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:24:23(Log.java:38)开始启动session··············
+2016-12-02-16:24:23(Log.java:38)...Start to run test(pro_discountMJ)...
+2016-12-02-16:24:23(Log.java:38)(pro_discountMJ)Test Result...Skipped
+
+2016-12-02-16:24:23(Log.java:38)...Start to run test(pro_discountBFB)...
+2016-12-02-16:24:23(Log.java:38)(pro_discountBFB)Test Result...Skipped
+
+2016-12-02-16:24:23(Log.java:38)...Start to run test(pro_discountUser)...
+2016-12-02-16:24:23(Log.java:38)(pro_discountUser)Test Result...Skipped
+
+2016-12-02-16:24:23(Log.java:38)...Start to run test(pro_discountStep)...
+2016-12-02-16:24:23(Log.java:38)(pro_discountStep)Test Result...Skipped
+
+2016-12-02-16:24:23(Log.java:38)开始启动session··············
+2016-12-02-16:24:23(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:24:23(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:24:24(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:24:24(Log.java:38)开始启动session··············
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_pp)...
+2016-12-02-16:24:24(Log.java:38)(pay_pp)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_success_msg)...
+2016-12-02-16:24:24(Log.java:38)(pay_success_msg)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(balance_ShippingMethods)...
+2016-12-02-16:24:24(Log.java:38)(balance_ShippingMethods)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(balance_TrackingNumber)...
+2016-12-02-16:24:24(Log.java:38)(balance_TrackingNumber)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(balance_Insurance)...
+2016-12-02-16:24:24(Log.java:38)(balance_Insurance)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_PPContinuePay)...
+2016-12-02-16:24:24(Log.java:38)(pay_PPContinuePay)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_creditContinuePay)...
+2016-12-02-16:24:24(Log.java:38)(pay_creditContinuePay)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_cancelPay)...
+2016-12-02-16:24:24(Log.java:38)(pay_cancelPay)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...Start to run test(pay_less_300)...
+2016-12-02-16:24:24(Log.java:38)(pay_less_300)Test Result...Skipped
+
+2016-12-02-16:24:24(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:25:01(Log.java:38)adb命令正常·······
+2016-12-02-16:25:01(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:25:01(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:25:01(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:25:01(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:25:08(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:25:08(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:25:08(Log.java:38)开始启动session··············
+2016-12-02-16:25:08(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:25:08(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:25:20(Log.java:38)启动session成功··············
+2016-12-02-16:25:20(Log.java:38)开始启动session··············
+2016-12-02-16:25:20(Log.java:38)初始化项目名称··············
+2016-12-02-16:25:20(Log.java:38)初始化项目成功··············
+2016-12-02-16:25:20(Log.java:38)初始化locator对象··············
+2016-12-02-16:25:20(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:25:20(Log.java:38)初始化测试的url
+2016-12-02-16:25:26(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:25:30(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:25:30(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:25:30(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:25:37(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:25:37(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:25:37(Log.java:38)...Start to run test(signin_invalidPwd)...
+2016-12-02-16:26:15(Log.java:38)adb命令正常·······
+2016-12-02-16:26:15(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:26:15(Log.java:38)获取进程Pid信息:9656
+2016-12-02-16:26:15(Log.java:38)kill进程:9656 task ...
+2016-12-02-16:26:15(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:26:15(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:26:15(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:26:20(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:26:20(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:26:20(Log.java:38)开始启动session··············
+2016-12-02-16:26:20(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:26:20(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:26:21(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:26:21(Log.java:38)开始启动session··············
+2016-12-02-16:26:22(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:26:22(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:26:22(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(signin_invalidPwd)...
+2016-12-02-16:26:22(Log.java:38)(signin_invalidPwd)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(signin_pwdLessSix)...
+2016-12-02-16:26:22(Log.java:38)(signin_pwdLessSix)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(resetpwd_linkClickCorrect)...
+2016-12-02-16:26:22(Log.java:38)(resetpwd_linkClickCorrect)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(resetpwd_CorrectMail)...
+2016-12-02-16:26:22(Log.java:38)(resetpwd_CorrectMail)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(resetpwd_Success)...
+2016-12-02-16:26:22(Log.java:38)(resetpwd_Success)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)...Start to run test(signin_success)...
+2016-12-02-16:26:22(Log.java:38)(signin_success)Test Result...Skipped
+
+2016-12-02-16:26:22(Log.java:38)开始启动session··············
+2016-12-02-16:26:22(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:26:22(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:26:23(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:26:23(Log.java:38)开始启动session··············
+2016-12-02-16:26:23(Log.java:38)...Start to run test(allFieldIsNull)...
+2016-12-02-16:26:23(Log.java:38)(allFieldIsNull)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(eachFieldIsNull)...
+2016-12-02-16:26:23(Log.java:38)(eachFieldIsNull)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(phoneNumber)...
+2016-12-02-16:26:23(Log.java:38)(phoneNumber)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(editAdressAndSave)...
+2016-12-02-16:26:23(Log.java:38)(editAdressAndSave)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(editAdressAndCancle)...
+2016-12-02-16:26:23(Log.java:38)(editAdressAndCancle)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(adressLessFive)...
+2016-12-02-16:26:23(Log.java:38)(adressLessFive)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(adressEqualsFive)...
+2016-12-02-16:26:23(Log.java:38)(adressEqualsFive)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(deleteAdressSinger)...
+2016-12-02-16:26:23(Log.java:38)(deleteAdressSinger)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)...Start to run test(deleteAdressAall)...
+2016-12-02-16:26:23(Log.java:38)(deleteAdressAall)Test Result...Skipped
+
+2016-12-02-16:26:23(Log.java:38)开始启动session··············
+2016-12-02-16:26:23(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:26:23(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:26:24(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:26:24(Log.java:38)开始启动session··············
+2016-12-02-16:26:24(Log.java:38)...Start to run test(pro_discountMJ)...
+2016-12-02-16:26:24(Log.java:38)(pro_discountMJ)Test Result...Skipped
+
+2016-12-02-16:26:24(Log.java:38)...Start to run test(pro_discountBFB)...
+2016-12-02-16:26:24(Log.java:38)(pro_discountBFB)Test Result...Skipped
+
+2016-12-02-16:26:24(Log.java:38)...Start to run test(pro_discountUser)...
+2016-12-02-16:26:24(Log.java:38)(pro_discountUser)Test Result...Skipped
+
+2016-12-02-16:26:24(Log.java:38)...Start to run test(pro_discountStep)...
+2016-12-02-16:26:24(Log.java:38)(pro_discountStep)Test Result...Skipped
+
+2016-12-02-16:26:24(Log.java:38)开始启动session··············
+2016-12-02-16:26:24(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:26:24(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:26:25(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:26:25(Log.java:38)开始启动session··············
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_pp)...
+2016-12-02-16:26:25(Log.java:38)(pay_pp)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_success_msg)...
+2016-12-02-16:26:25(Log.java:38)(pay_success_msg)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(balance_ShippingMethods)...
+2016-12-02-16:26:25(Log.java:38)(balance_ShippingMethods)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(balance_TrackingNumber)...
+2016-12-02-16:26:25(Log.java:38)(balance_TrackingNumber)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(balance_Insurance)...
+2016-12-02-16:26:25(Log.java:38)(balance_Insurance)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_PPContinuePay)...
+2016-12-02-16:26:25(Log.java:38)(pay_PPContinuePay)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_creditContinuePay)...
+2016-12-02-16:26:25(Log.java:38)(pay_creditContinuePay)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_cancelPay)...
+2016-12-02-16:26:25(Log.java:38)(pay_cancelPay)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...Start to run test(pay_less_300)...
+2016-12-02-16:26:25(Log.java:38)(pay_less_300)Test Result...Skipped
+
+2016-12-02-16:26:25(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:27:29(Log.java:38)adb命令正常·······
+2016-12-02-16:27:29(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:27:29(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:27:29(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:27:29(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:27:36(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:27:36(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:27:36(Log.java:38)开始启动session··············
+2016-12-02-16:27:36(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:27:36(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:27:47(Log.java:38)启动session成功··············
+2016-12-02-16:27:47(Log.java:38)开始启动session··············
+2016-12-02-16:27:47(Log.java:38)初始化项目名称··············
+2016-12-02-16:27:47(Log.java:38)初始化项目成功··············
+2016-12-02-16:27:47(Log.java:38)初始化locator对象··············
+2016-12-02-16:27:47(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:27:47(Log.java:38)初始化测试的url
+2016-12-02-16:27:55(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:27:59(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:27:59(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:27:59(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:28:06(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:28:06(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:28:08(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:28:24(Log.java:38)adb命令正常·······
+2016-12-02-16:28:24(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:28:24(Log.java:38)获取进程Pid信息:3884
+2016-12-02-16:28:24(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:28:24(Log.java:38)kill进程:3884 task ...
+2016-12-02-16:28:24(Log.java:38)kill进程:0 task ...
+2016-12-02-16:28:24(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:28:24(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:28:24(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:28:29(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:28:29(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:28:29(Log.java:38)开始启动session··············
+2016-12-02-16:28:29(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:28:29(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:28:31(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:28:31(Log.java:38)开始启动session··············
+2016-12-02-16:28:31(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:28:31(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-16:28:31(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:28:31(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-16:28:31(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:29:25(Log.java:38)adb命令正常·······
+2016-12-02-16:29:25(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:29:25(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:29:25(Log.java:38)kill进程:0 task ...
+2016-12-02-16:29:25(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:29:25(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:29:25(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:29:32(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:29:32(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:29:32(Log.java:38)开始启动session··············
+2016-12-02-16:29:32(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:29:32(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:29:49(Log.java:38)启动session成功··············
+2016-12-02-16:29:49(Log.java:38)开始启动session··············
+2016-12-02-16:29:49(Log.java:38)初始化项目名称··············
+2016-12-02-16:29:49(Log.java:38)初始化项目成功··············
+2016-12-02-16:29:49(Log.java:38)初始化locator对象··············
+2016-12-02-16:29:49(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:29:49(Log.java:38)初始化测试的url
+2016-12-02-16:29:55(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:29:58(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:29:58(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:29:58(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:30:05(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:30:05(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:30:07(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:34:02(Log.java:38)adb命令正常·······
+2016-12-02-16:34:02(Log.java:38)10.32.1.214:5555设备连接正常·····
+2016-12-02-16:34:02(Log.java:38)获取进程Pid信息:3004
+2016-12-02-16:34:02(Log.java:38)kill进程:3004 task ...
+2016-12-02-16:34:02(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:34:02(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:34:02(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:34:07(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:34:07(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:34:07(Log.java:38)开始启动session··············
+2016-12-02-16:34:07(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:34:07(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:34:09(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:34:09(Log.java:38)开始启动session··············
+2016-12-02-16:34:09(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:34:09(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-16:34:09(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:34:09(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-16:34:09(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:34:09(Log.java:38)开始断开设备链接·······
+2016-12-02-16:34:09(Log.java:38)10.32.1.214:5555设备已断开链接
+2016-12-02-16:34:18(Log.java:38)adb命令正常·······
+2016-12-02-16:34:18(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:34:18(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:34:18(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:34:18(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:34:18(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:34:25(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:34:25(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:34:25(Log.java:38)开始启动session··············
+2016-12-02-16:34:25(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:34:25(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:34:35(Log.java:38)启动session成功··············
+2016-12-02-16:34:35(Log.java:38)开始启动session··············
+2016-12-02-16:34:35(Log.java:38)初始化项目名称··············
+2016-12-02-16:34:35(Log.java:38)初始化项目成功··············
+2016-12-02-16:34:35(Log.java:38)初始化locator对象··············
+2016-12-02-16:34:35(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:34:35(Log.java:38)初始化测试的url
+2016-12-02-16:34:42(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:34:46(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:34:46(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:34:46(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:34:52(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:34:52(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:34:55(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:34:55(Log.java:38)获取进程Pid信息:3924
+2016-12-02-16:34:55(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:34:55(Log.java:38)kill进程:3924 task ...
+2016-12-02-16:34:55(Log.java:38)kill进程:0 task ...
+2016-12-02-16:34:56(Log.java:38)开始断开设备链接·······
+2016-12-02-16:34:56(Log.java:38)10.32.1.214:5555设备已断开链接
+2016-12-02-16:35:03(Log.java:38)adb命令正常·······
+2016-12-02-16:35:03(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:35:03(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:35:03(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:35:03(Log.java:38)kill进程:0 task ...
+2016-12-02-16:35:03(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:35:03(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:35:03(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:35:10(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:35:10(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:35:10(Log.java:38)开始启动session··············
+2016-12-02-16:35:10(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:35:10(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:35:28(Log.java:38)启动session成功··············
+2016-12-02-16:35:28(Log.java:38)开始启动session··············
+2016-12-02-16:35:28(Log.java:38)初始化项目名称··············
+2016-12-02-16:35:28(Log.java:38)初始化项目成功··············
+2016-12-02-16:35:28(Log.java:38)初始化locator对象··············
+2016-12-02-16:35:28(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:35:28(Log.java:38)初始化测试的url
+2016-12-02-16:35:34(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:35:40(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:35:40(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:35:40(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:35:47(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:35:47(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:35:50(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:35:50(Log.java:38)获取进程Pid信息:9200
+2016-12-02-16:35:50(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:35:50(Log.java:38)获取进程Pid信息:0
+2016-12-02-16:35:50(Log.java:38)kill进程:9200 task ...
+2016-12-02-16:35:50(Log.java:38)kill进程:0 task ...
+2016-12-02-16:35:50(Log.java:38)kill进程:0 task ...
+2016-12-02-16:35:50(Log.java:38)开始断开设备链接·······
+2016-12-02-16:35:51(Log.java:38)10.32.1.214:5555设备已断开链接
+2016-12-02-16:38:22(Log.java:38)adb命令正常·······
+2016-12-02-16:38:22(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:38:22(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:38:22(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:38:22(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:38:22(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:38:29(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:38:29(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:38:29(Log.java:38)开始启动session··············
+2016-12-02-16:38:29(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:38:29(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:38:40(Log.java:38)启动session成功··············
+2016-12-02-16:38:40(Log.java:38)开始启动session··············
+2016-12-02-16:38:40(Log.java:38)初始化项目名称··············
+2016-12-02-16:38:40(Log.java:38)初始化项目成功··············
+2016-12-02-16:38:40(Log.java:38)初始化locator对象··············
+2016-12-02-16:38:40(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:38:40(Log.java:38)初始化测试的url
+2016-12-02-16:38:45(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:38:49(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:38:49(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:38:49(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:38:56(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:38:56(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:38:58(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:38:58(Log.java:38)kill进程:1264 task ...
+2016-12-02-16:38:58(Log.java:38)kill进程:0 task ...
+2016-12-02-16:38:59(Log.java:38)开始断开设备链接·······
+2016-12-02-16:38:59(Log.java:38)10.32.1.214:5555设备已断开链接,断开链接信息:disconnected 10.32.1.214:5555
+2016-12-02-16:39:33(Log.java:38)adb命令正常·······
+2016-12-02-16:39:33(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:39:33(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:39:33(Log.java:38)kill进程:0 task ...
+2016-12-02-16:39:33(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:39:33(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:39:33(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:39:40(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:39:40(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:39:40(Log.java:38)开始启动session··············
+2016-12-02-16:39:40(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:39:40(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:40:34(Log.java:38)StartBrowser error:Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.
+Build info: version: '2.53.0', revision: '35ae25b1534ae328c771e0856c93e187490ca824', time: '2016-03-15 10:43:46'
+System info: host: '7F-lincj', ip: '10.32.2.235', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_67'
+Driver info: driver.version: AndroidDriver
+2016-12-02-16:40:34(Log.java:38)开始启动session··············
+2016-12-02-16:40:34(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:40:34(Log.java:38)(signin_linkCorrect)Test Result...Skipped
+
+2016-12-02-16:40:34(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:40:34(Log.java:38)(signin_invalidEmail)Test Result...Skipped
+
+2016-12-02-16:40:34(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:40:35(Log.java:38)kill进程:0 task ...
+2016-12-02-16:40:35(Log.java:38)开始断开设备链接·······
+2016-12-02-16:40:35(Log.java:38)10.32.1.214:5555设备已断开链接,断开链接信息:disconnected 10.32.1.214:5555
+2016-12-02-16:41:29(Log.java:38)adb命令正常·······
+2016-12-02-16:41:29(Log.java:38)开始连接设备:10.32.1.214:5555
+2016-12-02-16:41:29(Log.java:38)连接上设备,连接信息:connected to 10.32.1.214:5555
+2016-12-02-16:41:29(Log.java:38)开始启动appium,端口:4723·············
+2016-12-02-16:41:29(Log.java:38)run 10.32.1.214:5555 Appium Server in port 4723...
+2016-12-02-16:41:29(Log.java:38)启动appium命令:cmd /c appium  -p 4723 -bp 4724 --session-override --chromedriver-port 9515 -U 10.32.1.214:5555 >C://aa//4723.txt
+2016-12-02-16:41:36(Log.java:38)appium启动成功,端口号为:4723
+2016-12-02-16:41:36(Log.java:38)...Start to run Suite(sammydressw)...
+
+2016-12-02-16:41:36(Log.java:38)开始启动session··············
+2016-12-02-16:41:36(Log.java:38)url:http://127.0.0.1:4723/wd/hub
+2016-12-02-16:41:36(Log.java:38)capabilities:Capabilities [{newCommandTimeout=300, platformVersion=5.1.1, platformName=Android, deviceName=10.32.1.214:5555, browserName=Chrome, udid=10.32.1.214:5555}]
+2016-12-02-16:41:47(Log.java:38)启动session成功··············
+2016-12-02-16:41:47(Log.java:38)开始启动session··············
+2016-12-02-16:41:47(Log.java:38)初始化项目名称··············
+2016-12-02-16:41:47(Log.java:38)初始化项目成功··············
+2016-12-02-16:41:47(Log.java:38)初始化locator对象··············
+2016-12-02-16:41:47(Log.java:38)初始化locator对象成功··············
+2016-12-02-16:41:47(Log.java:38)初始化测试的url
+2016-12-02-16:41:53(Log.java:38)...Start to run test(signin_linkCorrect)...
+2016-12-02-16:41:57(Log.java:38)登录跳转成功,当前登录的地址:https://login.wap-sammydress.com.trunk.s1.egomsl.com/m-users-a-sign.html
+2016-12-02-16:41:57(Log.java:38)(signin_linkCorrect)Test Result...Success
+
+2016-12-02-16:41:57(Log.java:38)...Start to run test(signin_invalidEmail)...
+2016-12-02-16:42:04(Log.java:38)无效邮箱登录，验证成功，实际提示信息:The code appears to be wrong. Please try again.,预期提示信息:The code appears to be wrong. Please try again.
+2016-12-02-16:42:04(Log.java:38)(signin_invalidEmail)Test Result...Success
+
+2016-12-02-16:42:07(Log.java:38)...End to run Suite(sammydressw)...
+
+2016-12-02-16:42:07(Log.java:38)kill进程:8400 task ...
+2016-12-02-16:42:07(Log.java:38)kill进程:0 task ...
+2016-12-02-16:42:07(Log.java:38)开始断开设备链接·······
+2016-12-02-16:42:07(Log.java:38)10.32.1.214:5555设备已断开链接,断开链接信息:disconnected 10.32.1.214:5555
+2016-12-06-17:25:39(Log.java:38)执行异常:null
+2016-12-07-09:14:21(Log.java:38)testt
+2016-12-07-09:15:40(Log.java:38)服务已启动
+2016-12-07-09:15:48(Log.java:38)服务已启动
+2016-12-07-09:58:04(Log.java:38)appium服务已启动··········
+2016-12-07-10:01:49(Log.java:38)appium服务已启动··········
+2016-12-07-10:02:37(Log.java:38)appium服务已启动··········
+2016-12-07-10:03:35(Log.java:38)appium服务已启动··········
+2016-12-07-10:03:55(Log.java:38)执行异常:null
+2016-12-07-10:26:36(Log.java:38)执行异常:null
+2016-12-07-10:26:36(Log.java:38)appium服务可用
+2016-12-07-10:27:19(Log.java:38)appium服务已启动
+2016-12-07-10:43:31(Log.java:38)执行异常:null
+2016-12-07-10:43:31(Log.java:38)appium服务可用
+2016-12-07-10:43:37(Log.java:38)appium服务已启动
+2016-12-07-11:00:08(Log.java:38)执行异常:null
+2016-12-07-11:00:08(Log.java:38)设备:test,4723可启动appium服务器测试!
+2016-12-07-11:02:18(Log.java:38)appium服务已启动
+2016-12-07-11:02:19(Log.java:38)执行异常:null
+2016-12-07-11:02:19(Log.java:38)设备:test,4728可启动appium服务器测试!
+2016-12-07-11:12:39(Log.java:38)执行异常:null
+2016-12-07-11:12:40(Log.java:38)执行异常:null
+2016-12-07-11:12:41(Log.java:38)执行异常:null
+2016-12-07-11:12:43(Log.java:38)执行异常:null
+2016-12-07-11:12:44(Log.java:38)执行异常:null
+2016-12-07-11:12:45(Log.java:38)执行异常:null
+2016-12-07-11:12:46(Log.java:38)执行异常:null
+2016-12-07-11:12:46(Log.java:38)appium服务已启动
+2016-12-07-11:12:47(Log.java:38)执行异常:null
+2016-12-07-11:26:25(Log.java:38)有空闲的设备可用于测试,启动端口:4723
+2016-12-07-11:26:25(Log.java:38)port:4723
+2016-12-07-11:27:06(Log.java:38)appium服务已启动
+2016-12-07-11:27:11(Log.java:38)有空闲的设备可用于测试,启动端口:4728
+2016-12-07-11:27:11(Log.java:38)port:4728
+2016-12-07-11:33:49(Log.java:38)appium服务已启动
+2016-12-07-11:33:54(Log.java:38)有空闲的设备可用于测试,启动端口:4728
+2016-12-07-11:33:54(Log.java:38)port:4728

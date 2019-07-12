@@ -1,0 +1,90 @@
+#首页
+searchFrom:
+  type: name
+  value: searchFrom
+#登录链接
+Signin:
+  type: linkText
+  value: Sign in
+#邮箱输入框
+email:
+  type: id
+  value: email  
+#密码输入框
+passwordsign:
+  type: id
+  value: passwordsign
+#验证码输入框
+code:
+  type: id
+  value: code
+#登录按钮
+loginButton:
+  type: id
+  value: js_signInBtn
+#我的订单
+MyOrders:
+  type: linkText
+  value: My Orders
+#退出链接
+Logout:
+  type: linkText
+  value: Logout
+#提示信息
+PrompMsg:
+  type: xpath
+  value: "//*[@id='xubox_layer1']/div[1]/div/span[2]"
+
+#促销码处理
+#添加商品到购物车连addcart
+addcart:
+  type: id
+  value: new_addcart
+#购物车商品原价格总和
+cartPrices:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > div.row3 > strong > span.my_shop_price"
+#促销码输入框
+promotion_code:
+  type: id
+  value: promotion_code
+#应用促销码按钮
+applyButton:
+  type: css
+  value: "#js_couponWrap > a"
+#折扣提示消息
+discountMsg:
+  type:css
+  value:"#cart_list > div.toCheckOut > div.code > p"
+#购物需要满的金额
+cartM:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > p > span:nth-child(1)"
+#满减的金额
+cartJ:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > p > span:nth-child(2)"
+#节约价钱
+saveMoney:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > div.row2 > ul > li:nth-child(2) > em > span.my_shop_price"
+#进入结算页面链接
+enterBalance:
+  type: linkText
+  value: PROCEED TO CHECKOUT
+#商品总价格
+goodsPrices:
+  type: id
+  value: items_sub_total
+#统计支付各个项列表
+balanceTjList:
+  type: css
+  value: "#theForm > section.total > div.calc > ul > li"
+#支付总价格
+balancePaySumMoney:
+  type: id
+  value: price_total
+#购物车产品列表
+goodlist:
+  type: css
+  value: "ul[class='products clearfix ']"

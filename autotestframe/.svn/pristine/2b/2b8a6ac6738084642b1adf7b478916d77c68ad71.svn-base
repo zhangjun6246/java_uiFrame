@@ -1,0 +1,330 @@
+package com.globalegrow.interfacetest;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.globalegrow.util.Log;
+
+
+
+public class HttpUtils {
+
+	public HttpUtils() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static  Map<String, String> doGetByHttp(String url) {
+		Map<String, String> testReportData = new HashMap<>();
+		Map<String,List<String>> requestHeader = null;
+		Map<String,List<String>> responseHeader = null;
+        String reponsBody = "";
+        BufferedReader in = null;
+    	try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 获取所有请求头字段
+            requestHeader = connection.getRequestProperties();
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            responseHeader = connection.getHeaderFields();
+            // 遍历所有的响应头字段
+//                for (String key : map.keySet()) {
+//                    System.out.println(key + "--->" + map.get(key));
+//                }
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+            	reponsBody += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送GET请求出现异常！" + e);
+            testReportData.put("exceptionMsg", e.getMessage());
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+    	testReportData.put("requestHeader", requestHeader.toString());
+    	testReportData.put("requestUrl", url);
+    	testReportData.put("responseHeader", responseHeader.toString());
+    	testReportData.put("responseBody", reponsBody);
+    	System.out.println(testReportData);
+        return testReportData;
+    }
+
+	public static Map<String, String> doPostByHttp(String url, String body) throws Exception {
+		Map<String, String> testReportData = new HashMap<>();
+		Map<String,List<String>> requestHeader = null;
+		Map<String,List<String>> responseHeader = null;
+        String reponsBody = "";
+        try {
+		    URL localURL = new URL(url);
+		    URLConnection connection = localURL.openConnection();
+		    HttpURLConnection httpURLConnection = (HttpURLConnection)connection;
+		    httpURLConnection.setDoOutput(true);   //需要输出
+		    httpURLConnection.setDoInput(true);   //需要输入
+		    httpURLConnection.setUseCaches(false);  //不允许缓存
+		    httpURLConnection.setRequestMethod("POST");   //设置POST方式连接
+		    //设置请求属性
+		    httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		    httpURLConnection.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
+		    httpURLConnection.setRequestProperty("Charset", "UTF-8");
+		    // 获取所有请求头字段
+		    requestHeader = httpURLConnection.getRequestProperties();
+		    //连接,也可以不用明文connect，使用下面的httpConn.getOutputStream()会自动connect
+		    httpURLConnection.connect();
+		    //建立输入流，向指向的URL传入参数
+		    DataOutputStream dos=new DataOutputStream(httpURLConnection.getOutputStream());
+		    dos.writeBytes(body);
+		    dos.flush();
+		    dos.close();
+		    // 获取所有响应头字段
+		    responseHeader = connection.getHeaderFields();
+		    //获得响应状态
+		    int resultCode=httpURLConnection.getResponseCode();
+		    if(HttpURLConnection.HTTP_OK==resultCode){
+			      String res = "";
+			      String readLine=new String();
+			      BufferedReader responseReader=new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8"));
+			      while((readLine=responseReader.readLine())!=null){
+			    	  res += readLine;
+			      }
+			      responseReader.close();
+			      reponsBody = res;
+		    }
+		} catch (Exception e) {
+			 System.out.println("发送GET请求出现异常！" + e);
+			 testReportData.put("exceptionMsg", e.getMessage());
+	         e.printStackTrace();
+		}
+        testReportData.put("requestHeader", requestHeader.toString());
+        testReportData.put("requestUrl", url);
+        testReportData.put("requestBody", body);
+        testReportData.put("responseHeader", responseHeader.toString());
+        testReportData.put("responseBody", reponsBody);
+		System.out.println(testReportData);
+		return testReportData;
+    }
+	
+	
+	private static class TrustAnyTrustManager implements X509TrustManager {
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+        }
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+        }
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[] {};
+        }
+    }
+ 
+    private static class TrustAnyHostnameVerifier implements HostnameVerifier {
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    }
+    
+    public static Map<String, String> doGetByHttps(String url){
+    	Map<String, String> testReportData = new HashMap<>();
+		Map<String,List<String>> requestHeader = null;
+		Map<String,List<String>> responseHeader = null;
+        String reponsBody = "";
+        BufferedReader in = null;
+    	try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[] { new TrustAnyTrustManager() },
+                     new java.security.SecureRandom());
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            HttpsURLConnection connection = (HttpsURLConnection) realUrl.openConnection();
+            //设置https相关属性
+            connection.setSSLSocketFactory(sc.getSocketFactory());
+            connection.setHostnameVerifier(new TrustAnyHostnameVerifier());
+            connection.setDoOutput(true);
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 获取所有请求头字段
+            requestHeader = connection.getRequestProperties();
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            responseHeader = connection.getHeaderFields();
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+            	reponsBody += line;
+            }
+            //System.out.println("获取的结果为："+result);
+        } catch (Exception e) {
+        	Log.logInfo("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+            testReportData.put("exceptionMsg", e.getMessage());
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+    	testReportData.put("requestHeader", requestHeader.toString());
+    	testReportData.put("requestUrl", url);
+    	testReportData.put("responseHeader", responseHeader.toString());
+    	testReportData.put("responseBody", reponsBody);
+    	System.out.println(testReportData);
+        return testReportData;
+    }
+    
+    public static Map<String, String> doPostByHttps(String url){
+    	Map<String, String> testReportData = new HashMap<>();
+		Map<String,List<String>> requestHeader = null;
+		Map<String,List<String>> responseHeader = null;
+        String reponsBody = "";
+        BufferedReader in = null;
+    	try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[] { new TrustAnyTrustManager() },
+                     new java.security.SecureRandom());
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            HttpsURLConnection connection = (HttpsURLConnection) realUrl.openConnection();
+            //设置https相关属性
+            connection.setSSLSocketFactory(sc.getSocketFactory());
+            connection.setHostnameVerifier(new TrustAnyHostnameVerifier());
+            connection.setDoOutput(true);
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 获取所有请求头字段
+            requestHeader = connection.getRequestProperties();
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            responseHeader = connection.getHeaderFields();
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+            	reponsBody += line;
+            }
+            //System.out.println("获取的结果为："+result);
+        } catch (Exception e) {
+        	Log.logInfo("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+            testReportData.put("exceptionMsg", e.toString());
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+    	testReportData.put("requestHeader", requestHeader.toString());
+    	testReportData.put("requestUrl", url);
+    	testReportData.put("responseHeader", responseHeader.toString());
+    	testReportData.put("responseBody", reponsBody);
+    	System.out.println(testReportData);
+        return testReportData;
+    }
+    
+	public static Map<String, String> send(Map<String, String> testData) {
+		Map<String, String> testReportData = new HashMap<>();
+		try {
+			if(testData.get("test_protocol").equals("http")){
+				if(testData.get("test_method").equals("get")){
+					testReportData = doGetByHttp(testData.get("test_url"));
+				}else if (testData.get("test_method").equals("post")) {
+					testReportData = doPostByHttp(testData.get("test_url"), testData.get("request_body"));
+				}
+			}else if (((String)testData.get("test_protocol")).equals("https")) {
+				if(((String)testData.get("test_method")).equals("get")){
+					testReportData = doGetByHttps(testData.get("test_url"));
+				}else if (((String)testData.get("test_method")).equals("post")) {
+					//testReportData = doPostByHttps((String)testData.get("url"), (String)testData.get("body"));
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return testReportData;
+	}
+	
+	
+    public static Map<String, String> getUrlParams(String param) { 
+	    Map<String, String> map = new HashMap<String, String>();  
+	    if (StringUtils.isBlank(param)) { 
+	        return map;  
+	    }  
+	    String[] params = param.split("&");  
+	    for (int i = 0; i < params.length; i++) {
+	    	map.put(params[i].substring(0, params[i].indexOf("=")), params[i].substring(params[i].indexOf("=")+1));
+	    }  
+	    return map;  
+	} 
+    
+	public static void main(String[] args) {
+		String url = "http://zaful.com.a.s1.egomsl.com/auto/api.php?act=get_user_info&mod=user&email=autotest05@globalegrow.com";
+		String url2 = "https://www.dresslily.com/auto/api.php?act=get_user_info&mod=user&email=autotest01@globalegrow.com";
+		String postUrl = "https://login.gearbest.com.trunk.s1.egomsl.com/m-users-a-act_sign.htm";
+		String postParam = "email=autotest30%40globalegrow.com&password=123456&code=";
+		try {
+			doPostByHttp(postUrl,postParam);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+}

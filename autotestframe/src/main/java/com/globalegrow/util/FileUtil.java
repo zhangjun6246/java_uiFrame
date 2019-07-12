@@ -1,0 +1,436 @@
+package com.globalegrow.util;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+import net.sf.json.JSONObject;
+
+public class FileUtil {
+	
+    /**
+     * 读取text文件内容
+     * @param filePath
+     * @return
+     */
+    public static List<String>  readTxtFile(String filePath){
+    	List<String> result = new ArrayList<String>();
+        try {
+            String encoding="UTF-8";
+            File file=new File(filePath);
+            if(file.isFile() && file.exists()){ 
+                InputStreamReader read = new InputStreamReader(new FileInputStream(file),encoding);
+                BufferedReader bufferedReader = new BufferedReader(read);
+                String lineTxt = null;
+                while((lineTxt = bufferedReader.readLine()) != null){  
+                	result.add(lineTxt);  
+                }             
+               read.close();
+        }else{
+            Log.logInfo("找不到指定的文件:"+filePath);
+        }
+        } catch (Exception e) {
+        	Log.logInfo("读取文件内容出错:"+filePath);
+            e.printStackTrace();
+        }
+		return result;    
+    }
+    
+    /**
+     * 获取文件下的目录名称，无排序
+     * @param path
+     * @return
+     * @author linchaojiang
+     */
+    public static List<String> getFileName(String path) {
+ 	   List<String> fileName = new ArrayList<String>();
+ 	   File f = new File(path);
+ 	   if (!f.exists()) {
+ 	       System.out.println(path + " not exists");
+ 	    }	    
+ 	   File fa[] = f.listFiles();
+ 	   if(fa.length>0){
+ 		  for (int i = 0; i < fa.length; i++) {
+ 	 	       File fs = fa[i];
+ 	 	       if(!(fs.getName().equals("index.html")||fs.getName().equals("screenShot")||fs.getName().equals("left.html"))){
+ 	 	    	  fileName.add(fs.getName());
+ 	 	       }       
+ 	 	   } 
+ 	   }	   
+	   return fileName;
+ 	}
+    
+    /**
+     * 获取目录下文件夹名称，安时间倒序排序
+     * @param fliePath
+     * @author linchaojiang
+     */
+	public static List<String> getFileName_orderByDate(String fliePath) { 
+		
+		List<String> fileName = new ArrayList<String>();
+		try {
+			File file = new File(fliePath);  
+			File[] fs = file.listFiles();  
+			Arrays.sort(fs,new Comparator< File>(){  
+				public int compare(File f1, File f2) {
+				    long diff = f1.lastModified() - f2.lastModified();  
+				    if (diff > 0) 
+				        return 1;  
+				    else if (diff == 0)  
+				        return 0;  
+				    else  
+				        return -1;  
+			    } 			
+			    public boolean equals(Object obj) { 	    	
+				    return true;  
+				}  		          
+			}); 		
+			for (int i = fs.length-1; i >-1; i--) { 			
+				if(!(fs[i].getName().equals("index.html")||fs[i].getName().equals("screenShot")||fs[i].getName().equals("left.html")||fs[i].getName().equals(".svn"))){
+					fileName.add(fs[i].getName());
+			       }    
+			    //System.out.println(new Date(fs[i].lastModified()));  
+			 }
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logInfo("获取目录:"+fliePath+",文件名称异常，请检查目录是否正确！！！");
+		}
+		return fileName;  
+	} 
+	
+	/**
+	 * 删除文件夹及下的文件
+	 * @param filepath
+	 * @author linchaojiang
+	 */
+	public static void delDirectoryAndFile(String filepath) { 
+		
+		try {
+			File f = new File(filepath);//定义文件路径         
+			if(f.exists() && f.isDirectory()){//判断是文件还是目录  
+			   if(f.listFiles().length==0){//若目录下没有文件则直接删除  
+			      f.delete();  
+			   }else{//若有则把文件放进数组，并判断是否有下级目录  
+			       File delFile[]=f.listFiles();  
+			       int i =f.listFiles().length;  
+			       for(int j=0;j<i;j++){  
+			           if(delFile[j].isDirectory()){  
+			        	   delDirectoryAndFile(delFile[j].getAbsolutePath());//递归调用del方法并取得子目录路径  
+			           }
+			           delFile[j].delete();//删除文件  
+			         }  
+			    }  
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logInfo("删除文件夹及文件夹下文件异常,删除的目录为:"+filepath);
+		}      
+	} 
+	
+	/** 
+     * 新建目录       
+     * @param path 文件路径 
+     * @throws Exception
+     * @author linchaojiang 
+     */  
+    public static void makeDirs(String path) {  
+        if (StringUtils.isEmpty(path)) {  
+            return;  
+        }  
+        try {    
+            File f = new File(path);  // 获得文件对象  
+            if (!f.exists()) {                
+                f.mkdirs(); // 如果路径不存在,则创建  
+            }  
+        } catch (Exception e) {  
+            System.out.println("创建目录错误.path=" + path);  
+            throw e;  
+        }  
+    }
+    
+    /** 
+     * 删除单个文件 
+     * @param   sPath    被删除文件的文件名 
+     * @return 单个文件删除成功返回true，否则返回false 
+     * @author linchaojiang
+     */  
+    public static boolean deleteFile(String sPath) {  
+        boolean flag = false;
+        try {
+        	File file = new File(sPath);  
+            // 路径为文件且不为空则进行删除  
+            if (file.isFile() && file.exists()) {  
+                file.delete();  
+                flag = true;  
+            }else {
+            	flag = true;
+ 			}  
+ 		} catch (Exception e) {
+ 			flag = false;
+ 			e.printStackTrace();
+ 			Log.logInfo("删除文件异常！！！");
+ 		}       
+        return flag;  
+    } 
+          
+    /**
+     * 获取目录下所有文件(按时间排序,由近及远)
+     * @param path
+     * @return List
+     * @author linchaojiang
+     */
+    public static List<File> getFileSort(String path) {
+
+        List<File> list = getFiles(path, new ArrayList<File>());
+
+        if (list != null && list.size() > 0) {
+
+            Collections.sort(list, new Comparator<File>() {
+                public int compare(File file, File newFile) {
+                    if (file.lastModified() < newFile.lastModified()) {
+                        return 1;
+                    } else if (file.lastModified() == newFile.lastModified()) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+
+                }
+            });
+
+        }
+
+        return list;
+    }
+    
+    /** 
+     * 获取目录下所有文件 
+     * @param realpath
+     * @param files
+     * @return List
+     * @author linchaojiang
+     */
+    public static List<File> getFiles(String realpath, List<File> files) {
+
+        File realFile = new File(realpath);
+        if (realFile.isDirectory()) {
+            File[] subfiles = realFile.listFiles();
+            for (File file : subfiles) {       	   
+                if (!file.isDirectory()) {
+             	   files.add(file);
+                }              
+                //如果需要递归路径下的所有目录，用以下方法把文件添加到list中
+               /* if (file.isDirectory()) {
+                    getFiles(file.getAbsolutePath(), files);
+                } else {
+                    files.add(file);
+                }*/
+            }
+        }
+        return files;
+    }   	
+	
+	 /**
+	  * 通过递归得到某一路径下所有的目录及其文件
+	  */
+	public static ArrayList<String> getFiles_01(String filePath){
+		 ArrayList<String> filelist = new ArrayList<String>();
+		 ArrayList<String> fileNameList = new ArrayList<String>();
+		 File root = new File(filePath);		  
+		 File[] files = root.listFiles();
+		 for(File file:files){
+		     if(file.isDirectory()){//递归调用
+		    	 getFiles_01(file.getAbsolutePath());
+		     filelist.add(file.getAbsolutePath());
+		     }else{
+		    	 if((!file.getName().endsWith("index.html"))&&(!file.getName().endsWith("left.html"))){
+		    		 fileNameList.add(file.getName());
+		    	 }	    	 
+		    }     
+		 }
+		 /*for(int i=fileNameList.size()-1;i>=0;i--){
+			 System.out.println(fileNameList.get(i));
+		 }*/
+		return fileNameList;
+	}
+	
+   /**  
+    * 追加文件：使用FileOutputStream，在构造FileOutputStream时，把第二个参数设为true  ，在原有文件的末尾增加文件  
+    * @param fileName  
+    * @param content  
+    * @return 
+    * @author linchaojiang
+    */   
+   public  static   void  writeMsgToFile(String file, String conent) {  
+       BufferedWriter out = null ;  
+       try  {  
+           out = new  BufferedWriter( new  OutputStreamWriter(  
+                   new  FileOutputStream(file,  true )));  
+           out.write(conent);  
+       } catch  (Exception e) {  
+           e.printStackTrace();
+       } finally  {  
+           try  {  
+               out.close();  
+           } catch  (IOException e) {  
+               e.printStackTrace();  
+           }  
+       }  
+   } 
+    
+   /**
+    * 创建文件
+    * @param path
+    * @param fileName
+    * @throws IOException
+    */
+   public static void createFile(String path,String fileName){
+   		File file = new File(path);
+		File file2 = new File(path+fileName);
+		if(!file.exists()){//如果文件夹不存在，创建文件夹
+			try {
+				file.mkdirs();//第一次创建文件夹
+				if(!file2.exists()){//如果文件不存在，创建文件					
+					file2.createNewFile();//创建文件
+				}
+				//file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else{
+			if(!file2.exists()){//如果文件不存在，创建文件					
+				try {
+					file2.createNewFile();//创建文件
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.out.println("创建文件异常！！！");
+				}
+			}
+		}
+   }
+   
+   /**
+    * 读取文件内容,从指定行数开始,适用于ＧＢ埋点项目
+    * @param fileName
+    * @param startLine
+    * @return
+    * @throws Exception
+    */
+	@SuppressWarnings("resource")
+	public static  List<String> getLine(int startLine) throws Exception{
+	   //String filename = new SimpleDateFormat("yyyy_MM_dd").format(new Date());
+	   String fileName = "C:\\mdtest\\data.txt";
+       List<String> result = new ArrayList<String>();
+       LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
+       String buff = lnr.readLine();
+       while(buff!= null){
+           if(lnr.getLineNumber()>= startLine){
+        	   result.add(URLDecoder.decode(buff, "UTF-8"));
+           }
+           buff = lnr.readLine();
+       }
+       return result; 
+   }
+   
+   /**
+    * 获取文件的总行数,适用于ＧＢ埋点项目
+    * @param filename
+    * @return int
+    * @author linchaojiang
+    */
+   @SuppressWarnings("unused")
+	public static int getFileLineCount() {
+       int cnt = 0;
+       LineNumberReader reader = null;
+       //String filename = new SimpleDateFormat("yyyy_MM_dd").format(new Date());
+       try {
+    	   String fileName = "C:\\mdtest\\data.txt";
+           reader = new LineNumberReader(new FileReader(fileName));
+           String lineRead = "";
+           while ((lineRead = reader.readLine()) != null) {
+           }
+           cnt = reader.getLineNumber();
+       } catch (Exception ex) {
+           cnt = -1;
+           ex.printStackTrace();
+       } finally {
+           try {
+               reader.close();
+           } catch (Exception ex) {
+               ex.printStackTrace();
+           }
+       }
+       return cnt;
+   }
+   
+
+   /**
+    * 解析请求的参数,从？后开始解析,把参数循环解析为map方式
+    * @param url
+    * @return map
+    * @author linchaojiang
+    */
+   public Map<String, String> getMap(String url){
+	  Map<String, String> map = new HashMap<String,String>();
+	  String msg = url.split("?")[url.split("?").length-1];
+	  String[] parameters = msg.split("&");
+	  for (int i = 0; i < parameters.length; i++) {
+		  String[] keyValue = parameters[i].split("=");
+		  if(keyValue.length>0){
+			  String key = keyValue[0];
+			  if(keyValue.length==1){
+				  map.put(key, "");  
+			  }else if (keyValue.length==2) {
+				  String value = keyValue[1]; 
+				  map.put(key, value);
+			  }else {
+				  Log.logInfo("解析参数出错！！！");
+				  Log.logInfo("解析的字符串为:"+keyValue);
+			  }
+		  }
+	  }
+	  
+	 return map;	 
+   }
+   
+   public static void main(String[] args) {
+	   String file = "C:\\Users\\wangzhishan\\Desktop\\json.txt";
+	   List<String> content = readTxtFile(file);
+	   String res = "";
+	   for (String string : content) {
+		   res = res +string;
+	   }
+	   System.out.println(res);
+	   JSONObject it = JSONObject.fromObject(res);
+	   String expectKey = "currentCity";
+	   String actualkey = "";
+	   for (Object key : it.keySet()) {
+		   if(key.equals(expectKey)){
+			   actualkey = it.getString((String) key);
+		   }else {
+			   it.get(key);
+		   }
+	   }
+	   System.out.println(actualkey);
+   }
+   
+}

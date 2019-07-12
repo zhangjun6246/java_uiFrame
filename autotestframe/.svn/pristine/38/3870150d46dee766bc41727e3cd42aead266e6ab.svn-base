@@ -1,0 +1,132 @@
+#登录链接
+Signin:
+  type: linkText
+  value: Sign in
+#邮箱输入框
+email:
+  type: id
+  value: email   
+#密码输入框
+passwordsign:
+  type: id
+  value: passwordsign 
+#验证码输入框
+code:
+  type: id
+  value: code  
+#登录按钮
+loginButton:
+  type: id
+  value: js_signInBtn
+#个人头像标识
+mycoount:
+  type: className
+  value: mycoount
+#个人信息
+personalData:
+  type: linkText
+  value: Personal Data 
+#地址部tab标签
+AddressBook:
+  type: linkText
+  value: Address Book  
+#billingAddress地址管理按钮
+billingAddressButtom:
+  type: id
+  value: addBillingAddr 
+#shippingAddress地址管理按钮
+shippingAddressButtom:
+  type: id
+  value: addShipAddr 
+#firstname
+firstname:
+  type: id
+  value: firstname
+#lastname
+lastname:
+  type: id
+  value: lastname
+#电子邮件
+email:
+  type: id
+  value: email 
+#地址1
+addressline1:
+  type: id
+  value: addressline1 
+#地址2
+addressline2:
+  type: id
+  value: addressline2  
+#Country/Region
+CountryRegion:
+  type: name
+  value: country 
+#State/County
+province:
+  type: name
+  value: province 
+#city
+city:
+  type: id
+  value: city 
+#电话号码
+tel:
+  type: id
+  value: tel
+#邮政编码
+zipcode:
+  type: id
+  value: zipcode  
+#提交
+comfirmEdit:
+  type: xpath
+  value: "//*[@id='addressfrom']/div/button/span"
+#错误提示信息:
+firstNameErrorMsg:
+  type: css
+  value: "label[for='firstname']"  
+#错误提示信息:
+lastNameErrorMsg:
+  type: css
+  value: "label[for='lastname']"  
+#错误提示信息:
+emailErrorMsg:
+  type: css
+  value: "label[for='email']"
+#错误提示信息:
+addressline1ErrorMsg:
+  type: css
+  value: "label[for='addressline1']"
+#错误提示信息:
+countryErrorMsg:
+  type: css
+  value: "label[for='country']"
+#错误提示信息:
+statesErrorMsg:
+  type: css
+  value: "label[for='states_0_0']"
+#错误提示信息:
+cityErrorMsg:
+  type: css
+  value: "label[for='city']"
+#错误提示信息:
+telErrorMsg:
+  type: css
+  value: "label[for='tel']"
+#错误提示信息:
+zipcodeErrorMsg:
+  type: css
+  value: "label[for='zipcode']"
+#所有地址列表:
+adressList:
+  type: css
+  value: "div[class='list']"
+#ShippingAddress地址列表:
+ShippingAddressList:
+  type: css
+  value: "div#ship_addr_list > div.list"  
+#添加地址成功提示信息:
+sucessMsg:
+  type: xpath
+  value: "//*[@id='mainWrap']/section/div/p"  

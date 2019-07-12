@@ -1,0 +1,304 @@
+package com.globalegrow.interfacetest;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.testng.ITestContext;
+import org.testng.ITestResult;
+import org.testng.TestListenerAdapter;
+
+import com.globalegrow.util.DBhandle;
+import com.globalegrow.util.HtmlReport;
+import com.globalegrow.util.Log;
+import com.globalegrow.util.News;
+import com.globalegrow.util.ReportUtil;
+
+public class TestngListener2  extends TestListenerAdapter{
+	FileOutputStream outputStream = null;
+	StringBuffer msg = new StringBuffer();
+	Properties props=System.getProperties();
+	String projectPath=System.getProperty("user.dir");
+	static String projectName = "";
+	static List<String> modeName = new ArrayList<>();
+	public static String test_id = "";
+	String runTestStartTime = "1700-01-01 00:00:00";
+	String runTestFinishTime = "2050-01-01 00:00:00";
+	static HashMap<String, List<String>> repmap = new HashMap<String, List<String>>();
+	public static HashMap<String, String> modeTime = new HashMap<String, String>();
+	static HashMap<String, String> headmap = new HashMap<String, String>();
+	static HashMap<String,Map<String, String >> testcasemap = new HashMap<String,Map<String, String >>();
+	private String picDateSign;
+	public static String projectCode = "";
+	public static StringBuffer logStr = new StringBuffer();
+	
+	
+	public static String getProjectName() {
+		return projectName;
+	}
+
+	public static void setProjectName(String projectName) {
+		TestngListener2.projectName = projectName;
+	}
+
+	
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+	@Override
+	public void onStart(ITestContext testContext) {
+		super.onStart(testContext);
+		/*projectName = testContext.getSuite().getName();//获取项目名称
+		projectCode = testContext.getSuite().getParameter("project_code");*/
+		Date startDate = testContext.getStartDate();//测试执行时间
+		
+		msg.append(formatter.format(startDate)+";"+formatter.format(startDate)+";"+testContext.getClass().getName()+";"+testContext.getName()+";onStart;图片名称\r\n");
+		Log.logInfo("...Start to run Suite(" + testContext.getSuite().getName() + ")...\r\n");			
+	/*	headmap.put("project_code", testContext.getSuite().getParameter("project_code"));
+		headmap.put("env", testContext.getSuite().getParameter("env")); 
+		headmap.put("job", testContext.getSuite().getParameter("tastjob")); 
+		headmap.put("task_id", testContext.getSuite().getParameter("id"));
+		headmap.put("run_person", testContext.getSuite().getParameter("userid"));*/
+		
+		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyyMMddHHmmss");
+		Date currentTime = new Date();
+		picDateSign = formatter1.format(currentTime);
+	}
+	
+	@Override
+	public void onTestStart(ITestResult tr) {
+		super.onTestStart(tr);
+		test_id = Long.toString(System.currentTimeMillis())+ReportUtil.getRandomString(5, 2);
+		Date date = new Date();	
+		String modeStr = tr.getInstanceName().split("\\.")[tr.getInstanceName().split("\\.").length-1];
+		if(!modeName.contains(modeStr)){
+			modeName.add(modeStr);
+			modeTime.put(tr.getInstanceName(), formatter.format(date));
+		}
+		runTestStartTime = formatter.format(date);
+		
+		Log.logInfo("...Start to run test(" + tr.getName() + ")...");
+		
+		/*if(!repmap.containsKey(tr.getName())){//把测试数据写入map中			
+			List<String> testl = new ArrayList<String>();
+			String modestr = tr.getInstanceName().split("\\.")[tr.getInstanceName().split("\\.").length-1]+picDateSign;
+			testl.add(0, formatter.format(date));
+			testl.add(1, formatter.format(date));
+			testl.add(2, tr.getInstanceName());
+			testl.add(3, tr.getName());
+			testl.add(4, "onTestStart");
+			testl.add(5, "图片名称");
+			testl.add(6, test_id);
+			testl.add(7, modestr);
+			repmap.put(tr.getName(), testl);			
+		}else{
+			repmap.get(tr.getName()).set(0, formatter.format(date));
+			repmap.get(tr.getName()).set(1, formatter.format(date));
+		}	*/
+	}
+	
+	@Override
+	public void onTestFailure(ITestResult tr){
+		super.onTestFailure(tr);
+		Date date = new Date();
+		Object obj = tr.getInstance();//获取运行对象实例		
+		Log.logInfo("(" + tr.getName() + ")Test Result...Failure\r\n");	
+		runTestFinishTime = formatter.format(date);
+		if(tr.getTestClass().getName().equals("com.globalegrow.project.PreInterfaceTest")){
+			InterfaceTestApi.preTestReportData.get(tr.getName()).put("run_result", "FAILURE");
+		}else {
+			InterfaceTestApi.allTestReportData.get(tr.getName()).put("run_result", "FAILURE");
+		}
+		
+	}
+	
+	@Override
+	public void onTestSkipped(ITestResult tr) {
+		super.onTestSkipped(tr);		
+		Date date = new Date();	
+		runTestFinishTime = formatter.format(date);
+		Log.logInfo("(" + tr.getName() + ")Test Result...Skipped\r\n");
+		if(tr.getTestClass().getName().equals("com.globalegrow.project.PreInterfaceTest")){
+			InterfaceTestApi.preTestReportData.get(tr.getName()).put("run_result", "SKIPPED");
+		}else {
+			InterfaceTestApi.allTestReportData.get(tr.getName()).put("run_result", "SKIPPED");
+		}
+	}
+
+	@Override
+	public void onTestSuccess(ITestResult tr) {
+		super.onTestSuccess(tr);	
+		Date date = new Date();	
+		Log.logInfo("(" + tr.getName() + ")Test Result...Success\r\n");
+		runTestFinishTime = formatter.format(date);
+		if(tr.getTestClass().getName().equals("com.globalegrow.project.PreInterfaceTest")){
+			InterfaceTestApi.preTestReportData.get(tr.getName()).put("run_result", "SUCCESS");
+		}else {
+			InterfaceTestApi.allTestReportData.get(tr.getName()).put("run_result", "SUCCESS");
+		}
+	}
+	
+	@SuppressWarnings({ "unused", "rawtypes" })
+	@Override
+	public void onFinish(ITestContext testContext) {
+		DBhandle dbBhandle = new DBhandle();
+		String sql = "",run_id = "",queryRunIdSql = "" ;
+		Map<String, String> run_id_temp = (Map<String, String>) dbBhandle.query("SELECT MAX(run_id) as run_id FROM auto_interfacerunresult WHERE jobName = '"+testContext.getSuite().getParameter("jobName")+"'").get(0);
+		run_id = String.valueOf(run_id_temp.get("run_id"));
+		if(run_id == null){
+			run_id = "0";
+		}
+		//往数据库中插入运行用例的结果数据
+		for (String test_name : InterfaceTestApi.allTestReportData.keySet()) {
+			sql = "insert into auto_interfacerunresult (id,jobName,run_id,test_id,response_data,response_cookies,run_exception,run_result,run_order,request_cookies) "
+	    			+ "values ('"+DBhandle.getUUID()+"', "
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("jobName")+"',"
+	    					+ " "+(Integer.valueOf(run_id)+1)+","
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("test_id")+"',"
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("responseBody")+"',"
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("responseHeader")+"',"
+	    					+ " null,"
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("run_result")+"',"
+	    					+ " '"+InterfaceTestApi.allTestReportData.get(test_name).get("run_order")+"',"
+	    					+ " '"+HttpUtils.cookies+"')";
+			dbBhandle.insert(sql);
+		}
+		//往数据库中插入前置条件用例的结果数据
+		for (String test_name : InterfaceTestApi.preTestReportData.keySet()) {
+			sql = "insert into auto_interfacerunresult (id,jobName,run_id,test_id,response_data,response_cookies,run_exception,run_result,run_order,request_cookies) "
+	    			+ "values ('"+DBhandle.getUUID()+"', "
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("jobName")+"',"
+	    					+ " "+(Integer.valueOf(run_id)+1)+","
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("test_id")+"',"
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("responseBody")+"',"
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("responseHeader")+"',"
+	    					+ " null,"
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("run_result")+"',"
+	    					+ " '"+InterfaceTestApi.preTestReportData.get(test_name).get("run_order")+"',"
+	    					+ " '"+HttpUtils.cookies+"')";
+			dbBhandle.insert(sql);
+		}
+		Log.logInfo("所有测试结果数据："+InterfaceTestApi.allTestReportData);
+		super.onFinish(testContext);
+		//把测试数据写入msg变量中
+        Iterator keys = repmap.keySet().iterator();  
+        while(keys.hasNext()){  
+            String key = (String)keys.next();
+            String line = "";
+            for(int i= 0;i<repmap.get(key).size();i++){
+            	if(i == (repmap.get(key).size()-1)){
+            		line = line+repmap.get(key).get(i);
+            	}else {
+            		line = line+repmap.get(key).get(i)+";";
+				}           	
+            }
+            msg.append(line+"\r\n");
+        }
+		
+		int pass = 0;//成功
+		int failure = 0;//失败用例
+		int skied = getSkippedTests().size();//跳过用例
+		int sum = 0;//总用例
+		/**
+		 * 执行用例统计
+		 */
+		ArrayList<ITestResult> testsToBeRemoved = new ArrayList<ITestResult>();
+		Set<Integer> passedTestIds = new HashSet<Integer>();
+		for (ITestResult passedTest : testContext.getPassedTests().getAllResults()) {
+			pass++;
+			passedTestIds.add(getId(passedTest));
+		}
+		Set<Integer> failedTestIds = new HashSet<Integer>();
+		for (ITestResult failedTest : testContext.getFailedTests().getAllResults()) {
+			failure++;
+			int failedTestId = getId(failedTest);
+			if (failedTestIds.contains(failedTestId) || passedTestIds.contains(failedTestId)) {
+				testsToBeRemoved.add(failedTest);
+			} else {
+				failedTestIds.add(failedTestId);
+			}
+		}
+		sum = pass+failure+skied;
+		Date endDate = testContext.getEndDate();
+		Date SDate = testContext.getStartDate();//开始运行时间
+		msg.append(formatter.format(endDate)+";"+formatter.format(endDate)+";"+testContext.getClass().getName()+";"+testContext.getName()+";onFinish;图片名称\r\n");	
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH时mm分");
+		String runDate = formatter.format(SDate);//拼接文件名称
+		String id = testContext.getSuite().getParameter("id");
+		String path = projectPath + "/test-output/html-report/"+projectName+"/"+id+"-"+projectName+"/";
+		String spath = projectPath + "/test-output/html-report/"+projectName+"/";
+		String filePath = path+"result.txt"; 
+		
+		String writeindb = testContext.getSuite().getParameter("writeindb");
+		Log.logInfo("是否写数据库writeindb = :"+writeindb);		
+		if(writeindb.equals("true")){//是否写入数据库进入数据库		
+			DBhandle dBhandle = new DBhandle();
+			dBhandle.insertDataInDb2(headmap,repmap,testcasemap);
+			if(News.isNotSendEmail(testContext.getSuite().getParameter("project_code"))){//是否发送电子邮件
+				News.sendEmailCustom(testContext.getSuite().getParameter("project_code"), 
+						testContext.getSuite().getParameter("tastjob"), 
+						testContext.getSuite().getParameter("id"),
+						testContext.getSuite().getParameter("news_code"));
+			}
+			if(News.isNotSendRtx(testContext.getSuite().getParameter("project_code"))){//是否发送rtx消息
+				News.sendRtx(testContext.getSuite().getParameter("project_code"), 
+						testContext.getSuite().getParameter("tastjob"), 
+						testContext.getSuite().getParameter("id"),testContext.getSuite().getParameter("test_specification"),
+						testContext.getSuite().getParameter("news_code"),testContext.getSuite().getParameter("CustomRTX"));//CustomRTX 自定义rtx消息;
+			}
+			ReportUtil.copyImage(testContext.getSuite().getParameter("tastjob"), testContext.getSuite().getName());	
+		}		
+		HtmlReport.delDirectoryAndFile(path);//如果目录存在先删除目录及下的文件
+		ReportUtil.makeDirs(path);//创建目录
+		try {
+			ReportUtil.htmlReport(msg,"result.txt",path);//把结果写到txt文件
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		HtmlReport.overview_html(path,filePath,testContext,runDate);//概览
+		ReportUtil.deleteFile(spath+"index.html");//删除index.html
+		HtmlReport.index(spath);//重写index.html
+		ReportUtil.deleteFile(spath+"left.html");//删除left.html
+		HtmlReport.left(spath,testContext);//重写left.html	
+		
+		Log.logInfo("...End to run Suite(" + testContext.getSuite().getName() + ")...\r\n");
+		
+	}
+			
+
+	private int getId(ITestResult result) {
+		int id = result.getTestClass().getName().hashCode();
+		id = id + result.getMethod().getMethodName().hashCode();
+		id = id + (result.getParameters() != null ? Arrays.hashCode(result.getParameters()) : 0);
+		return id;
+	}
+
+	
+	/** 
+	 * 利用java反射机制，根据属性名获取属性值 
+	 * @author linchaojiang
+	 */ 
+	private Object getFieldValueByName(String fieldName, Object o) {  
+       try {    
+           String firstLetter = fieldName.substring(0, 1).toUpperCase();    
+           String getter = "get" + firstLetter + fieldName.substring(1);    
+           Method method = o.getClass().getMethod(getter, new Class[] {});    
+           Object value = method.invoke(o, new Object[] {});    
+           return value;    
+        } catch (Exception e) {    
+        	Log.logInfo(e.getMessage());    
+           return null;    
+        }    
+    }
+		
+}

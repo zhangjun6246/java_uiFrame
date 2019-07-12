@@ -1,0 +1,208 @@
+package com.globalegrow.code;
+
+import java.awt.Robot;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ho.yaml.Yaml;
+import org.openqa.selenium.By;
+import org.testng.Assert;
+
+import com.globalegrow.util.Log;
+
+
+public class AndroidAppLocator {
+
+
+
+	protected Robot robot = null;
+
+	private Map<String, Map<String, String>> ml = new HashMap<String, Map<String, String>>();// 存放对象
+	
+	public Map<String, Map<String, String>> getMl() {
+		return ml;
+	}
+
+	public void setMl(Map<String, Map<String, String>> ml) {
+		this.ml = ml;
+	}
+
+
+	/**
+	 * 重写一个构造函数，不需要初始化driver的，以方便我在测试类中调用 
+	 * @param moduleName 测试模块名称
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public AndroidAppLocator(String projectName) {
+		getYamlFile(projectName);
+	}
+
+	/**
+	 * 获取yaml文件，转换为map
+	 * @param fileName
+	 * @return Map
+	 * @author linchaojiang
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<String, String>> getYamlFile(String projectName) {
+
+		try {
+			Log.logInfo(projectName);
+			File file = new File("locator/" + projectName + "/");
+			File[] yamlfileList=file.listFiles();
+			for(int i=0;i<yamlfileList.length;i++)
+			{
+				if(yamlfileList[i].toString().contains("yaml")){
+					Log.logInfo(yamlfileList[i].getAbsolutePath());
+					ml.putAll(Yaml.loadType(new FileInputStream(yamlfileList[i].getAbsolutePath()), HashMap.class));
+				}
+				
+			}
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+
+		return ml;
+	}
+
+	/**
+	 * 获取yaml文件，转换为map
+	 * @param moduleName yaml文件名，约定为和测试类名相同
+	 * @return projectName 项目名，约定为和项目包名相同
+	 * @author yuyang 创建时间:2016-11-15 更新时间:2016-11-15
+	 * 备注：重载该方法，由使用静态变量改为参数传递的方式
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<String, String>> getYamlFile(String projectName, String moduleName) {
+
+		try {
+			File yamlfile = new File("locator/" + projectName + "/" + moduleName + ".yaml");
+			ml = Yaml.loadType(new FileInputStream(yamlfile.getAbsolutePath()), HashMap.class);
+		} catch (FileNotFoundException e) {
+			Log.logInfo(e.getMessage());
+			Log.logInfo("读取对象文件有误，请检查yaml文件是否正确！！！");
+		}
+		return ml;
+	}
+
+	/**
+	 * 重写一个构造函数，不需要初始化driver的，以方便我在测试类中调用 
+	 * @param moduleName 测试模块名称
+	 * @author yuyang 创建时间:2016-10-15新时间:2016-10-15
+	 * 备注：重载该方法，由使用静态变量改为参数传递的方式
+	 */
+	public AndroidAppLocator(String projectName, String moduleName) {
+		getYamlFile(projectName, moduleName);
+	}
+
+	/**
+	 * 通过传入对象名称，返回by对象
+	 * @param type,value
+	 * @return By
+	 * @author linchaojiang
+	 */
+	private By getBy(String type, String value) {
+		By by = null;
+		if (type.equals("id")) {
+			by = By.id(value);
+		} else if (type.equals("name")) {
+			by = By.name(value);
+		} else if (type.equals("xpath")) {
+			by = By.xpath(value);
+		} else if (type.equals("className")) {
+			by = By.className(value);
+		} else if (type.equals("linkText")) {
+			by = By.linkText(value);
+		} else if (type.equals("css")) {
+			by = By.cssSelector(value);
+		} else {
+			Log.logInfo("根据属性:" + type + "=" + value + ",查找不到对象!!!");
+		}
+		return by;
+	}
+
+	/**
+	 * 传入yaml中的标识，返回by对象
+	 * @param identification
+	 * @return By
+	 * @author linchaojiang
+	 */
+	public By getBy(String identification) {
+		By by = null;
+		String type;
+		String value;
+		if (ml.containsKey(identification)) {
+			Map<String, String> m = ml.get(identification);
+			type = m.get("type");
+			value = m.get("value");
+			Log.logInfo("type:"+type+" value:"+value);
+			if (type.equals("id")) {
+				by = By.id(value);
+			} else if (type.equals("name")) {
+				by = By.name(value);
+			} else if (type.equals("xpath")) {
+				by = By.xpath(value);
+			} else if (type.equals("className")) {
+				by = By.className(value);
+			} else if (type.equals("linkText")) {
+				by = By.linkText(value);
+			} else if (type.equals("css")) {
+				by = By.cssSelector(value);
+			} else {
+				Log.logInfo("返回by对象出错！！！");
+			}
+		} else {
+			Log.logInfo("对象管理文件yaml中，不存在标识为" + identification + "的对象!!!");
+		}
+		return by;
+	}
+
+
+	/**
+	 * 更新locator中变量的值，使用新字符串替换值中的变量字符串
+	 * @param itemName 变量名
+	 * @param replaceStr 待替换的字符串，或者叫变量字符串
+	 * @param newStr 新字符串
+	 * @throws Exception 执出全部异常
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public void renewLocatorValue(String itemName, String replaceStr, String newStr) throws Exception {
+		String OldVal = ml.get(itemName).get("value");
+		String newVal = OldVal.replaceFirst(replaceStr, newStr);
+		ml.get(itemName).put("value", newVal);
+	}
+
+	/**
+	 * 打印出locator中指定项的值，主要用来调试代码
+	 * @param itemName 项
+	 * @throws Exception 执出全部异常
+	 * @author yuyang 创建时间:2016-10-07新时间:2016-10-07
+	 */
+	public void printLocatorItemValue(String itemName) throws Exception {
+		Log.logInfo(ml.get(itemName).get("value"));
+	}
+
+	/**
+	 * 从locator0复制locator的元素ml
+	 * @param locator0 用来复制的对象
+	 * @throws Exception
+	 * @author yuyang 创建时间:2016-10-13新时间:2016-11-18
+	 * 更新说明(2016-11-18)：by yuyang,移动到PhoneLocator
+	 */
+	public void copy(AndroidAppLocator locator0) {
+		try {
+			for (String key : ml.keySet()) {
+				ml.get(key).put("value", locator0.ml.get(key).get("value"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("Error occured while restoring locator.");
+			Assert.fail();
+		}
+	}
+	
+}

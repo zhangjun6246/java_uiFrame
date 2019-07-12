@@ -1,0 +1,5077 @@
+package com.globalegrow.util;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import com.globalegrow.code.AndroidAppLocator;
+import com.globalegrow.code.Locator;
+import com.globalegrow.code.PhoneLocator;
+
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidKeyCode;
+import io.appium.java_client.android.AndroidKeyMetastate;
+
+public class Op {
+	public WebDriver driver;
+	public Locator locator;
+	public long defaultPageLoadTimeoutMax = 60;
+	enum driverType {
+		WEB, WAP, ANDROID, IOS
+	}
+
+	public WebDriver wDriver;
+	public Locator wLocator;
+
+	@SuppressWarnings("rawtypes")
+	public AndroidDriver androidDriver;
+	public AndroidAppLocator androidLocator;
+	
+	public WebDriver wapDriver;
+	public PhoneLocator wapLocator;
+	
+	public Actions action;
+	public JavascriptExecutor jse;
+
+	public driverType opType;
+
+	public long explicitWaitTimeoutLoop = 20;
+	private String projectName;
+	private String screenShotPath;
+
+	public String CHECK_LOG_FORMAT = "yyyyMMdd";
+	public String TEN_PAY_DATE_STRING_FORMAT = "yyMMdd";
+	public String REPORT_CSV_FORMAT = "yyyyMMdd_HHmm";
+	public String ZH_DATE_FORMAT = "yyyy年MM月dd日 HH:mm:ss";
+	public String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public String DATE_FORMAT = "yyyy-MM-dd HH-mm-ss";
+
+	private  SimpleDateFormat simpleDateFormat;
+
+	public  String format(String type) {
+		simpleDateFormat = new SimpleDateFormat(type);
+		return simpleDateFormat.format(new Date());
+	}
+	
+	/**
+	 * wap测试构造函数
+	 * @param wDriver
+	 * @param wLocator
+	 * @param projectName
+	 */
+	public Op(WebDriver wDriver, Locator wLocator, String projectName) {
+		this.wDriver = wDriver;
+		this.wLocator = wLocator;
+		opType = driverType.WEB;
+		this.projectName = projectName;
+		this.action = new Actions(wDriver);
+		this.jse = (JavascriptExecutor) wDriver;
+	}
+	
+	/**
+	 * wap测试构造函数
+	 * @param driver
+	 * @param locator
+	 * @param projectName
+	 * @param string
+	 */
+	public Op(WebDriver driver, Locator locator, String projectName, String string) {
+		this.driver = driver;
+		this.locator = locator;
+		this.projectName = projectName;
+		this.action = new Actions(driver);
+		this.jse = (JavascriptExecutor) driver;
+	}
+
+	/**
+	 * wapc测试构造函数
+	 * @param wapDriver
+	 * @param wapLocator
+	 * @param projectName
+	 */
+	public Op(WebDriver wapDriver, PhoneLocator wapLocator, String projectName) {
+		this.wapDriver = wapDriver;
+		this.wapLocator = wapLocator;
+		opType = driverType.WAP;
+		this.projectName = projectName;
+		this.action = new Actions(wapDriver); // 不好用
+	
+		
+	}
+
+	/**
+	 * 安卓测试构造函数
+	 * @param aDriver
+	 * @param appLocator
+	 * @param projectName
+	 */
+	public Op(AndroidDriver androidDriver, AndroidAppLocator androidLocator, String projectName) {
+		this.androidDriver = androidDriver;
+		this.androidLocator = androidLocator;
+		opType = driverType.ANDROID;
+		this.projectName = projectName;
+		this.action = new Actions(androidDriver); // 不好用
+	}
+
+	/**
+	 * 设置截图路径
+	 * @param screenShotPath
+	 * @author yuyang ,创建时间：2016-10-18,更新时间：2016-10-18
+	 */
+	public void setScreenShotPath(String screenShotPath) {
+		this.screenShotPath = screenShotPath;
+	}
+
+	public long getExplicitWaitTimeoutLoop() {
+		return explicitWaitTimeoutLoop;
+	}
+
+	public void setExplicitWaitTimeoutLoop(long explicitWaitTimeoutLoop) {
+		this.explicitWaitTimeoutLoop = explicitWaitTimeoutLoop;
+	}
+
+	/**
+	 * 获取方法名
+	 * @return 方法名
+	 */
+	public static String GetMethodName() {
+		String methodnamestr = Thread.currentThread().getStackTrace()[2].getMethodName();
+		return methodnamestr;
+	}
+
+	/**
+	 * 在一定时间内，等待页面元素存在
+	 * @param elementStr 页面元素
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param assertFlag 断言标志，true-则执行断言，false-则不执行断言
+	 * @throws Exception 所有异常抛出
+	 * @author yuyang ,创建时间：2016-10-18,更新时间：2016-10-18
+	 */
+	public WebElement MyWebDriverWait(String elementStr, long explicitWaitTimeout, boolean assertFlag) throws Exception {
+		boolean res = false;
+		WebElement element = null;
+
+		try {
+			switch (opType) {
+			case WEB:
+				element = (new WebDriverWait(wDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wLocator.getBy(elementStr)));
+				break;
+			case WAP:
+				element = (new WebDriverWait(wapDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wapLocator.getBy(elementStr)));
+				break;
+			case ANDROID:
+				element = (new WebDriverWait(androidDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(androidLocator.getBy(elementStr)));
+				break;
+			case IOS:
+				break;
+			}
+
+			res = true;
+		} catch (Exception e) {
+//			e.printStackTrace();
+		}
+
+		if (res) {
+			Log.logInfo("等待到页面元素(" + elementStr + ")存在.");
+		} else {
+			captureScreen2(projectName, "MyWebDriverWait(" + elementStr + ")_" + explicitWaitTimeout + "seconds");
+			Log.logWarn(explicitWaitTimeout + "seconds超时 ,未等待到页面元素(" + elementStr + ")存在.");
+			if (assertFlag) {
+				Assert.fail();
+			}
+		}
+
+		return element;
+	}
+
+	/**
+	 * 在一定时间内，等待页面元素存在，如果等待到，则返回页面元素，否则返回null，不抛出异常
+	 * 备注：与MyWebDriverWait相似，只是不打印多余的log，用于取代WebDriverWait
+	 * @param elementStr 页面元素
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang ,创建时间：2016-11-15,更新时间：2016-11-15
+	 */
+	public WebElement MyWebDriverWait2(String elementStr, long explicitWaitTimeout, boolean ePrintFlag, boolean printFlag) {
+		boolean res = false;
+		WebElement element = null;
+
+		try {
+			switch (opType) {
+			case WEB:
+				element = (new WebDriverWait(wDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wLocator.getBy(elementStr)));
+				break;
+			case WAP:
+				element = (new WebDriverWait(wapDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wapLocator.getBy(elementStr)));
+				break;
+			case ANDROID:
+				element = (new WebDriverWait(androidDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(androidLocator.getBy(elementStr)));
+				break;
+			case IOS:
+				break;
+			}
+
+			res = true;
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+
+		if (printFlag) {
+			if (res) {
+				Log.logInfo("等待到页面元素(" + elementStr + ")存在.");
+			} else {
+				Log.logWarn(explicitWaitTimeout + "seconds超时 ,未等待到页面元素(" + elementStr + ")存在.");
+			}
+		}
+
+		return element;
+	}
+
+	/**
+	 * 截取屏幕图片,只适用于wap
+	 * @author linchaojiang
+	 * @param directory 路径的最后一级文件夹名
+	 * @param captureName 除去时间字符串和后缀的截图名
+	 * 创建时间：2016-08-23 更新时间:2016-12-07
+	 * 更新说明(2016-09-27)：by yuyang,增加重试来解决概率截图失败的问题
+	 * 更新说明(2016-11-16):by yuyang,移动到SatartPhoneBrowse里，发现在使用模拟器的时候，无法截图，由于要使用模拟器调试，先把截图步骤屏蔽
+	 * 更新说明(2016-11-16):by yuyang,移动到Op里,由静态方法改为成员方法,只适用于wap
+	 * 更新说明(2016-12-07):by yuyang,增加截图失败后刷新页面的动作
+	 */
+	public String captureScreen(String directory, String captureName) {
+
+		Date currentTime = new Date();
+		SimpleDateFormat formats = new SimpleDateFormat("yyyyMMddHHmmss");
+		String picDateSign = formats.format(currentTime);
+		String screenShotFileName = screenShotPath + directory + "/" + picDateSign + "_" + captureName + ".jpg";
+		File screenShotFile = null;
+		int count = 0;
+
+		while (true) {
+			Log.logInfo("screen shot:" + screenShotFileName);
+			try {
+				Thread.sleep(500);
+				screenShotFile = ((TakesScreenshot) wapDriver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(screenShotFile, new File(screenShotFileName));
+				break;
+			} catch (Exception e) {
+//				 e.printStackTrace();
+				count++;
+				Log.logWarn(count + " times,截图失败,接下来会刷新页面.");
+				wapDriver.navigate().refresh();
+				if (count >= 3) {
+					Log.logInfo("Screenshot failed！");
+					break;
+				}
+			}
+		}
+		return screenShotFileName;
+	}
+
+	/**
+	 * 截取屏幕图片,浏览器多个窗口的,只适用于web
+	 * @author yuyang
+	 * @param directory 路径的最后一级文件夹名
+	 * @param captureName 除去时间字符串和后缀的截图名
+	 * 创建时间：2016-09-29 更新时间:2016-12-07
+	 * 更新说明(2016-12-07):by yuyang,移动到Op里,由静态方法改为成员方法,只适用于web
+	 */
+	public String captureScreenAll(String directory, String captureName) {
+		Date currentTime = new Date();
+		SimpleDateFormat formats = new SimpleDateFormat("yyyyMMddHHmmss");
+		String picDateSign = formats.format(currentTime);
+		String screenShotFileNameFirst = "";
+		String screenShotFileName = "";
+		File screenShotFile = null;
+		int count = 0;
+		int picNum = 0;
+
+		screenShotFileNameFirst = screenShotPath + directory + "/" + picDateSign + "_" + captureName + "_1.jpg";
+		String currentHandle = wDriver.getWindowHandle();
+		Set<String> handles = wDriver.getWindowHandles();
+		for (String s : handles) {
+			picNum++;
+			screenShotFileName = screenShotPath + directory + "/" + picDateSign + "_" + captureName + "_" + picNum + ".jpg";
+			wDriver.switchTo().window(s);
+			while (true) {
+				Log.logInfo("screen shot:" + screenShotFileName);
+				try {
+					Thread.sleep(500);
+					screenShotFile = ((TakesScreenshot) wDriver).getScreenshotAs(OutputType.FILE);
+					FileUtils.copyFile(screenShotFile, new File(screenShotFileName));
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
+					count++;
+					Log.logWarn(count + " times,截图失败,接下来会刷新页面.");
+					wDriver.navigate().refresh();
+					if (count >= 3) {
+						Log.logInfo("Screenshot failed！");
+						break;
+					}
+				}
+			}
+
+		}
+		wDriver.switchTo().window(currentHandle);
+		return screenShotFileNameFirst;
+	}
+
+	/**
+	 * 截取屏幕图片,兼容web和wap
+	 * @author yuyang
+	 * @param directory 路径的最后一级文件夹名
+	 * @param captureName 除去时间字符串和后缀的截图名
+	 * 创建时间：2016-12-07 更新时间:2016-12-07
+	 */
+	public String captureScreen2(String directory, String captureName) {
+		String screenShotFileName = "";
+		switch (opType) {
+		case WEB:
+			screenShotFileName = captureScreenAll(directory, captureName);
+			break;
+		case WAP:
+			screenShotFileName = captureScreen(directory, captureName);
+			break;
+		case ANDROID:
+			screenShotFileName = captureScreen(directory, captureName);
+			break;
+		case IOS:
+			break;
+		}
+		return screenShotFileName;
+	}
+
+	/**
+	 * 单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素，则抛出自定义异常。
+	 * 备注:第二次尝试单击时， 如果找不到单击的页面元素，仍然查找新的页面元素
+	 * @param clickStr 用来作单击动作的元素
+	 * @param FindStr 用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-11-29,更新时间：2016-12-08
+	 * 更新说明(2016-12-06)：by yuyang,第二次尝试单击时，如果找不到单击的页面元素，仍然查找新的页面元素
+	 */
+	public void loopClick(String clickStr, String FindStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement clickElement;
+		WebElement findElement;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickStr + ").");
+				}
+
+				clickElement = MyWebDriverWait2(clickStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + clickStr + "),但未等待到该元素.");
+					if (clickTimes > 1) { // 重试时，如果单击页面元素的动作异常，仍然执行查找新的页面元素
+						findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+						if (findElement == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备单击的页面元素(" + clickStr + ")后,也未等待到新的页面元素(" + FindStr
+									+ ").");
+						} else {
+							Log.logWarn(clickTimes + " times,未等待到准备单击的页面元素(" + clickStr + ")后,但等待到新的页面元素(" + FindStr + ").");
+							res = true;
+							break;
+						}
+					}
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,等待到页面元素(" + clickStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickStr + ").");
+					}
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,查找到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素(" + FindStr + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + ")后,等待到新的页面元素(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + "," + FindStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClick(" + clickStr + ")_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickStr + ")后再查找新的页面元素(" + FindStr + "),未按预期执行.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 给页面输入框元素输入字符串，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，则抛出自定义异常
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-11-16,更新时间：2016-11-16
+	 */
+	public void loopSendKeys(String inputStr, String keys, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")输入字符串(" + keys + "),输入前会先清空一下输入框.");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备输入字符串.");
+					}
+					if (sendTimes > 1) {
+						sendElement.sendKeys(Keys.chord(Keys.CONTROL, "a"), keys);
+					} else {
+						sendElement.sendKeys(keys);
+					}
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")输入字符串.");
+					}
+
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")输入字符串后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+						if (inputText.equals(keys)) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")输入字符串内容正确.");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")输入字符串(" + keys + "),输入的字符内容(" + inputText + ")错误.");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopSendKeys(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")输入字符串.(" + keys + ")");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 点击页面元素，如果点击成功，则返回；否则循环点击，直到超时
+	 * @param elementStr 页面元素
+	 * @param sleepTime 单击后的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-11-17,更新时间：2016-11-17
+	 */
+	public void loopClickElement(String elementStr, long sleepTime, long Timeout, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement clickElement = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				clickElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + elementStr + "),但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功单击页面元素(" + elementStr + ").");
+					}
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClickElement(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败点击页面元素(" + elementStr + ").");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 获取页面元素的文本值，如果获取到，则返回；否则循环获取，直到超时
+	 * @param elementStr 页面元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-11-17,更新时间：2016-11-17
+	 */
+	public String loopGetElementText(String elementStr, long Timeout, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		String text = "";
+		long tmpTimeout = Timeout * 1000;
+		WebElement element = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备获取页面元素(" + elementStr + ")的文本值,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备获取文本值.");
+					}
+					text = element.getText();
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取页面元素(" + elementStr + ")的文本值.");
+					}
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopGetElementText(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败获取页面元素(" + elementStr + ")的文本值.");
+			throw new RetryException();
+		}
+
+		return text;
+	}
+
+	/**
+	 * 检查页面元素直到可见，如果可见，则返回true；如果元素不存在或者不可见，则循环检查，直到超时，超时仍不可见返回false
+	 * 备注：1.如果元素可见是期望结果，则调用这个方法，如果单纯要判断元素是否可见(或超时不存在)，那么调用loopCheckElementVisible2
+	 * 2.会在一段时间内判断元素是否可见，如果超时后，元素仍不可见(或不存在)，则根据assertFlag来执行断言失败，或者返回false
+	 * @param elementStr 待检查的元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param assertFlag 断言标志，为true时则执行断言
+	 * @author yuyang,创建时间：2016-11-17,更新时间：2016-11-17
+	 */
+	public boolean loopCheckElementVisible(String elementStr, long Timeout, long explicitWaitTimeout, boolean assertFlag) {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		boolean diplayFlag = false;
+		boolean enableFlag = false;
+		WebElement element = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备检查页面元素(" + elementStr + ")是否可见,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备检查页面元素是否可见.");
+					}
+					diplayFlag = element.isDisplayed();
+					enableFlag = element.isEnabled();
+
+					if (diplayFlag && enableFlag) {
+						if (looptimes > 1) {
+							Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")可见.");
+						}
+						res = true;
+						break;
+					} else {
+						Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")不可见(" + diplayFlag + "," + enableFlag + ").");
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			captureScreen2(projectName, "loopCheckElementVisible(" + elementStr + ")_" + looptimes + "times");
+			Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + elementStr + ")可见,期望值为(true,true),当前值为(" + diplayFlag + "," + enableFlag + ").");
+			if (assertFlag) {
+				Assert.fail();
+			}
+		} else {
+			Log.logInfo("检查到页面元素(" + elementStr + ")可见.");
+		}
+		return res;
+	}
+
+	/**
+	 * 检查页面元素是否可见，如果存在且可见，则返回1；如果存在且不可见，则返回2；如果不存在或其它异常，则重试直到超时，超时返回-1
+	 * 备注：该方法不会截图
+	 * @param elementStr 待检查的元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param printFlag 打印标志，为true时则打印log
+	 * @return 1-页面元素存在且可见，2-页面元素存在且不可见，-1-超时检查，页面元素不存在或者其它异常
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-12-14,更新时间：2016-12-14
+	 */
+	public int loopCheckElementVisible2(String elementStr, long Timeout, long explicitWaitTimeout, boolean printFlag) throws RetryException {
+		int res = -1;
+		long tmpTimeout = Timeout * 1000;
+		boolean diplayFlag = false;
+		boolean enableFlag = false;
+		WebElement element = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					if (printFlag) {
+						Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备检查页面元素(" + elementStr + ")是否可见,但未等待到该元素.");
+					}
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备检查页面元素是否可见.");
+					}
+					diplayFlag = element.isDisplayed();
+					enableFlag = element.isEnabled();
+
+					if (diplayFlag && enableFlag) {
+						if (looptimes > 1) {
+							Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")可见.");
+						} else {
+							Log.logInfo("检查到页面元素(" + elementStr + ")可见.");
+						}
+						res = 1;
+						break;
+					} else {
+						if (looptimes > 1) {
+							Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")不可见(" + diplayFlag + "," + enableFlag + ").");
+						} else {
+							Log.logInfo("检查到页面元素(" + elementStr + ")不可见(" + diplayFlag + "," + enableFlag + ").");
+						}
+						res = 2;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (res == -1 && printFlag) {
+			Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + elementStr + ")的可见状态.");
+		}
+		return res;
+	}
+
+	/**
+	 * 检查页面元素是否存在不可见，或者不存在，如果是，则返回true；如果元素存在且可见，则返回false
+	 * @param elementStr 待检查的元素
+	 * @param assertFlag 断言标志，为true时则执行断言
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-12-14,更新时间：2016-12-14
+	 */
+	public boolean loopCheckElementInvisibleNoExist(String elementStr, boolean assertFlag) throws RetryException {
+		boolean res = false;
+
+		if (loopCheckElementVisible2(elementStr, 1, 1, false) == -1) {
+			Log.logInfo("检查到页面元素(" + elementStr + ")不存在.");
+			res = true;
+		} else if (loopCheckElementVisible2(elementStr, 1, 1, false) == 2) {
+			res = true;
+		} else {
+			if (assertFlag) {
+				Assert.fail();
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * 获取页面元素的属性值，如果获取到，则返回；否则循环获取，直到超时
+	 * @param elementStr 页面元素
+	 * @param attributeStr 属性名
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-11-18,更新时间：2016-11-18
+	 */
+	public String loopGetElementValue(String elementStr, String attributeStr, long Timeout, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement element = null;
+		String value = "";
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备获取页面元素(" + elementStr + ")的属性值,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备获取页面元素的属性值(" + attributeStr + ").");
+					}
+					value = element.getAttribute(attributeStr);
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取页面元素(" + elementStr + ")的属性值(" + attributeStr + ").");
+					}
+					res = true;
+					break;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopGetElementValue(" + elementStr + "," + attributeStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败获取页面元素(" + elementStr + ")的属性值(" + attributeStr + ").");
+			throw new RetryException();
+		}
+
+		return value;
+	}
+
+	/**
+	 * 在一定时间内，检查页面元素是否会消失
+	 * @param elementStr 页面元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @throws Exception 所有异常抛出
+	 * @author yuyang,创建时间：2016-11-22,更新时间：2016-11-22
+	 */
+	public boolean loopCheckDisappear(String elementStr, long Timeout) throws Exception {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			currentTime = System.currentTimeMillis();
+			if (currentTime - startTime < 0) {
+				currentTime += 86400;
+			}
+			if (currentTime - startTime >= tmpTimeout) {
+				break;
+			}
+			Thread.sleep(200);
+
+			if (!isElementPresent(elementStr)) {
+				Log.logInfo("页面元素(" + elementStr + ")消失.");
+				res = true;
+				break;
+			}
+
+		}
+
+		if (!res) {
+			captureScreen2(projectName, "loopCheckDisappear(" + elementStr + ")_" + Timeout + "seconds");
+			Log.logWarn(Timeout + "seconds超时 ,页面元素(" + elementStr + ")仍显示在页面中.");
+			Assert.fail();
+		}
+		return res;
+	}
+
+	/**
+	 * 给页面输入框元素清空后再输入字符串，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，则抛出自定义异常
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-11-24,更新时间：2016-11-24
+	 */
+	public void loopSendKeysClean(String inputStr, String keys, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + ").");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")清空后再输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备先清空再输入字符串.");
+					}
+					sendElement.sendKeys(Keys.chord(Keys.CONTROL, "a"), keys);
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")清空后再输入字符串.");
+					}
+
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")清空并再输入字符串后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+						if (inputText.equals(keys)) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串,且输入字符串内容正确.");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + "),输入的字符内容(" + inputText + ")错误.");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopSendKeysClean(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")清空后再输入字符串.(" + keys + ")");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 给页面输入框元素清空，如果清空失败，则会重试，如果多次重试后仍然无法清空，则抛出自定义异常
+	 * @param inputStr 输入框元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param assertFlag 断言标志，true-则执行断言，false-则不执行断言
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-12-16,更新时间：2017-02-20
+	 * @更新说明(2017-02-20)：by yuyang,增加断言标志,来选择是否需要抛出异常
+	 */
+	public void loopSendClean(String inputStr, int loopTimes, long explicitWaitTimeout, boolean assertFlag) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")清空.");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")清空,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备执行清空操作.");
+					}
+					sendElement.clear();
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")清空.");
+					}
+
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")清空后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+						if (inputText.equals("")) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后,页面元素的值为空.");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空失败.");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopSendClean(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res && assertFlag) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")清空.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 模拟单击，把焦点移动到页面元素上，进行单击
+	 * @param elementStr 元素字符串
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2016-11-24,更新时间：2017-01-24
+	 * 更新说明(2017-01-24)：by yuyang,增加重试来解决模拟鼠标操作会抛出异常的问题,默认重试3次
+	 */
+	public void actionSingleClick(String elementStr) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				WebElement element = MyWebDriverWait2(elementStr, explicitWaitTimeoutLoop, false, false);
+				action.moveToElement(element).click().perform();
+				Thread.sleep(1000);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟鼠标操作时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟鼠标操作发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 模拟单击，把焦点移动到页面元素(x,y)上，进行单击
+	 * @param elementStr 元素字符串
+	 * @param x 滑动到页面元素上的x位置
+	 * @param y 滑动到页面元素上的y位置
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang，创建时间：2016-12-13,更新时间：2017-01-24
+	 * 更新说明(2017-01-24)：by yuyang,增加重试来解决模拟鼠标操作会抛出异常的问题,默认重试3次
+	 */
+	public void actionSingleClickXY(String elementStr, int x, int y) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				WebElement element = MyWebDriverWait2(elementStr, explicitWaitTimeoutLoop, false, false);
+				action.moveToElement(element, x, y).perform();
+				Thread.sleep(500);
+				action.click().perform();
+				Thread.sleep(1000);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟鼠标操作时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟鼠标操作发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 模拟右击
+	 * @param elementStr 元素字符串
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang, 创建时间：2016-12-08,更新时间：2017-01-24
+	 * 更新说明(2017-01-24)：by yuyang,增加重试来解决模拟鼠标操作会抛出异常的问题,默认重试3次
+	 */
+	public void actionRightClick(String elementStr) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				WebElement element = MyWebDriverWait2(elementStr, explicitWaitTimeoutLoop, false, false);
+				action.contextClick(element).perform();
+				Thread.sleep(1000);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟鼠标操作时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟鼠标操作发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 模拟移动，把焦点移动到页面元素上
+	 * @param elementStr 元素字符串
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang，创建时间：2016-12-23,更新时间：2017-01-24
+	 * 更新说明(2017-01-24)：by yuyang,增加重试来解决模拟鼠标操作会抛出异常的问题,默认重试3次
+	 */
+	public void actionMoveTo(String elementStr) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				WebElement element = MyWebDriverWait2(elementStr, explicitWaitTimeoutLoop, false, false);
+				action.moveToElement(element).perform();
+				Thread.sleep(1000);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟鼠标操作时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟鼠标操作发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * get url,如果加载url失败，则重试
+	 * @param url 页面地址
+	 * @param timeout 超时时间
+	 * @param loopTimes 重试次数
+	 * @param timeoutDefault 默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang，创建时间：2016-11-28，更新时间：2016-11-28
+	 */
+	public void loopGet(String url, int timeout, int loopTimes, int timeoutDefault) throws RetryException {
+		boolean res = false;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				if (i > 1) {
+					Log.logWarn(i + " times,准备get url(" + url + ").");
+				}
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
+					wDriver.get(url);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
+					wapDriver.get(url);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+				if (i > 1) {
+					Log.logWarn(i + " times,get url(" + url + ")成功.");
+				}
+				res = true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("get url(" + url + ")时发生异常(" + GetMethodName() + ").");
+			} finally {
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+			}
+
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败get url(" + url + ").");
+			throw new RetryException();
+		}
+	}
+	
+	/**
+	 * get url,如果加载url失败，则重试,用于navigate().to(url)方法
+	 * @param url 页面地址
+	 * @param timeout 超时时间
+	 * @param loopTimes 重试次数
+	 * @param timeoutDefault 默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author zhangjun
+	 * 	 */
+	
+	public void navigateUrl(String url, int timeout, int loopTimes, int timeoutDefault)throws RetryException{
+		boolean res=false;
+		for(int i=1;i<=loopTimes;i++){
+			try {
+				if(i>1){
+					Log.logWarn(i+"times,准备get url(" + url + ").");
+				}
+				switch(opType){
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wDriver.navigate().to(url);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wapDriver.navigate().to(url);
+					break;
+				case  ANDROID:
+					break;
+				case  IOS:
+					break;
+					
+				}
+				if(i>1){
+					Log.logWarn(i + " times,get url(" + url + ")成功.");
+				}
+				res=true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("get url(" + url + ")时发生异常(" + GetMethodName() + ").");
+			}finally{
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+			}
+		}
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败get url(" + url + ").");
+			throw new RetryException();
+		}
+	}
+	
+	/**
+	 * back url,如果返回到前一个页面失败，则重试,用于navigate().back()方法
+	 * @param timeout 超时时间
+	 * @param loopTimes 重试次数
+	 * @param timeoutDefault 默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author zhangjun
+	 * 	 */
+	
+	public void navigateBack( int timeout, int loopTimes, int timeoutDefault)throws RetryException{
+		boolean res=false;
+		for(int i=1;i<=loopTimes;i++){
+			try {
+				if(i>1){
+					Log.logWarn(i+"times,准备back 到以前页面");
+				}
+				switch(opType){
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wDriver.navigate().back();	
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wapDriver.navigate().back();	
+					break;
+				case  ANDROID:
+					break;
+				case  IOS:
+					break;
+					
+				}
+				if (i > 1) {
+					Log.logWarn(i + " times,后退成功.");
+				}
+				res = true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("back时页面时发生异常(" + GetMethodName() + ").");
+			}finally{
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+			}
+		}
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + "页面后退状态都失败");
+			throw new RetryException();
+		}
+	}
+	
+	/**
+	 * 前进 url,如果返回到前一个页面失败，则重试,用于navigate().forward()方法
+	 * @param timeout 超时时间
+	 * @param loopTimes 重试次数
+	 * @param timeoutDefault 默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author zhangjun
+	 * 	 */
+	
+	public void navigateForward( int timeout, int loopTimes, int timeoutDefault)throws RetryException{
+		boolean res=false;
+		for(int i=1;i<=loopTimes;i++){
+			try {
+				if(i>1){
+					Log.logWarn(i+"times,准备forward");
+				}
+				switch(opType){
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wDriver.navigate().forward();
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wapDriver.navigate().forward();
+					break;
+				case  ANDROID:
+					break;
+				case  IOS:
+					break;
+					
+				}
+				if (i > 1) {
+					Log.logWarn(i + " times,前进成功.");
+				}
+				res = true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("forward时页面时发生异常(" + GetMethodName() + ").");
+			}finally{
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+			}
+		}
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + "forward时页面都发生异常");
+			throw new RetryException();
+		}
+	}
+	
+	/**
+	 *刷新 url,如果返回到前一个页面失败，则重试,用于navigate().refresh()方法
+	 * @param timeout 超时时间
+	 * @param loopTimes 重试次数
+	 * @param timeoutDefault 默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author zhangjun
+	 * 	 */
+	
+	public void navigateRefresh( int timeout, int loopTimes, int timeoutDefault)throws RetryException{
+		boolean res=false;
+		for(int i=1;i<=loopTimes;i++){
+			try {
+				if(i>1){
+					Log.logWarn(i+"times,准备refresh");
+				}
+				switch(opType){
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wDriver.navigate().refresh();	
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeout,TimeUnit.SECONDS);
+					wapDriver.navigate().refresh();
+					break;
+				case  ANDROID:
+					break;
+				case  IOS:
+					break;
+					
+				}
+				if (i > 1) {
+					Log.logWarn(i + " 刷新页面成功.");
+				}
+				res = true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("refresh()时页面时发生异常(" + GetMethodName() + ").");
+			}finally{
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+			}
+		}
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + "refresh时页面都发生异常");
+			throw new RetryException();
+		}
+	}
+	
+	
+	/**
+	 * 点击页面元素，如果点击成功，则返回；否则循环点击，直到超时,并且控制页面的超时时间
+	 * @param elementStr 页面元素
+	 * @param sleepTime 单击后的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param pageTime 页面加载耗时
+	 * @param timeoutDefault  默认加载页面的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author zhangjun,创建时间：2016-11-17,更新时间：2016-11-17
+	 */
+	public void loopClickGoPageURL(String elementStr, long sleepTime, long Timeout, long explicitWaitTimeout,int pageTime, int timeoutDefault) throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement clickElement = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				switch(opType){
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(pageTime,TimeUnit.SECONDS);	
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(pageTime,TimeUnit.SECONDS);
+					break;
+				case  ANDROID:
+					break;
+				case  IOS:
+					break;
+					
+				}
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				clickElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + elementStr + "),但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功单击页面元素(" + elementStr + ").");
+					}
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}finally{
+				switch (opType) {
+				case WEB:
+					wDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case WAP:
+					wapDriver.manage().timeouts().pageLoadTimeout(timeoutDefault, TimeUnit.SECONDS);
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}			
+			}
+			captureScreen2(projectName, "loopClickElement(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败点击页面元素(" + elementStr + ").");
+			throw new RetryException();
+		}
+	}
+	
+	
+
+	/**
+	 * 模拟移动到元素，再单击元素，单击的可以另一个元素，通常用于滑动显示的菜单项的单击
+	 * @param moveElementStr 移动到的元素
+	 * @parma clickElementStr 单击的元素
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang，创建时间：2016-11-28,更新时间：2017-01-24
+	 * 更新说明(2017-01-24)：by yuyang,增加重试来解决模拟鼠标操作会抛出异常的问题,默认重试3次
+	 */
+	public void actionMoveThenClick(String moveElementStr, String clickElementStr) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				WebElement moveElement = MyWebDriverWait2(moveElementStr, explicitWaitTimeoutLoop, false, false);
+				action.moveToElement(moveElement).perform();
+				Thread.sleep(500);
+				WebElement clickElement = MyWebDriverWait2(clickElementStr, explicitWaitTimeoutLoop, false, false);
+				action.moveToElement(clickElement).perform();
+				action.click().perform();
+				Thread.sleep(1000);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟鼠标操作时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟鼠标操作发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 切换浏览器窗口到指定标题的窗口,只适用于web
+	 * @param driver 浏览器驱动
+	 * @param windowTitle 待切换到窗口的标题
+	 * @param sleepMillisecondBefore 切换之前延迟的时间，单位为毫秒
+	 * @return true或false,表示是否切换窗口成功
+	 * @throws InterruptedException 
+	 * @author yuyang 创建时间:2016-09-1更新时间:2016-12-06
+	 * 更新说明(2016-12-06)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public boolean switchToWindow(String windowTitle, long sleepMillisecondBefore) throws InterruptedException {
+		boolean flag = false;
+		try {
+			if (sleepMillisecondBefore > 0) {
+				Thread.sleep(sleepMillisecondBefore);
+			}
+			String currentHandle = null;
+			try {
+				currentHandle = wDriver.getWindowHandle();
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+			Set<String> handles = wDriver.getWindowHandles();
+			for (String s : handles) {
+				if (s.equals(currentHandle))
+					continue;
+				else {
+					wDriver.switchTo().window(s);
+					if (wDriver.getTitle().contains(windowTitle)) {
+						flag = true;
+						// System.out.println("Switch to window: " + windowTitle + " successfully!");
+						break;
+					} else
+						continue;
+				}
+			}
+			if (!flag) {
+				wDriver.switchTo().window(currentHandle);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Window: " + windowTitle + " cound not found!(switchToWindow)");
+		}
+		return flag;
+	}
+
+	/**
+	 * 获取运行所使用的浏览器信息,只适用于web
+	 * @return 浏览器信息，如版本等
+	 * @author yuyang,创建时间：2016-09-07 更新时间:2016-12-07
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public String getBrowserInfo() {
+		String JS_getBrowserInfo = "var browser_info = window.navigator.userAgent;return browser_info;";
+		String res = "";
+		try {
+			res = (String) (jse).executeScript(JS_getBrowserInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	/**
+	 * 单击页面元素，会打开一个新页面，如果未打开，则尝试再次单击，如果多次重试后仍然无法单击并打开一个新页面，则抛出自定义异常,只适用于web
+	 * @param clickStr 用来作单击动作的元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-04 更新时间:2016-12-07
+	 * 更新说明(2016-10-12)：用来作单击动作的元素，由 必须存在 改为 等待出现
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public void loopClickPage(String clickStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		int beforePageNum = 0;
+		int afterPageNum = 0;
+		WebElement clickElement;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickStr + ").");
+				}
+
+				clickElement = MyWebDriverWait2(clickStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + clickStr + "),但未等待到该元素.");
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,等待到页面元素(" + clickStr + "),准备单击.");
+					}
+					beforePageNum = wDriver.getWindowHandles().size();
+					clickElement.click();
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickStr + ").");
+					}
+					Thread.sleep(1000);
+					afterPageNum = wDriver.getWindowHandles().size();
+
+					if (afterPageNum > beforePageNum) {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + ")后,打开新页面.");
+						}
+						res = true;
+						break;
+					} else {
+						Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + ")后,未打开新页面.");
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreenAll(projectName, "loopClickPage(" + clickStr + ")_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickStr + ")后,未打开新页面.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 检查页面输入框元素的属性value的值是否为期望值，如果是，则返回；如果不是，则循环检查，直到超时
+	 * @param inputStr 输入框元素
+	 * @param expectedValueStr 期望值
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param printFlag 是否打印，第一次查找到元素失败的标志，true-打印，false-不打印
+	 * @author yuyang ,创建时间：2016-10-12,更新时间：2016-12-07
+	 * 注意：用于购物车页面的获取商品数量
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op
+	 */
+	public boolean loopCheckInputValue(String inputStr, String expectedValueStr, long Timeout, long explicitWaitTimeout, boolean printFlag) {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		String inputText = "";
+		WebElement element;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备获取页面元素(" + inputStr + ")的value,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + inputStr + "),准备获取页面元素的value.");
+					}
+					inputText = element.getAttribute("value");
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取页面元素(" + inputStr + ")的value.");
+					}
+
+					if (inputText.equals(expectedValueStr)) {
+						res = true;
+						break;
+					}
+				}
+
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+				}
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopCheckInputValue(" + inputStr + ")_" + looptimes + "times");
+
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + inputStr + ")的属性value的值,期望值为(" + expectedValueStr + "),当前值为(" + inputText + ").");
+//			throw new RetryException();
+		}
+
+		return res;
+	}
+
+	/**
+	 * 检查页面元素的值是否为期望值，如果是，则返回；如果不是，则循环检查，直到超时
+	 * @param priceStr 输入框元素
+	 * @param expectedPriceStr 期望值
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-12,更新时间：2016-12-07
+	 * 注意：主要用于购物车页面的获取价格变化后的值
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op
+	 */
+	public String loopCheckPriceValue(String priceStr, String expectedPriceStr, long Timeout, long explicitWaitTimeout) throws RetryException {
+		String res = "";
+		long tmpTimeout = Timeout * 1000;
+		String priceText = "";
+		WebElement element;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(priceStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备获取页面元素(" + priceStr + ")的价格,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + priceStr + "),准备获取页面元素的价格.");
+					}
+					priceText = "";
+					priceText = Pub.getPriceStr(element.getText());
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取页面元素(" + priceStr + ")的价格(" + priceText + ").");
+					}
+
+					if (priceText.equals(expectedPriceStr)) {
+						res = priceText;
+						break;
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + priceStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopCheckPriceValue(" + priceStr + ")_" + looptimes + "times");
+		}
+
+		if (!Pub.hasLength(res)) {
+			Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + priceStr + ")的值,期望值为(" + expectedPriceStr + "),当前值为(" + priceText + ").");
+			throw new RetryException();
+		}
+
+		return res;
+	}
+
+	/**
+	 * 页面元素执行js脚本，如果执行成功，则返回；否则循环执行，直到超时;无返回字符串值,只适用于web
+	 * @param elementStr 页面元素
+	 * @param jsStr js脚本字符串
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout  显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-13,更新时间：2016-12-07
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public void loopExecuteScript(String elementStr, String jsStr, long Timeout, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement element;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + elementStr + ")执行js,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备给页面元素执行js.");
+					}
+					jse.executeScript(jsStr, element);
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopExecuteScript(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败给页面元素(" + elementStr + ")执行js脚本.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 页面元素执行js脚本，并获取返回字符串，如果执行成功，则返回；否则循环执行，直到超时,只适用于web
+	 * @param elementStr 页面元素
+	 * @param jsStr js脚本字符串
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout  显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-14,更新时间：2016-12-07
+	 * 备注：如果执行js后返回的字符串如果为空，认为获取失败
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public String loopExecuteScriptStr(String elementStr, String jsStr, long Timeout, long explicitWaitTimeout) throws RetryException {
+		String res = "";
+		long tmpTimeout = Timeout * 1000;
+		WebElement element;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + elementStr + ")执行js并获取返回字符串,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备给页面元素执行js并获取返回字符串.");
+					}
+					res = jse.executeScript(jsStr, element).toString();
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopExecuteScriptStr(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!Pub.hasLength(res)) {
+			Log.logWarn(Timeout + "seconds超时 ,失败给页面元素(" + elementStr + ")执行js并获取返回字符串.");
+			throw new RetryException();
+		}
+
+		return res;
+	}
+
+	/**
+	 * 给页面输入框元素输入回车，如果不成功则重试，直到超时
+	 * @param inputStr 输入框元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-17,更新时间：2016-12-07
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op
+	 */
+	public void loopSendKeysEnter(String inputStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")输入回车.");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")输入回车,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备输入回车.");
+					}
+					sendElement.sendKeys(Keys.chord(Keys.ENTER));
+					Thread.sleep(100);
+					res = true;
+
+					if (res) {
+						if (sendTimes > 1) {
+							Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")输入回车.");
+						}
+						break;
+					} else {
+						Log.logWarn(sendTimes + " times,失败给页面元素(" + inputStr + ")输入回车.");
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopSendKeysEnter(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")输入回车.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 判断对象是否存在
+	 * @param by 待检查的元素,如id,xpath等
+	 * @return boolean,true-查找到，false-未查找到
+	 * @author yuyang 创建时间:2016-10-17,更新时间：2016-12-07
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op,可兼容web和wap
+	 */
+	public boolean isElementPresent(String elementStr) {
+		boolean res = false;
+		try {
+			switch (opType) {
+			case WEB:
+				wDriver.findElement(wLocator.getBy(elementStr));
+				break;
+			case WAP:
+				wapDriver.findElement(wapLocator.getBy(elementStr));
+				break;
+			case ANDROID:
+				androidDriver.findElement(androidLocator.getBy(elementStr));
+				break;
+			case IOS:
+				break;
+			}
+			res = true;
+		} catch (NoSuchElementException e) {
+//			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+		}
+		return res;
+	}
+	
+	/**
+	 * 判断对象是否存在，增加显示等待元素的时间，用元素显示等待时间判断元素是否存在
+	 * @param 通过显示等待元素，判断元素是否显示
+	 * @return boolean,true-查找到，false-未查找到
+	 * @author zhangjun 
+	 *
+	 */
+	public boolean isElementPresent(String elementStr,long explicitWaitTimeout) {
+		boolean res = false;
+		WebElement sendElement = null;
+		try {
+			switch (opType) {
+			case WEB:
+				sendElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				break;
+			case WAP:
+				sendElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				
+				break;
+			case ANDROID:
+				sendElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				break;
+			case IOS:
+				break;
+			}
+
+
+			if (sendElement==null){
+				res=false;
+			}else{
+				res = true;
+				Log.logInfo("元素查找成功");
+			}
+			
+		} catch (NoSuchElementException e) {
+//			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+		}
+		return res;
+	}
+	
+	
+	
+	
+	
+
+	/**
+	 * 给非空的页面输入框元素输入字符串，即输入前先检查该输入框是否为空，如果不为空，则输入，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，则抛出自定义异常
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-20,更新时间：2016-12-07
+	 * 更新说明(2016-12-07)：by yuyang,由PublicFun移动到Op
+	 */
+	public void loopCheckSendKeys(String inputStr, String keys, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给空的页面输入框元素(" + inputStr + ")输入字符串(" + keys + ").");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给空的页面输入框元素(" + inputStr + ")输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面输入框元素(" + inputStr + "),准备检查该输入框是否为空.");
+					}
+					inputText = "";
+					inputText = sendElement.getAttribute("value");
+					if (Pub.hasLength(inputText)) {
+						if (sendTimes == 1) {
+							Log.logWarn(sendTimes + " times,该输入框元素(" + inputStr + ")不为空，不执行输入动作，直接返回.");
+							return;
+						}
+					}
+
+					if (sendTimes == 1) {
+						sendElement.sendKeys(keys);
+					} else { // 重试时会先清空输入框再输字符串
+						sendElement.sendKeys(Keys.chord(Keys.CONTROL, "a"), keys);
+					}
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")输入字符串.");
+					}
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")输入字符串后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+
+						if (inputText.equals(keys)) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,成功给空的页面输入框元素(" + inputStr + ")输入字符串(" + keys + ").");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给空的页面输入框元素(" + inputStr + ")输入字符串(" + keys + "),输入框的字符内容却是(" + inputText + "),输入错误.");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopCheckSendKeys(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给空的页面输入框元素(" + inputStr + ")输入字符串.(" + keys + ")");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 使用鼠标滑动到页面元素上的 (x,y)位置，单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素，则抛出自定义异常,只适用于web
+	 * @param clickStr 用来作单击动作的元素
+	 * @param x 滑动到页面元素上的x位置
+	 * @param y 滑动到页面元素上的y位置
+	 * @param FindStr 用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-10-24,更新时间：2016-12-08
+	 * 注意：用来作单击动作的元素，可是等待出现
+	 * 更新说明(2016-12-08)：by yuyang,由PublicFun移动到Op,只适用于web
+	 */
+	public void loopClickMoveTo(String clickStr, int x, int y, String FindStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement clickElement = null;
+		WebElement findElement = null;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试移动到并单击页面元素(" + clickStr + ").");
+				}
+
+				clickElement = MyWebDriverWait2(clickStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,准备移动到并单击页面元素(" + clickStr + "),但未等待到该元素.");
+					if (clickTimes > 1) { // 重试时，如果移动到并单击的页面元素的动作异常，仍然执行查找新的页面元素
+						findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+						if (findElement == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备移动到并单击的页面元素(" + clickStr + ")后,也未等待到新的页面元素("
+									+ FindStr + ").");
+						} else {
+							if (clickTimes > 1) {
+								Log.logWarn(clickTimes + " times,未等待到准备移动到并单击的页面元素(" + clickStr + ")后,但等待到新的页面元素(" + FindStr + ").");
+							}
+							res = true;
+							break;
+						}
+					}
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,等待到页面输入框元素(" + clickStr + "),准备移动到并单击页面元素.");
+					}
+					action.moveToElement(clickElement, x, y).perform();
+					Thread.sleep(500);
+					action.click().perform();
+
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times,移动到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素(" + FindStr + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,移动到并单击页面元素(" + clickStr + ")后,等待到新的页面元素(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + "," + FindStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClickMoveTo(" + clickStr + ")_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,移动到并单击页面元素(" + clickStr + "),未按预期执行.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，如果查找不到，则尝试查找第二个新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素们，则抛出自定义异常
+	 * @param clickStr 用来作单击动作的元素
+	 * @param FindStr 用来查找的新页面元素
+	 * @param FindStr2  未查找到FindStr时，用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2016-10-27,更新时间：2016-12-08
+	 * 更新说明(2016-12-08)：by yuyang,由PublicFun移动到Op
+	 */
+	public void loopClick2(String clickStr, String FindStr, String FindStr2, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement clickElement = null;
+		WebElement findElement = null;
+		WebElement findElement2 = null;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickStr + ").");
+				}
+
+				clickElement = MyWebDriverWait2(clickStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + clickStr + "),但未等待到该元素.");
+					if (clickTimes > 1) { // 重试时，如果单击页面元素的动作异常，仍然执行查找新的页面元素
+						findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+						if (findElement == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备单击的页面元素(" + clickStr + ")后,也未等待到新的页面元素1(" + FindStr
+									+ ").");
+						} else {
+							Log.logWarn(clickTimes + " times,未等待到准备单击的页面元素(" + clickStr + ")后,但等待到新的页面元素1(" + FindStr + ").");
+							res = true;
+							break;
+						}
+
+						findElement2 = MyWebDriverWait2(FindStr2, explicitWaitTimeout, false, false);
+						if (findElement2 == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备单击的页面元素(" + clickStr + ")后,未等待到新的页面元素1(" + FindStr
+									+ "),也未等待到新的页面元素2(" + FindStr2 + ").");
+						} else {
+							if (clickTimes > 1) {
+								Log.logWarn(clickTimes + " times,未等待到准备单击的页面元素(" + clickStr + ")后,未等待到新的页面元素1(" + FindStr + ")后,但等待到新的页面元素2("
+										+ FindStr2 + ").");
+							}
+							res = true;
+							break;
+						}
+					}
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,等待到页面元素(" + clickStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickStr + ").");
+					}
+
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,查找到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素1(" + FindStr + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + ")后,等待到新的页面元素1(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+
+					findElement2 = MyWebDriverWait2(FindStr2, explicitWaitTimeout, false, false);
+					if (findElement2 == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,查找到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素1(" + FindStr
+								+ "),也未等待到新的页面元素2(" + FindStr2 + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(
+									clickTimes + " times,查找到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素1(" + FindStr + ")后,但等待到新的页面元素2(" + FindStr2 + ").");
+						}
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + "," + FindStr + "," + FindStr2 + ")时发生异常(" + GetMethodName() + ").");
+			}
+
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickStr + ")后,查找不到新的页面元素们.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 获取当前URL，是否包含或等于指定字符串，如果包含或等于，则返回true
+	 * @param URLStr URL地址字符串
+	 * @param Timeout 超时时间，单位为秒
+	 * @param mode 1-包含,2-等于
+	 * @throws Exception 除超时查找元素的异常之外的其它异常抛出
+	 * @author yuyang ,创建时间：2016-11-02,更新时间：2016-12-08
+	 * 更新说明(2016-12-08)：by yuyang,由PublicFun移动到Op
+	 */
+	public boolean CheckURL(String URLStr, long Timeout, int mode) throws Exception {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+
+		String currentURL = "";
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			currentTime = System.currentTimeMillis();
+			if (currentTime - startTime < 0) {
+				currentTime += 86400;
+			}
+			if (currentTime - startTime >= tmpTimeout) {
+				break;
+			}
+			Thread.sleep(200);
+
+			switch (opType) {
+			case WEB:
+				currentURL = wDriver.getCurrentUrl();
+				break;
+			case WAP:
+				currentURL = wapDriver.getCurrentUrl();
+				break;
+			case ANDROID:
+				break;
+			case IOS:
+				break;
+			}
+
+			if (mode == 1) {
+				if (currentURL.contains(URLStr)) {
+					res = true;
+					break;
+				}
+			} else if (mode == 2) {
+				if (currentURL.equals(URLStr)) {
+					res = true;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * 如果当前为重试执行，则刷新页面
+	 * @param lastMethodName 上一次执行的方法名
+	 * @param currentMethodName 当前执行的方法名
+	 * @author yuyang ,创建时间：2016-11-12,更新时间：2016-12-08
+	 * 备注：需要传入正确的上一次执行的方法名
+	 * 更新说明(2016-11-30)：by yuyang,增加了navigate刷新页面失败时，使用get方法的再打开一次
+	 * 更新说明(2016-12-08)：by yuyang,由PublicFun移动到Op
+	 */
+	public void retryRefresh(String lastMethodName, String currentMethodName) {
+		String currentURL = "";
+		try {
+			if (Pub.RetryFlag(lastMethodName, currentMethodName)) {
+				switch (opType) {
+				case WEB:
+					currentURL = wDriver.getCurrentUrl();
+					break;
+				case WAP:
+					currentURL = wapDriver.getCurrentUrl();
+					break;
+				case ANDROID:
+					break;
+				case IOS:
+					break;
+				}
+
+				Log.logInfo("Refresh web page(" + currentURL + ")");
+
+				try {
+					switch (opType) {
+					case WEB:
+						wDriver.navigate().refresh();
+						break;
+					case WAP:
+						wapDriver.navigate().refresh();
+						break;
+					case ANDROID:
+						break;
+					case IOS:
+						break;
+					}
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.logWarn("重试时刷新当前页面失败,接下来使用get方法重新获取当前页面.");
+				}
+
+				try {
+					switch (opType) {
+					case WEB:
+						wDriver.get(currentURL);
+						break;
+					case WAP:
+						wapDriver.get(currentURL);
+						break;
+					case ANDROID:
+						break;
+					case IOS:
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.logWarn("重试时get当前页面失败,测试中止.");
+					Assert.fail();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("重试时重新获取当前页面失败,测试中止.");
+			Assert.fail();
+		}
+	}
+
+	/**
+	 * 获取当前页面的URL
+	 * @param assertFlag 断言标志，true-则执行断言，false-则不执行断言
+	 * @author yuyang ,创建时间：2016-11-23,更新时间：2016-12-08
+	 * 备注：主要为了规避UnhandledAlertException弹窗异常，才封装了这个方法
+	 * 更新说明(2016-12-08)：by yuyang,由PublicFun移动到Op
+	 */
+	public String MyGetCurrentUrl(boolean assertFlag) {
+		String currentURL = "";
+
+		int looptimes = 0;
+		while (true) {
+			try {
+				looptimes++;
+				Thread.sleep(200);
+				if (looptimes >= 10 && assertFlag) {
+					Assert.fail();
+				}
+				if (looptimes > 10) {
+					break;
+				}
+				try { // for alert window
+					switch (opType) {
+					case WEB:
+						currentURL = wDriver.getCurrentUrl();
+						break;
+					case WAP:
+						currentURL = wapDriver.getCurrentUrl();
+						break;
+					case ANDROID:
+						break;
+					case IOS:
+						break;
+					}
+				} catch (UnhandledAlertException f) {
+					try {
+						Alert alert = null;
+						switch (opType) {
+						case WEB:
+							alert = wDriver.switchTo().alert();
+							break;
+						case WAP:
+							alert = androidDriver.switchTo().alert();
+							break;
+						case ANDROID:
+							break;
+						case IOS:
+							break;
+						}
+						String alertText = alert.getText();
+						Log.logInfo(looptimes + " times,Alert data: " + alertText);
+						alert.accept();
+					} catch (NoAlertPresentException e) {
+						e.printStackTrace();
+					}
+				}
+				if (Pub.hasLength(currentURL)) {
+					break;
+				}
+				Log.logWarn(looptimes + " times,失败获取current URL(" + GetMethodName() + ").");
+//				if (looptimes >= 10) {
+//					break;
+//				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("获取current URL时发生异常(" + GetMethodName() + ").");
+			}
+		}
+		return currentURL;
+	}
+
+	/**
+	 * 在一定时间内，等待页面元素，且该页面元素可用和可被单击，如果等待到，则返回页面元素，否则返回null，不抛出异常
+	 * @param elementStr 页面元素
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang,创建时间：2016-12-08,更新时间：2016-12-08
+	 * 备注：与MyWebDriverWait2相似，返回的元素是可用和可被单击的
+	 */
+	public WebElement MyWebDriverWaitClickable(String elementStr, long explicitWaitTimeout, boolean ePrintFlag, boolean printFlag) {
+		boolean res = false;
+		WebElement element = null;
+
+		try {
+			switch (opType) {
+			case WEB:
+				element = (new WebDriverWait(wDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.elementToBeClickable(wLocator.getBy(elementStr)));
+				break;
+			case WAP:
+				element = (new WebDriverWait(wapDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.elementToBeClickable(wapLocator.getBy(elementStr)));
+				break;
+			case ANDROID:
+				break;
+			case IOS:
+				break;
+			}
+
+			res = true;
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+
+		if (printFlag) {
+			if (res) {
+				Log.logInfo("等待到页面元素(" + elementStr + ")存在,且该页面元素可用和可被单击.");
+			} else {
+				Log.logWarn(explicitWaitTimeout + "seconds超时 ,未等待到页面元素(" + elementStr + ")存在,或者页面元素不为可用或可被单击状态.");
+			}
+		}
+
+		return element;
+	}
+
+	/**
+	 * 在一定时间内，等待页面元素，且该页面元素可用和可被单击，如果等待到，则返回true,否则返回false
+	 * @param elementStr 页面元素
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang,创建时间：2016-12-08,更新时间：2016-12-08
+	 */
+	public boolean isElementClickable(String elementStr, long explicitWaitTimeout, boolean ePrintFlag, boolean printFlag) {
+		boolean res = false;
+
+		try {
+			if (MyWebDriverWaitClickable(elementStr, explicitWaitTimeout, ePrintFlag, printFlag) == null) {
+				res = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+		}
+
+		return res;
+	}
+
+	/**
+	 * 获取下拉选择对象
+	 * @param elementStr select页面元素
+	 * @author linchaojiang,创建时间：xxxx-xx-xx,更新时间：2016-12-08
+	 * 更新说明(2016-12-08)：by yuyang,由Locator移动到Op
+	 */
+	public Select getSelect(String elementStr, long explicitWaitTimeout) {
+		Select sel = null;
+		try {
+			sel = new Select(MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false));
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logWarn(e.getMessage());
+			Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+		}
+		return sel;
+	}
+
+	/**
+	 * 获取相同属性的所有对象
+	 * @param elementsStr 页面元素
+	 * @return 页面元素列表
+	 * @author linchaojiang,创建时间：2016-12-08,更新时间：2016-12-08
+	 */
+	public List<WebElement> getElements(String elementsStr) {
+		List<WebElement> elementList = new ArrayList<WebElement>();
+		switch (opType) {
+		case WEB:
+			elementList = wDriver.findElements(wLocator.getBy(elementsStr));
+			break;
+		case WAP:
+			elementList = wapDriver.findElements(wapLocator.getBy(elementsStr));
+			break;
+		case ANDROID:
+			elementList = androidDriver.findElements(androidLocator.getBy(elementsStr));
+			break;
+		case IOS:
+			break;
+		}
+		return elementList;
+	}
+
+	/**
+	 * 获取所有cookie的集合
+	 * @return cookie集合
+	 * @author yuyang,创建时间：2016-12-15,更新时间：2016-12-15
+	 */
+	public Set<Cookie> getCookies() {
+		Set<Cookie> cks = null;
+		switch (opType) {
+		case WEB:
+			cks = wDriver.manage().getCookies();
+			break;
+		case WAP:
+			cks = wapDriver.manage().getCookies();
+			break;
+		case ANDROID:
+			break;
+		case IOS:
+			break;
+		}
+		return cks;
+	}
+
+	/**
+	 * 打印cookies信息
+	 * @author yuyang,创建时间：2016-12-15,更新时间：2016-12-15
+	 */
+	public void printCookies(Set<Cookie> cks) {
+		System.out.println("cookie总数为" + cks.size());
+		int i = 0;
+		for (Cookie ck : cks) {
+			i++;
+			System.out.println(i + ",作用域：" + ck.getDomain());
+			System.out.println(i + ",名称：" + ck.getName());
+			System.out.println(i + ",值：" + ck.getValue());
+			System.out.println(i + ",范围：" + ck.getPath());
+			System.out.println(i + ",过期时间" + ck.getExpiry());
+		}
+	}
+
+	/**
+	 * 获取当前窗口数量
+	 * @return 当前的窗口数量
+	 * @author yuyang,创建时间：2016-12-15,更新时间：2016-12-15
+	 */
+	public int getWindowNum() {
+		int windowNum = -1;
+		switch (opType) {
+		case WEB:
+			windowNum = wDriver.getWindowHandles().size();
+			break;
+		case WAP:
+			windowNum = wapDriver.getWindowHandles().size();
+			break;
+		case ANDROID:
+			break;
+		case IOS:
+			break;
+		}
+		return windowNum;
+	}
+
+	/**
+	 * 慢速给页面输入框元素清空后再输入字符串，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，则抛出自定义异常
+	 * 备注：与loopSendKeysClean的区别是，慢速输入，慢速输入是指，在输入字符串之后，延时1秒后再检查字符串是否输入成功,主要用在GB购物车页面的数量输入框输入数量
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2016-12-22,更新时间：2016-12-22
+	 */
+	public void loopSendKeysCleanSlow(String inputStr, String keys, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + ").");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")清空后再输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备先清空再输入字符串.");
+					}
+					sendElement.sendKeys(Keys.chord(Keys.CONTROL, "a"), keys);
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")清空后再输入字符串.");
+					}
+
+					Pub.sleep(2);
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")输入字符串并延时2秒后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+						if (inputText.equals(keys)) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串,且输入字符串内容正确.");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + "),输入的字符内容(" + inputText + ")错误.");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopSendKeysCleanSlow(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")清空后再输入字符串.(" + keys + ")");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素，则抛出自定义异常。
+	 * 第二次尝试单击时， 如果找不到单击的页面元素，仍然查找新的页面元素，并且在查找新元素前会执行刷新页面的动作
+	 * 备注:与loopClick不同的地方是，第二次尝试单击时， 如果找不到单击的页面元素，在查找新元素前会执行刷新页面的动作
+	 * @param clickStr 用来作单击动作的元素
+	 * @param FindStr 用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang ,创建时间：2017-01-19,更新时间：2017-01-19
+	 */
+	public void loopClickRefresh(String clickStr, String FindStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement clickElement;
+		WebElement findElement;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickStr + ").");
+				}
+
+				clickElement = MyWebDriverWait2(clickStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + clickStr + "),但未等待到该元素.");
+					if (clickTimes > 1) { // 重试时，如果单击页面元素的动作异常，仍然执行查找新的页面元素
+						switch (opType) {
+						case WEB:
+							wDriver.navigate().refresh();
+							break;
+						case WAP:
+							wapDriver.navigate().refresh();
+							break;
+						case ANDROID:
+							break;
+						case IOS:
+							break;
+						}
+						findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+						if (findElement == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备单击的页面元素(" + clickStr + ")后,也未等待到新的页面元素(" + FindStr
+									+ ").");
+						} else {
+							Log.logWarn(clickTimes + " times,未等待到准备单击的页面元素(" + clickStr + ")后,然后刷新页面后,但等待到新的页面元素(" + FindStr + ").");
+							res = true;
+							break;
+						}
+					}
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,等待到页面元素(" + clickStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickStr + ").");
+					}
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,查找到并单击页面元素(" + clickStr + ")后,未等待到新的页面元素(" + FindStr + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + ")后,等待到新的页面元素(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + "," + FindStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClickRefresh(" + clickStr + ")_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickStr + ")后再查找新的页面元素(" + FindStr + "),未按预期执行.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 给页面输入框元素输入字符串，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，也不抛出自定义异常,直接返回true或false
+	 * 备注:与loopSendKeys的区别是，不会抛出异常，成功输入字符串会返回true，失败输入字符串返回false
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @return 成功输入字符串会返回true，失败输入字符串返回false
+	 * @author yuyang,创建时间：2017-01-24,更新时间：2017-01-24
+	 */
+	public boolean loopSendKeysCheck(String inputStr, String keys, int loopTimes, long explicitWaitTimeout) {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")输入字符串(" + keys + "),输入前会先清空一下输入框.");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备输入字符串.");
+					}
+					if (sendTimes > 1) {
+						sendElement.sendKeys(Keys.chord(Keys.CONTROL, "a"), keys);
+					} else {
+						sendElement.sendKeys(keys);
+					}
+					Thread.sleep(100);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")输入字符串.");
+					}
+
+					sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+					if (sendElement == null) {
+						Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")输入字符串后,准备检查该元素的值,但未等待到该元素.");
+					} else {
+						inputText = sendElement.getAttribute("value");
+						if (inputText.equals(keys)) {
+							if (sendTimes > 1) {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")输入字符串内容正确.");
+							}
+							res = true;
+							break;
+						} else {
+							Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")输入字符串(" + keys + "),输入的字符内容(" + inputText + ")错误.");
+						}
+					}
+				}
+			} catch (Exception e) {
+//				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * 检查页面元素直到可见(可显示或可使用)，如果可见(可显示或可使用)，则返回true；如果元素不存在或者不可见(可显示或可使用)，则循环检查，直到超时，超时仍不可见返回false
+	 * 备注：1.如果元素可见(可显示或可使用)是期望结果，则调用这个方法，如果单纯要判断元素是否可见(或超时不存在)，那么调用loopCheckElementVisible2
+	 * 2.会在一段时间内判断元素是否可见(可显示或可使用)，如果超时后，元素仍不可见(或不存在)，则根据assertFlag来执行断言失败，或者返回false
+	 * @param elementStr 待检查的元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param diplayCheck 检查是否可显示的标志
+	 * @param enableCheck 检查是否可使用的标志
+	 * @param assertFlag 断言标志，为true时则执行断言
+	 * @author yuyang,创建时间：2017-01-24,更新时间：2017-01-24
+	 */
+	public boolean loopCheckElementVisible(String elementStr, long Timeout, long explicitWaitTimeout, boolean diplayCheck, boolean enableCheck,
+			boolean assertFlag) {
+		boolean res = false;
+		boolean res1 = false;
+		boolean res2 = false;
+		long tmpTimeout = Timeout * 1000;
+		boolean diplayFlag = false;
+		boolean enableFlag = false;
+		WebElement element = null;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				element = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (element == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备检查页面元素(" + elementStr + ")是否可见,但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备检查页面元素是否可见.");
+					}
+					diplayFlag = element.isDisplayed();
+					enableFlag = element.isEnabled();
+
+					if (diplayCheck) {
+						if (diplayFlag) {
+							if (looptimes > 1) {
+								Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")可显示.");
+							}
+							res1 = true;
+						} else {
+							Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")不可显示.");
+						}
+					} else {
+						res1 = true;
+					}
+
+					if (enableCheck) {
+						if (enableFlag) {
+							if (looptimes > 1) {
+								Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")可使用.");
+							}
+							res2 = true;
+						} else {
+							Log.logWarn(looptimes + " times,检查到页面元素(" + elementStr + ")不可使用.");
+						}
+					} else {
+						res2 = true;
+					}
+
+					if (res1 && res2) {
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			captureScreen2(projectName, "loopCheckElementVisible(" + elementStr + ")_" + looptimes + "times");
+			if (diplayCheck && enableCheck) {
+				Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + elementStr + ")可见,期望值为(true,true),当前值为(" + diplayFlag + "," + enableFlag + ").");
+			} else if (diplayCheck) {
+				Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + elementStr + ")可显示,期望值为(true,),当前值为(" + diplayFlag + ").");
+			} else if (enableCheck) {
+				Log.logWarn(Timeout + "seconds超时 ,失败检查页面元素(" + elementStr + ")可使用,期望值为(true,),当前值为(" + enableFlag + ").");
+			}
+			if (assertFlag) {
+				Assert.fail();
+			}
+		} else {
+			if (diplayCheck && enableCheck) {
+				Log.logInfo("检查到页面元素(" + elementStr + ")可显示且可使用.");
+			} else if (diplayCheck) {
+				Log.logInfo("检查到页面元素(" + elementStr + ")可显示.");
+			} else if (enableCheck) {
+				Log.logInfo("检查到页面元素(" + elementStr + ")可使用.");
+			} else {
+				Log.logInfo("检查到页面元素的可显示可使用状态为(" + diplayFlag + "," + enableFlag + ").");
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * 点击页面元素，如果点击成功，则返回；否则循环点击，直到超时
+	 * @param elementStr 页面元素
+	 * @param idx 元素的索引
+	 * @param sleepTime 单击后的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2017-03-09,更新时间：2017-03-09
+	 */
+	public void loopClickElementAndroid(String elementStr, int idx, int sleepTime, long Timeout) throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement clickElement = null;
+		List<WebElement> clickElements = null;
+		int sizeElements = 0;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				clickElements = getElements(elementStr);
+				if (clickElements != null) {
+					sizeElements = clickElements.size();
+					if (sizeElements > 0 && (idx + 1) <= sizeElements) {
+						clickElement = clickElements.get(idx);
+					} else {
+						clickElement = null;
+					}
+				} else {
+					sizeElements = 0;
+					clickElement = null;
+				}
+				if (clickElement == null) {
+					Log.logWarn(looptimes + " times,准备单击页面元素(" + elementStr + "),但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备单击.");
+					}
+					clickElement.click();
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功单击页面元素(" + elementStr + ").");
+					}
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, GetMethodName() + "(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败点击页面元素(" + elementStr + ").");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 模拟安卓按键动作,只适用于AndroidApp
+	 * @param keyCode 安卓按键
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2017-03-10,更新时间：2017-03-10
+	 */
+	public void actionPressKeyCode(int keyCode) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				androidDriver.pressKeyCode(keyCode);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟安卓按键(" + keyCode + ")时发生异常(" + GetMethodName() + ").");
+			}
+			Thread.sleep(1000);
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟安卓按键(" + keyCode + ")时发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 给页面输入框元素清空后再输入字符串，输入后检查是否输入成功，如果不成功则重试，如果多次重试后仍然无法输入字符串，则抛出自定义异常
+	 * 备注：由loopSendKeysClean改装,适用于AndroidApp
+	 * @param inputStr 输入框元素
+	 * @param keys 待输入的字符串
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @param checkFlag 是否检查输入内容,true-检查,false-不检查,实际用时发现,登录密码那里不能检查,因为获取不到密码的值
+	 * @param backFlag 输入完字符串后是否回退,true-回退,false-不回退,为什么需要回退?因为实际用时发现,输入完密码之后,会弹出键盘,需要通过执行回退动作,将键盘隐藏
+	 * @param checkEmptyFlag 检查输入框是否为空,true-检查,false-不检查,如果设置为true,会在输入字符前检查是否为空,如果为空才输入
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2017-03-09,更新时间：2017-03-10
+	 */
+	public void loopSendKeysCleanAndroid(String inputStr, String keys, int loopTimes, long explicitWaitTimeout, boolean checkFlag,
+			boolean checkEmptyFlag) throws RetryException {
+		boolean res = false;
+		int sendTimes;
+		WebElement sendElement = null;
+		String inputText = "";
+		int lenDel = 10;
+
+		for (sendTimes = 1; sendTimes <= loopTimes; sendTimes++) {
+			try {
+				if (sendTimes > 1) {
+					Log.logWarn(sendTimes + " times,尝试给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + ").");
+				}
+
+				sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+				if (sendElement == null) {
+					Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,准备给页面元素(" + inputStr + ")清空后再输入字符串,但未等待到该元素.");
+				} else {
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,等待到页面元素(" + inputStr + "),准备先清空再输入字符串.");
+					}
+
+					if (sendTimes == 1 && checkEmptyFlag) {
+						inputText = sendElement.getAttribute("text");
+						lenDel = inputText.length();
+						if (lenDel > 0) {
+							Log.logWarn("该页面元素(" + inputStr + ")不为空，不执行输入动作，直接返回.");
+							return;
+						}
+					}
+
+					if (checkFlag) {
+						inputText = sendElement.getAttribute("text");
+						lenDel = inputText.length();
+					}
+					sendElement.click();
+					actionPressKeyCode(AndroidKeyCode.KEYCODE_MOVE_END);
+					for (int i = 0; i < lenDel; i++) {
+						actionPressKeyCode(AndroidKeyCode.DEL);
+					}
+					sendElement.sendKeys(keys);
+					if (sendTimes > 1) {
+						Log.logWarn(sendTimes + " times,成功给页面元素(" + inputStr + ")清空后再输入字符串.");
+					}
+
+					if (checkFlag) {
+						sendElement = MyWebDriverWait2(inputStr, explicitWaitTimeout, false, false);
+						if (sendElement == null) {
+							Log.logWarn(sendTimes + " times," + explicitWaitTimeout + "秒超时,给页面元素(" + inputStr + ")清空并再输入字符串后,准备检查该元素的值,但未等待到该元素.");
+						} else {
+							inputText = sendElement.getAttribute("text");
+							if (inputText.equals(keys)) {
+								if (sendTimes > 1) {
+									Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串,且输入字符串内容正确.");
+								}
+								res = true;
+								break;
+							} else {
+								Log.logWarn(sendTimes + " times,给页面元素(" + inputStr + ")清空后再输入字符串(" + keys + "),输入的字符内容(" + inputText + ")错误.");
+							}
+						}
+					} else {
+						res = true;
+						break;
+					}
+				}
+				Thread.sleep(100);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + inputStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, GetMethodName() + "(" + inputStr + ")_" + sendTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,失败给页面元素(" + inputStr + ")清空后再输入字符串.(" + keys + ")");
+			throw new RetryException();
+		}
+	}
+
+	/***
+	* 上滑1/4屏幕
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	@SuppressWarnings("rawtypes")
+	public void slideUP(AndroidDriver driver) {
+		int x = androidDriver.manage().window().getSize().width;
+		int y = androidDriver.manage().window().getSize().height;
+		androidDriver.swipe(x / 2, y / 3 * 2, x / 2, y / 3 * 1, 0);
+		Pub.sleep(1);
+	}
+
+	/***
+	* 下滑1/4屏幕
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideDown() {
+		int x = androidDriver.manage().window().getSize().width;
+		int y = androidDriver.manage().window().getSize().height;
+		androidDriver.swipe(x / 2, y / 3 * 1, x / 2, y / 3 * 2, 0);
+		Pub.sleep(1);
+	}
+
+	/***
+	* 左滑1/2屏幕
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideLeft() {
+		int x = androidDriver.manage().window().getSize().width;
+		int y = androidDriver.manage().window().getSize().height;
+		androidDriver.swipe(x / 4 * 3, y / 2, x / 4 * 1, y / 2, 0);
+		Pub.sleep(1);
+	}
+
+	/***
+	* 右滑1/2屏幕
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideRight() {
+		int x = androidDriver.manage().window().getSize().width;
+		int y = androidDriver.manage().window().getSize().height;
+		androidDriver.swipe(x / 4 * 1, y / 2, x / 4 * 3, y / 2, 0);
+		Pub.sleep(1);
+	}
+
+	/***
+	* 特殊上滑
+	* @param 传入从左到右宽度的百分比(1-99之间)
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideUP(int i) {
+		if (i <= 0 || i >= 100) {
+			Log.logWarn("上滑宽度传入错误");
+		} else {
+			int x = androidDriver.manage().window().getSize().width;
+			int y = androidDriver.manage().window().getSize().height;
+			androidDriver.swipe(x / 10 * i, y / 3 * 2, x / 10 * i, y / 3 * 1, 0);
+			Pub.sleep(1);
+		}
+	}
+
+	/***
+	* 特殊下滑
+	* @param 传入从左到右宽度的百分比(1-99之间)
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideDown(int i) {
+		if (i <= 0 || i >= 100) {
+			Log.logWarn("下滑宽度传入错误");
+		} else {
+			int x = androidDriver.manage().window().getSize().width;
+			int y = androidDriver.manage().window().getSize().height;
+			androidDriver.swipe(x / 10 * i, y / 3 * 1, x / 10 * i, y / 3 * 2, 0);
+			Pub.sleep(1);
+		}
+	}
+
+	/***
+	* 特殊左滑
+	* @param 传入从上到下宽度的百分比(1-99之间)
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideLeft(int i) {
+		if (i <= 0 || i >= 100) {
+			Log.logWarn("左滑宽度传入错误");
+		} else {
+			int x = androidDriver.manage().window().getSize().width;
+			int y = androidDriver.manage().window().getSize().height;
+			androidDriver.swipe(x / 4 * 3, y / 10 * i, x / 4 * 2, y / 10 * i, 0);
+			Pub.sleep(1);
+		}
+	}
+
+	/***
+	* 特殊右滑
+	* @param 传入从上到下宽度的百分比(1-99之间)
+	* @author linchaojiang,创建时间：2017-01-12,更新时间：2017-01-12
+	*/
+	public void slideRight(int i) {
+		if (i <= 0 || i >= 100) {
+			Log.logWarn("左滑宽度传入错误");
+		} else {
+			int x = androidDriver.manage().window().getSize().width;
+			int y = androidDriver.manage().window().getSize().height;
+			androidDriver.swipe(x / 4 * 2, y / 10 * i, x / 4 * 3, y / 10 * i, 0);
+			Pub.sleep(1);
+		}
+	}
+
+	/**
+	 * 获取屏幕宽度,只适用于AndroidApp
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2017-03-10,更新时间：2017-03-10
+	 */
+	public int actionGetWidth() throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+		int width = 0;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				width = androidDriver.manage().window().getSize().width;
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("获取屏幕宽度时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,获取屏幕宽度时发生异常.");
+			throw new RetryException();
+		}
+
+		return width;
+	}
+
+	/**
+	 * 获取屏幕高度,只适用于AndroidApp
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2017-03-10,更新时间：2017-03-10
+	 */
+	public int actionGetHeight() throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+		int height = 0;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				height = androidDriver.manage().window().getSize().height;
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("获取屏幕高度时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,获取屏幕高度时发生异常.");
+			throw new RetryException();
+		}
+
+		return height;
+	}
+
+	/**
+	 * 模拟安卓滑屏动作,只适用于AndroidApp
+	 * @param startx 屏幕起始x坐标
+	 * @param starty 屏幕起始y坐标
+	 * @param endx 屏幕结束x坐标
+	 * @param endy 屏幕结束y坐标
+	 * @param duration 滑动时间
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2017-03-10,更新时间：2017-03-10
+	 */
+	public void actionSlide(int startx, int starty, int endx, int endy, int duration) throws Exception {
+		boolean res = false;
+		boolean printFlag = true;
+
+		int loopTimes = 3;
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				androidDriver.swipe(startx, starty, endx, endy, duration);
+				Pub.sleep(1);
+				res = true;
+				break;
+			} catch (Exception e) {
+				if (printFlag) {
+					e.printStackTrace();
+					printFlag = false;
+				}
+				Log.logWarn("模拟安卓滑屏时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,模拟安卓滑屏时发生异常.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素，则抛出自定义异常。
+	 * 备注:1.第二次尝试单击时， 如果找不到单击的页面元素，仍然查找新的页面元素
+	 * 2.由loopClick改装,适用于AndroidApp
+	 * @param clickStr 用来作单击动作的元素
+	 * @param idx 元素的索引
+	 * @param FindStr 用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang 创建时间:2017-03-12 更新时间:2017-03-12
+	 */
+	public void loopClickAndroid(String clickStr, int idx, String FindStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement findElement;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickStr + idx + ").");
+				}
+
+				try {
+					loopClickElementAndroid(clickStr, idx, 500, explicitWaitTimeout);
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickStr + idx + ").");
+					}
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,查找到并单击页面元素(" + clickStr + idx + ")后,未等待到新的页面元素(" + FindStr
+								+ ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickStr + idx + ")后,等待到新的页面元素(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					Log.logWarn(clickTimes + " times,失败单击页面元素(" + clickStr + idx + ").");
+					if (clickTimes > 1) { // 重试时，如果单击页面元素的动作异常，仍然执行查找新的页面元素
+						findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+						if (findElement == null) {
+							Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,未等待到准备单击的页面元素(" + clickStr + idx + ")后,也未等待到新的页面元素("
+									+ FindStr + ").");
+						} else {
+							Log.logWarn(clickTimes + " times,未等待到准备单击的页面元素(" + clickStr + idx + ")后,但等待到新的页面元素(" + FindStr + ").");
+							res = true;
+							break;
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickStr + idx + "," + FindStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClick(" + clickStr + idx + ")_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickStr + idx + ")后再查找新的页面元素(" + FindStr + "),未按预期执行.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 获取指定ID的页面元素的索引值,只适于用AndroidApp,不能用
+	 * 备注：1.使用某个属性(如class)查找到一批元素时,再通过该元素的ID得到该元素在这一批元素中的索引
+	 * 2.该方法不能使用,因为当元素不具备id属性时会抛出异常
+	 * @param elementStr 页面元素
+	 * @param ID 元素的id
+	 * @param sleepTime 循环的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @return 未成功获取到索引时返回-1,获取到时返回索引,索引从0开始
+	 * @author yuyang 创建时间:2017-03-12 更新时间:2017-03-12
+	 */
+	public int getIndexByID(String elementStr, String ID, int sleepTime, long Timeout) {
+		long tmpTimeout = Timeout * 1000;
+		List<WebElement> elements = null;
+		int sizeElements = 0;
+		int index = -1;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				elements = getElements(elementStr);
+				if (elements != null) {
+					sizeElements = elements.size();
+					if (sizeElements > 0) {
+						int i = 0;
+						for (WebElement element : elements) {
+							String eID = element.getAttribute("resourceId");
+							if (eID.equals(ID)) {
+								index = i;
+								break;
+							}
+							i++;
+						}
+						Log.logWarn(looptimes + " times,准备获取指定ID的页面元素(" + elementStr + ")的索引值,但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+					} else {
+						Log.logWarn(looptimes + " times,准备获取指定ID的页面元素(" + elementStr + ")的索引值,但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+					}
+				} else {
+					Log.logWarn(looptimes + " times,准备获取指定ID的页面元素(" + elementStr + ")的索引值,但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+				}
+				if (index > 0) {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取指定ID的页面元素(" + elementStr + ")的索引值为" + index + ".");
+					}
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (index < 0) {
+			Log.logWarn(Timeout + "seconds超时 ,失败获取指定ID的页面元素(" + elementStr + ")的索引值.");
+		}
+		return index;
+	}
+
+	/**
+	 * 获取指定位置的页面元素的索引值,只适于用AndroidApp
+	 * 备注：使用某个属性(如class)查找到一批元素时,再通过该元素的位置得到该元素在这一批元素中的索引
+	 * @param elementStr 页面元素
+	 * @param location 元素的位置,即元素的在屏幕上的起始x,y坐标
+	 * @param sleepTime 循环的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @return 未成功获取到索引时返回-1,获取到时返回索引,索引从0开始
+	 * @author yuyang 创建时间:2017-03-13 更新时间:2017-03-13
+	 */
+	public int getIndexByLocation(String elementStr, Point location, int sleepTime, long Timeout) {
+		long tmpTimeout = Timeout * 1000;
+		List<WebElement> elements = null;
+		int sizeElements = 0;
+		int index = -1;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				elements = getElements(elementStr);
+				if (elements != null) {
+					sizeElements = elements.size();
+					if (sizeElements > 0) {
+						int i = 0;
+						for (WebElement element : elements) {
+							Point elemLocation = element.getLocation();
+							if (elemLocation.getX() >= location.getX() && elemLocation.getY() >= location.getY()) {
+								index = i;
+								break;
+							}
+							i++;
+						}
+					} else {
+						sizeElements = 0;
+						Log.logWarn(looptimes + " times,准备获取指定位置的页面元素(" + elementStr + ")的索引值,但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+					}
+				} else {
+					sizeElements = 0;
+					Log.logWarn(looptimes + " times,准备获取指定位置的页面元素(" + elementStr + ")的索引值,但未等待到该元素(当前查找到元素的数量为" + sizeElements + ").");
+				}
+				if (index >= 0) {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功获取指定位置的页面元素(" + elementStr + ")的索引值为" + index + ".");
+					}
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (index < 0) {
+			Log.logWarn(Timeout + "seconds超时 ,失败获取指定位置的页面元素(" + elementStr + ")的索引值.");
+		}
+		return index;
+	}
+
+	/**
+	 * 在一定时间内,等待页面元素存在,如果等待到,则查找其子元素,如果查找到,则返回子页面元素,否则返回null,不抛出异常
+	 * 备注：1.与MyWebDriverWait2相似,不打印多余的log
+	 * 2.如果子元素字符串为空,表现与MyWebDriverWait2一致,即返回查找到的父元素
+	 * 3.由MyWebDriverWait2改装,适用于AndroidApp
+	 * @param elementStr 页面元素,父元素
+	 * @param childStr 子元素
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang 创建时间:2017-03-13 更新时间:2017-03-13
+	 */
+	public WebElement MyWebDriverWaitFindChild(String elementStr, String childStr, long explicitWaitTimeout, boolean ePrintFlag, boolean printFlag) {
+		boolean res = false;
+		WebElement element = null;
+		WebElement elementChild = null;
+
+		try {
+			switch (opType) {
+			case WEB:
+				element = (new WebDriverWait(wDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wLocator.getBy(elementStr)));
+				break;
+			case WAP:
+				element = (new WebDriverWait(wapDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(wapLocator.getBy(elementStr)));
+				break;
+			case ANDROID:
+				element = (new WebDriverWait(androidDriver, explicitWaitTimeout))
+						.until(ExpectedConditions.presenceOfElementLocated(androidLocator.getBy(elementStr)));
+				break;
+			case IOS:
+				break;
+			}
+
+			res = true;
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+
+		if (printFlag) {
+			if (res) {
+				Log.logInfo("等待到页面元素(" + elementStr + ")存在,接下来,查找子元素.");
+			} else {
+				Log.logWarn(explicitWaitTimeout + "seconds超时 ,未等待到页面元素(" + elementStr + ")存在,不查找子元素.");
+			}
+		}
+
+		if (res && childStr.length() > 0) {
+			elementChild = element.findElement(androidLocator.getBy(childStr));
+			if (elementChild != null) {
+				if (printFlag) {
+					Log.logInfo("查找到页面元素(" + elementStr + ")的子元素(" + childStr + ").");
+				}
+			} else {
+				if (printFlag) {
+					Log.logWarn("未查找到页面元素(" + elementStr + ")的子元素(" + childStr + ").");
+				}
+			}
+		}
+
+		if (childStr.length() > 0) {
+			return elementChild;
+		} else {
+			return element;
+		}
+	}
+
+	/**
+	 * 单击页面元素，单击后在一定时间内查找新的页面元素，如果查找到则返回，否则尝试再次单击，如果多次重试后仍然无法单击并查找到新的页面元素，则抛出自定义异常。
+	 * 备注:1.第二次尝试单击时， 如果找不到单击的页面元素，仍然查找新的页面元素
+	 * 2.由loopClick而来,与loopClick不同的地方是,单击的元素,不传字符串,直接传入WebElement
+	 * 3.由loopClick改装,适用于AndroidApp
+	 * @param clickElement 用来作单击动作的元素,类型为WebElement
+	 * @param FindStr 用来查找的新页面元素
+	 * @param loopTimes 尝试单击的次数
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang 创建时间:2017-03-13 更新时间:2017-03-13
+	 */
+	public void loopClick(WebElement clickElement, String FindStr, int loopTimes, long explicitWaitTimeout) throws RetryException {
+		boolean res = false;
+		int clickTimes;
+		WebElement findElement;
+
+		for (clickTimes = 1; clickTimes <= loopTimes; clickTimes++) {
+			try {
+				if (clickTimes > 1) {
+					Log.logWarn(clickTimes + " times,尝试单击页面元素(" + clickElement + ").");
+				}
+
+				if (clickElement == null) {
+					Log.logWarn(clickTimes + " times,准备单击页面元素(" + clickElement + "),但该元素为null.");
+				} else {
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,准备单击页面元素(" + clickElement + ").");
+					}
+					clickElement.click();
+					if (clickTimes > 1) {
+						Log.logWarn(clickTimes + " times,成功单击页面元素(" + clickElement + ").");
+					}
+					findElement = MyWebDriverWait2(FindStr, explicitWaitTimeout, false, false);
+					if (findElement == null) {
+						Log.logWarn(clickTimes + " times," + explicitWaitTimeout + "秒超时,单击页面元素(" + clickElement + ")后,未等待到新的页面元素(" + FindStr + ").");
+					} else {
+						if (clickTimes > 1) {
+							Log.logWarn(clickTimes + " times,单击页面元素(" + clickElement + ")后,等待到新的页面元素(" + FindStr + ").");
+						}
+						res = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + clickElement + "," + FindStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, GetMethodName() + "(WebElement)_" + clickTimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn("连续 " + loopTimes + " times,单击页面元素(" + clickElement + ")后再查找新的页面元素(" + FindStr + "),未按预期执行.");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 在一定时间内,等待页面元素存在,如果等待到,则查找其子元素,如果查找到,则返回指定索引的子页面元素,否则返回null,不抛出异常
+	 * 备注：由MyWebDriverWaitFindChild改装,适用于AndroidApp
+	 * @param element 页面元素,父元素
+	 * @param childStr 子元素
+	 * @param idx 元素的索引
+	 * @param explicitWaitTimeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang 创建时间:2017-03-13 更新时间:2017-03-13
+	 */
+	public WebElement findChildByIdx(WebElement element, String childStr, int idx, boolean ePrintFlag, boolean printFlag) {
+		WebElement elementChild = null;
+		List<WebElement> elementChilds = null;
+		int sizeElements = 0;
+
+		try {
+			if (childStr.length() > 0) {
+				elementChilds = element.findElements(androidLocator.getBy(childStr));
+				if (elementChilds != null) {
+					sizeElements = elementChilds.size();
+					if (sizeElements > 0 && (idx + 1) <= sizeElements) {
+						elementChild = elementChilds.get(idx);
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+
+		if (elementChild != null) {
+			if (printFlag) {
+				Log.logInfo("查找到页面元素(" + element + ")的子元素(" + childStr + ").");
+			}
+		} else {
+			if (printFlag) {
+				Log.logWarn("未查找到页面元素(" + element + ")的子元素(" + childStr + ").");
+			}
+		}
+
+		return elementChild;
+	}
+
+	public static final Map<String, Integer> keycode = new HashMap<String, Integer>();
+	static {
+		keycode.put("0", 7);
+		keycode.put("1", 8);
+		keycode.put("2", 9);
+		keycode.put("3", 10);
+		keycode.put("4", 11);
+		keycode.put("5", 12);
+		keycode.put("6", 13);
+		keycode.put("7", 14);
+		keycode.put("8", 15);
+		keycode.put("9", 16);
+		keycode.put("a", 29);
+		keycode.put("b", 30);
+		keycode.put("c", 31);
+		keycode.put("d", 32);
+		keycode.put("e", 33);
+		keycode.put("f", 34);
+		keycode.put("g", 35);
+		keycode.put("h", 36);
+		keycode.put("i", 37);
+		keycode.put("j", 38);
+		keycode.put("k", 39);
+		keycode.put("l", 40);
+		keycode.put("m", 41);
+		keycode.put("n", 42);
+		keycode.put("o", 43);
+		keycode.put("p", 44);
+		keycode.put("q", 45);
+		keycode.put("r", 46);
+		keycode.put("s", 47);
+		keycode.put("t", 48);
+		keycode.put("u", 49);
+		keycode.put("v", 50);
+		keycode.put("w", 51);
+		keycode.put("x", 52);
+		keycode.put("y", 53);
+		keycode.put("z", 54);
+		keycode.put("z", 54);
+		keycode.put("z", 54);
+	}
+
+	/**
+	 * 模拟按键,输入字符串
+	 * @param value 待输入的字符串
+	 * @author lichaojiang 创建时间:2017-03-14 更新时间:2017-03-14
+	 */
+	public void sendSetKeyValue(String value) {
+		char[] inputString = value.toCharArray();
+		for (int i = 0; i < inputString.length; i++) {
+			if (inputString[i] >= 'A' && inputString[i] <= 'Z') {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_CAPS_LOCK);
+			} else if (inputString[i] >= 'a' && inputString[i] <= 'z') {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_NUM_LOCK);
+			}
+			if (String.valueOf(inputString[i]).equals("@")) {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_AT);
+			} else if (String.valueOf(inputString[i]).equals(".")) {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_PERIOD);
+			} else if (String.valueOf(inputString[i]).equals("_")) {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_MINUS, AndroidKeyMetastate.META_SHIFT_ON);
+			} else if (String.valueOf(inputString[i]).equals("$")) {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_4, AndroidKeyMetastate.META_SHIFT_ON);
+			} else if (String.valueOf(inputString[i]).equals("%")) {
+				androidDriver.pressKeyCode(AndroidKeyCode.KEYCODE_5, AndroidKeyMetastate.META_SHIFT_ON);
+			} else {
+//				Log.logInfo("inputString[" + i + "]:" + inputString[i] + "-" + keycode.get(String.valueOf(inputString[i])));
+				androidDriver.pressKeyCode(keycode.get(String.valueOf(inputString[i])));
+			}
+		}
+	}
+
+	/**
+	 * 模拟安卓滑屏动作,只适用于AndroidApp
+	 * @param startx 屏幕起始x坐标,分辨率比率处理后的double类型
+	 * @param starty 屏幕起始y坐标,分辨率比率处理后的double类型
+	 * @param endx 屏幕结束x坐标,分辨率比率处理后的double类型
+	 * @param endy 屏幕结束y坐标,分辨率比率处理后的double类型
+	 * @param duration 滑动时间
+	 * @throws Exception 抛出全部异常
+	 * @author yuyang,创建时间：2017-03-14,更新时间：2017-03-14
+	 */
+	public void actionSlideWithRate(double startx, double starty, double endx, double endy, int duration) throws Exception {
+		int startxInt = (int) startx;
+		int startyInt = (int) starty;
+		int endxInt = (int) endx;
+		int endyInt = (int) endy;
+		actionSlide(startxInt, startyInt, endxInt, endyInt, duration);
+	}
+
+	/**
+	 * 滑动屏幕,检查页面元素是否存在,如果查找到,则返回该元素,否则返回null,不抛出异常
+	 * @param elementStr 页面元素
+	 * @param startx 屏幕起始x坐标,分辨率比率处理后的double类型
+	 * @param starty 屏幕起始y坐标,分辨率比率处理后的double类型
+	 * @param endx 屏幕结束x坐标,分辨率比率处理后的double类型
+	 * @param endy 屏幕结束y坐标,分辨率比率处理后的double类型
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @author yuyang 创建时间:2017-03-15 更新时间:2017-03-15
+	 */
+	public WebElement findElementBySlide(String elementStr, double startx, double starty, double endx, double endy, boolean ePrintFlag) {
+		WebElement element = null;
+
+		try {
+			String pageSourceBefore = androidDriver.getPageSource();
+			String pageSourceAfter = "";
+			while (true) {
+				actionSlideWithRate(startx, starty, endx, endy, 1000);
+				element = androidDriver.findElement(androidLocator.getBy(elementStr));
+				if (element != null) {
+					Log.logInfo("滑动屏幕后,查找到页面元素(" + elementStr + ").");
+					break;
+				}
+				pageSourceAfter = androidDriver.getPageSource();
+				if (pageSourceBefore.equals(pageSourceAfter)) {
+					Log.logInfo("滑动屏幕到底后,仍然没有查找到页面元素(" + elementStr + ").");
+					break;
+				}
+				Thread.sleep(500);
+			}
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+		return element;
+	}
+
+	/**
+	 * 滑动屏幕,检查指定文本值的页面元素是否存在,如果查找到,则返回该元素,否则返回null,不抛出异常
+	 * @param elementStr 页面元素
+	 * @param elementText 指定的页面元素的文本值
+	 * @param startx 屏幕起始x坐标,分辨率比率处理后的double类型
+	 * @param starty 屏幕起始y坐标,分辨率比率处理后的double类型
+	 * @param endx 屏幕结束x坐标,分辨率比率处理后的double类型
+	 * @param endy 屏幕结束y坐标,分辨率比率处理后的double类型
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @author yuyang 创建时间:2017-03-16 更新时间:2017-03-16
+	 */
+	public WebElement findElementBySlide(String elementStr, String elementText, double startx, double starty, double endx, double endy,
+			boolean ePrintFlag) {
+		WebElement element = null;
+		List<WebElement> elements = null;
+		int sizeElements = 0;
+
+		try {
+			String pageSourceBefore = "";
+			String pageSourceAfter = "";
+
+			elements = getElements(elementStr);
+			sizeElements = elements.size();
+			for (int i = 0; i < sizeElements; i++) {
+				element = elements.get(i);
+				if (element.getText().equals(elementText)) {
+					break;
+				} else {
+					element = null;
+				}
+			}
+			if (element != null) {
+				Log.logInfo("未执行滑动屏幕动作,就查找到指定文本值(" + elementText + ")的页面元素(" + elementStr + ").");
+			} else {
+				while (true) {
+					pageSourceBefore = androidDriver.getPageSource();
+					actionSlideWithRate(startx, starty, endx, endy, 1000);
+					elements = getElements(elementStr);
+					sizeElements = elements.size();
+					for (int i = 0; i < sizeElements; i++) {
+						element = elements.get(i);
+						if (element.getText().equals(elementText)) {
+							break;
+						} else {
+							element = null;
+						}
+					}
+					if (element != null) {
+						Log.logInfo("滑动屏幕后,查找到指定文本值(" + elementText + ")的页面元素(" + elementStr + ").");
+						break;
+					}
+					pageSourceAfter = androidDriver.getPageSource();
+					if (pageSourceBefore.equals(pageSourceAfter)) {
+						Log.logInfo("滑动屏幕到底后,仍然没有查找到指定文本值(" + elementText + ")的页面元素(" + elementStr + ").");
+						break;
+					}
+					Thread.sleep(500);
+				}
+			}
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+		return element;
+	}
+
+	/**
+	 * 页面元素有多个时,点击指定文本的页面元素,如果点击成功,则返回;否则循环点击,直到超时
+	 * @param elementStr 页面元素
+	 * @param elementText 指定的页面元素的文本值
+	 * @param sleepTime 单击后的延时时间，单位为毫秒
+	 * @param Timeout 超时时间，单位为秒
+	 * @param explicitWaitTimeout 显示等待元素的超时时间
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang 创建时间:2017-03-16 更新时间:2017-03-16
+	 */
+	public void loopClickElement(String elementStr, String elementText, long sleepTime, long Timeout, long explicitWaitTimeout)
+			throws RetryException {
+		boolean res = false;
+		long tmpTimeout = Timeout * 1000;
+		WebElement clickElement = null;
+		List<WebElement> clickElements = null;
+		int sizeElements = 0;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				if (sleepTime < 200) {
+					Thread.sleep(200);
+				} else {
+					Thread.sleep(sleepTime);
+				}
+
+				clickElement = MyWebDriverWait2(elementStr, explicitWaitTimeout, false, false);
+				if (clickElement == null) {
+					Log.logWarn(looptimes + " times," + explicitWaitTimeout + "秒超时,准备单击页面元素(" + elementStr + "),但未等待到该元素.");
+				} else {
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,等待到页面元素(" + elementStr + "),准备单击.");
+					}
+
+					clickElements = getElements(elementStr);
+					sizeElements = clickElements.size();
+					for (int i = 0; i < sizeElements; i++) {
+						clickElement = clickElements.get(i);
+						if (clickElement.getText().equals(elementText)) {
+							break;
+						} else {
+							clickElement = null;
+						}
+					}
+
+					if (clickElement != null) {
+						clickElement.click();
+					} else {
+						continue;
+					}
+					if (looptimes > 1) {
+						Log.logWarn(looptimes + " times,成功单击页面元素(" + elementStr + ").");
+					}
+					res = true;
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopClickElement(" + elementStr + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败点击页面元素(" + elementStr + ").");
+			throw new RetryException();
+		}
+	}
+
+	/**
+	 * 获取页面元素的文本值，如果获取到，则返回；否则循环获取，直到超时
+	 * 备注:传入页面元素类型是WebElement
+	 * @param element 页面元素
+	 * @param Timeout 超时时间，单位为秒
+	 * @throws RetryException 抛出重试异常
+	 * @author yuyang,创建时间：2017-03-18,更新时间：2017-03-18
+	 */
+	public String loopGetElementText(WebElement element, long Timeout) throws RetryException {
+		boolean res = false;
+		String text = "";
+		long tmpTimeout = Timeout * 1000;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				text = element.getText();
+				if (looptimes > 1) {
+					Log.logWarn(looptimes + " times,成功获取页面元素(" + element + ")的文本值.");
+				}
+				res = true;
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作页面元素(" + element + ")时发生异常(" + GetMethodName() + ").");
+			}
+			captureScreen2(projectName, "loopGetElementText(" + element + ")_" + looptimes + "times");
+		}
+
+		if (!res) {
+			Log.logWarn(Timeout + "seconds超时 ,失败获取页面元素(" + element + ")的文本值.");
+			throw new RetryException();
+		}
+
+		return text;
+	}
+
+	/**
+	 * 检查 指定文本值的页面元素是否可见，如果存在且可见，则返回1；如果存在且不可见，则返回2；如果不存在或其它异常，则重试直到超时，超时返回-1
+	 * 备注：1.该方法不会截图
+	 * 2.由loopCheckElementVisible2改造,适用于Android查找到一批元素后,再需要依次比较元素文本值的情况
+	 * @param elementStr 待检查的元素
+	 * @param elementText 指定的页面元素的文本值
+	 * @param Timeout 超时时间，单位为秒
+	 * @param printFlag 打印标志，为true时则打印log
+	 * @return 1-页面元素存在且可见，2-页面元素存在且不可见，-1-超时检查，页面元素不存在或者其它异常
+	 * @author yuyang,创建时间：2017-03-20,更新时间：2017-03-20
+	 */
+	public int loopCheckElementVisible2Android(String elementStr, String elementText, long Timeout, boolean printFlag) {
+		int res = -1;
+		long tmpTimeout = Timeout * 1000;
+		boolean diplayFlag = false;
+		boolean enableFlag = false;
+		WebElement element = null;
+		List<WebElement> elements = null;
+		int sizeElements = 0;
+
+		int looptimes = 0;
+		long currentTime;
+		long startTime = System.currentTimeMillis();
+		while (true) {
+			try {
+				looptimes++;
+				currentTime = System.currentTimeMillis();
+				if (currentTime - startTime < 0) {
+					currentTime += 86400;
+				}
+				if (currentTime - startTime >= tmpTimeout) {
+					break;
+				}
+				Thread.sleep(200);
+
+				elements = getElements(elementStr);
+				sizeElements = elements.size();
+				for (int i = 0; i < sizeElements; i++) {
+					element = elements.get(i);
+					if (element.getText().equals(elementText)) {
+						break;
+					} else {
+						element = null;
+					}
+				}
+				if (element == null) {
+					if (printFlag) {
+						Log.logWarn(looptimes + " times,准备检查指定文本值(" + elementText + ")的页面元素(" + elementStr + ")是否可见,但未等待到该元素.");
+					}
+				} else {
+					if (looptimes > 1 && printFlag) {
+						Log.logWarn(looptimes + " times,等待到指定文本值(" + elementText + ")的页面元素(" + elementStr + "),准备检查页面元素是否可见.");
+					}
+
+					diplayFlag = element.isDisplayed();
+					enableFlag = element.isEnabled();
+
+					if (diplayFlag && enableFlag) {
+						if (looptimes > 1) {
+							Log.logWarn(looptimes + " times,检查到指定文本值的页面元素(" + elementStr + ")可见.");
+						} else {
+							Log.logInfo("检查到指定文本值的页面元素(" + elementStr + ")可见.");
+						}
+						res = 1;
+						break;
+					} else {
+						if (looptimes > 1) {
+							Log.logWarn(looptimes + " times,检查到指定文本值(" + elementText + ")的页面元素(" + elementStr + ")不可见(" + diplayFlag + ","
+									+ enableFlag + ").");
+						} else {
+							Log.logInfo("检查到指定文本值(" + elementText + ")的页面元素(" + elementStr + ")不可见(" + diplayFlag + "," + enableFlag + ").");
+						}
+						res = 2;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.logWarn("操作指定文本值(" + elementText + ")的页面元素(" + elementStr + ")时发生异常(" + GetMethodName() + ").");
+			}
+		}
+
+		if (res == -1 && printFlag) {
+			Log.logWarn(Timeout + "seconds超时 ,失败检查指定文本值(" + elementText + ")的页面元素(" + elementStr + ")的可见状态.");
+		}
+		return res;
+	}
+
+	/**
+	 * 在一定时间内，等待页面元素存在，如果等待到，则返回页面元素，否则返回null，不抛出异常，适用于AndroidApp
+	 * 备注：1.与MyWebDriverWait相似，只是不打印多余的log，用于取代WebDriverWait
+	 * 2.由MyWebDriverWait2改造,该方法不一定不适用于web,未尝试确认
+	 * @param elementStr 页面元素
+	 * @param idx 元素的索引
+	 * @param Timeout  超时时间，单位为秒
+	 * @param ePrintFlag 查找不到元素时是否打印异常信息的标志，true-打印，false-不打印
+	 * @param printFlag 是否打印查找或未查找到页面元素的信息标志，true-打印，false-不打印
+	 * @author yuyang,创建时间：2017-03-20,更新时间：2017-03-20
+	 */
+	public WebElement MyWebDriverWait2Android(String elementStr, int idx, long Timeout, boolean ePrintFlag, boolean printFlag) {
+		boolean res = false;
+		WebElement element = null;
+		List<WebElement> elements = null;
+		int sizeElements = 0;
+		long tmpTimeout = Timeout * 1000;
+
+		try {
+			switch (opType) {
+			case WEB:
+				break;
+			case WAP:
+				break;
+			case ANDROID:
+				long currentTime;
+				long startTime = System.currentTimeMillis();
+				while (true) {
+					currentTime = System.currentTimeMillis();
+					if (currentTime - startTime < 0) {
+						currentTime += 86400;
+					}
+					if (currentTime - startTime >= tmpTimeout) {
+						break;
+					}
+					Thread.sleep(200);
+
+					elements = getElements(elementStr);
+					sizeElements = elements.size();
+					if (sizeElements > 0 && (idx + 1) <= sizeElements) {
+						element = elements.get(idx);
+						break;
+					}
+				}
+				break;
+			case IOS:
+				break;
+			}
+
+			res = true;
+		} catch (Exception e) {
+			if (ePrintFlag) {
+				e.printStackTrace();
+			}
+		}
+
+		if (printFlag) {
+			if (res) {
+				Log.logInfo("等待到指定索引的(" + idx + ")的页面元素(" + elementStr + ")存在.");
+			} else {
+				Log.logWarn(Timeout + "seconds超时 ,未等待到指定索引的(" + idx + ")的页面元素(" + elementStr + ")存在.");
+			}
+		}
+
+		return element;
+	}
+
+	/**
+	 * 获取父元素下的相同属性的所有对象
+	 * 备注：重写getElements()方法,会先查找父元素,再查找子元素列表
+	 * @param elementsStr 页面元素
+	 * @return 获取子页面元素列表
+	 * @author yuyang,创建时间：2017-04-02,更新时间：2017-04-02
+	 */
+	public List<WebElement> getElements(String ParentStr, String elementsStr) {
+		WebElement parentElement = MyWebDriverWait2(ParentStr, explicitWaitTimeoutLoop, false, false);
+		List<WebElement> elementList = new ArrayList<WebElement>();
+		switch (opType) {
+		case WEB:
+			elementList = parentElement.findElements(wLocator.getBy(elementsStr));
+			break;
+		case WAP:
+			elementList = parentElement.findElements(wapLocator.getBy(elementsStr));
+			break;
+		case ANDROID:
+			elementList = parentElement.findElements(androidLocator.getBy(elementsStr));
+			break;
+		case IOS:
+			break;
+		}
+		return elementList;
+	}
+
+	
+	
+	
+	
+	/**
+	 * 访问url，且设置页面加载时间
+	 * @param url url对象
+	 * @param pageLoadTimeout 页面加载超时时间
+	 */
+	public void get(String url, long pageLoadTimeout){
+		try {
+			Log.logInfo("访问【"+url+"】");
+			driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
+			driver.get(url);
+			driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			Log.logInfo("访问【"+url+"】超时！");
+			//e.printStackTrace();
+		}	
+	}
+	
+	/**
+	 * 访问url，且设置页面加载时间,设置重试次数
+	 * @param url url对象
+	 * @param pageLoadTimeout 页面加载超时时间
+	 * @param loopTimes 重试次数
+	 */
+	public  void get(String url, long pageLoadTimeout, int loopTimes){
+		for (int i = 1; i <= loopTimes; i++) {
+			try {
+				Log.logInfo("访问【"+url+"】");
+				driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
+				driver.get(url);
+				driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+				break;
+			} catch (Exception e) {
+				Log.logInfo("访问【"+url+"】超时！");
+				//e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 页面刷新
+	 * @param timeout 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  void pageRefresh(long pageLoadTime){
+		try {
+			driver.manage().timeouts().pageLoadTimeout(pageLoadTime, TimeUnit.SECONDS);
+			driver.navigate().refresh();
+			driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			Log.logInfo("页面加载超时，继续往下执行");
+		}	
+	}
+	
+	/**
+	 * 获取元素,没找到元素则断言失败
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  WebElement findElementAssert(final String elementName ,long waitElementTimeout){
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			element = wait.until(ExpectedConditions.presenceOfElementLocated(locator.getBy(elementName)));
+		} catch (Exception e) {
+			//e.printStackTrace();
+			srceenShots(elementName);
+			Log.logError("获取元素["+elementName+"]失败");
+		}
+		return element;
+	}
+	
+	/**
+	 * 获取元素,没找到元素则断言失败
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  WebElement findElementNotAssert(final String elementName ,long waitElementTimeout){
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			element = wait.until(ExpectedConditions.presenceOfElementLocated(locator.getBy(elementName)));
+		} catch (Exception e) {
+			Log.logInfo("元素["+elementName+"]不存在");
+			//e.printStackTrace();
+			srceenShots(elementName);
+		}
+		return element;
+	}
+	
+	/**
+	 * 获取一组元素
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  List<WebElement> findElements(final String elementName ,long waitElementTimeout){
+		List<WebElement> elements = new ArrayList<>();
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator.getBy(elementName)));
+		} catch (Exception e) {
+			//Log.logInfo("获取元素组["+elementName+"]失败");
+			//e.printStackTrace();
+			//srceenShots(elementName);
+		}
+		return elements;
+	}
+	
+	/**
+	 * 根据动态的元素路径获取元素
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  WebElement getElement(String type,String value,long waitElementTimeout){
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			if(type.equals("id")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value)));
+				element = driver.findElement(By.id(value));  
+			}else if(type.equals("xpath")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value)));
+			    element = driver.findElement(By.xpath(value));  
+			}else if(type.equals("css")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(value)));
+			    element = driver.findElement(By.cssSelector(value)); 
+			}   
+		} catch (Exception e) {
+			Log.logInfo("获取元素["+value+"]失败");
+			srceenShots("value");
+			//e.printStackTrace();
+		}
+		return element;
+    }
+	
+	/**
+	 * 根据动态的元素路径获取一组元素
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  List<WebElement> getElements(String type,String value,long waitElementTimeout){
+		List<WebElement> elements = null;
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			if(type.equals("id")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.id(value)));
+				elements = driver.findElements(By.id(value));  
+			}else if(type.equals("xpath")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(value)));
+				elements = driver.findElements(By.xpath(value));  
+			}else if(type.equals("css")){
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(value)));
+				elements = driver.findElements(By.cssSelector(value)); 
+			}   
+		} catch (Exception e) {
+			Log.logInfo("获取元素["+value+"]组失败");
+		}
+		return elements;
+    }
+	
+	/**
+	 * 检查勾选框是否被选中
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间(秒)
+	 */
+	
+	public  boolean isSelected(String elementName ,long waitElementTimeout){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			if(element.isSelected()){
+				Log.logInfo("元素【"+elementName+"】已勾选");
+				return true;
+			}else{
+				Log.logInfo("元素【"+elementName+"】未勾选");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("元素input不是checkbox类型");
+		}
+		return false;
+	}
+	
+	/**
+	 * 等待勾选框被选中
+	 * @param elepath 元素定位值
+	 * @param timeout 等待超时时间(秒)
+	 */
+	
+	public  boolean waitElementSelected(String elementName ,long timeout){
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		boolean res = false;
+		try {
+			res = wait.until(ExpectedConditions.elementToBeSelected(locator.getBy(elementName)));
+			if(res){
+				Log.logInfo("元素["+elementName+"]已勾选");
+				return true;
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
+			Log.logInfo("元素input不是checkbox类型");
+		}
+		Log.logInfo("元素【"+elementName+"】未勾选");
+		return res;
+	}
+	
+	/**
+	 * 检查元素是否存在
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间(秒)
+	 */
+	public  boolean isExist(String elementName ,long waitElementTimeout){
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, waitElementTimeout);
+		try {
+			element = wait.until(ExpectedConditions.presenceOfElementLocated(locator.getBy(elementName)));
+			Log.logInfo("元素["+elementName+"]存在");
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		srceenShots(elementName);
+		Log.logInfo("元素["+elementName+"]不存在dom中");
+		return false;
+	}
+	
+	/**
+	 * 检查元素是否可见
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间(秒)
+	 */
+	public  boolean isVisible(String elementName ,long waitElementTimeout){
+		WebElement element = findElementNotAssert(elementName, waitElementTimeout);
+		try {
+			if(element == null){
+				Log.logInfo("元素【"+elementName+"】不可见");
+				return false;
+			}
+			if(element.isDisplayed()){
+				Log.logInfo("元素【"+elementName+"】可见");
+				return true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("判断元素是否可见发生异常");
+		}
+		Log.logInfo("元素【"+elementName+"】不可见");
+		return false;
+	}
+	
+	/**
+	 * 检查元素是否可见
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间(秒)
+	 */
+	public  boolean isVisible(String elementName ,long waitElementTimeout ,boolean isAssert){
+		WebElement element = findElementNotAssert(elementName, waitElementTimeout);
+		try {
+			if(element.isDisplayed()){
+				Log.logInfo("元素【"+elementName+"】可见");
+				return true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		Log.logInfo("元素【"+elementName+"】不可见");
+		return false;
+	}
+	
+	/**
+	 * 等待元素可见
+	 * @param elepath 元素定位值
+	 * @param timeout 等待超时时间(秒)
+	 */
+	public  boolean waitElementVisible(String elementName ,long timeout){
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(locator.getBy(elementName)));
+			Log.logInfo("元素【"+elementName+"】可见");
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		srceenShots(elementName);
+		Log.logInfo("元素【"+elementName+"】不可见");
+		return false;
+	}
+	
+	/**
+	 * 等待元素不可见
+	 * @param elepath 元素定位值
+	 * @param timeout 等待超时时间(秒)
+	 */
+	public  boolean waitElementInvisibility(String elementName ,long timeout){
+		boolean res = false;
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		try {
+			res = wait.until(ExpectedConditions.invisibilityOfElementLocated(locator.getBy(elementName)));
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		if(res){
+			Log.logInfo("元素【"+elementName+"】不可见");
+		}else{
+			//srceenShots(elementName);
+			Log.logInfo("元素【"+elementName+"】可见");
+		}
+		return res;
+	}
+	
+	
+	
+	/**
+	 * 检查元素是否可操作
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间(秒)
+	 */
+	public  boolean isEnabled(String elementName ,long waitElementTimeout){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		if(element.isEnabled()){
+			Log.logInfo("元素【"+elementName+"】可操作");
+			return true;
+		}else{
+			Log.logInfo("元素【"+elementName+"】不可操作");
+		}
+		return false;
+	}
+	
+	/**
+	 * 等待元素可操作
+	 * @param elepath 元素定位值
+	 * @param timeout 等待超时时间(秒)
+	 */
+	public  boolean waitElementEnabled(String elementName ,long timeout){
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		try {
+			element = wait.until(ExpectedConditions.elementToBeClickable(locator.getBy(elementName)));
+			if(element != null){
+				Log.logInfo("元素【"+elementName+"】可操作");
+				return true;
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		srceenShots(elementName);
+		Log.logInfo("元素【"+elementName+"】不可操作");
+		return false;
+	}
+	
+	/**
+	 * 点击元素
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  void click(String elementName ,long waitElementTimeout){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {	
+			Log.logInfo("点击了["+elementName+"],元素["+elementName+"]");
+			element.click();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 点击元素
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param pageLoadTime 页面加载时间
+	 */
+	public  void click(String elementName ,long waitElementTimeout,long pageLoadTime){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			driver.manage().timeouts().pageLoadTimeout(pageLoadTime, TimeUnit.SECONDS);
+			Log.logInfo("点击了["+elementName+"],元素["+elementName+"]");
+			element.click();
+			driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			Log.logInfo("点击["+elementName+"],发生异常");
+		}
+	}
+	
+	/**
+	 * 点击元素
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param oprationNote 操作说明
+	 */
+	public  void click(String elementName ,long waitElementTimeout,String oprationNote){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			Log.logInfo("点击了["+oprationNote+"],元素["+elementName+"]");
+			element.click();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.logInfo("点击["+oprationNote+"],发生异常");
+		}
+	}
+	
+	/**
+	 * 点击元素
+	 * @param elementName 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param pageLoadTime 设置页面加载时间
+	 * @param oprationNote 操作说明
+	 */
+	public  void click(String elementName ,long waitElementTimeout,long pageLoadTime,String oprationNote){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		Log.logInfo("点击了"+"["+oprationNote+"]"+",元素"+"["+elementName+"]");
+		try {
+			driver.manage().timeouts().pageLoadTimeout(pageLoadTime, TimeUnit.SECONDS);
+			element.click();
+			driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			Log.logInfo("点击"+"["+oprationNote+"]发生异常");
+			e.printStackTrace();
+		}
+	}
+	
+	public  void sendTextNotClear(String elementName ,long waitElementTimeout,String content){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			Log.logInfo("对["+elementName+"],输入：["+content+"],元素["+elementName+"]");
+			element.sendKeys(content);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("输入文本发生异常");
+		}
+	}
+	
+	/**
+	 * 清空文本框，输入字符串
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param content 输入文本值
+	 */
+	public  void sendText(String elementName ,long waitElementTimeout,String content){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			Log.logInfo("清空["+elementName+"],输入：["+content+"],元素["+elementName+"]");
+			element.clear();
+			element.sendKeys(content);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("输入文本发生异常");
+		}
+	}
+	
+	/**
+	 * 清空文本框，输入字符串
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param content 输入文本值
+	 * @param oprationNote 操作说明
+	 */
+	public  void sendText(String elementName ,long waitElementTimeout,String content,String oprationNote){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			Log.logInfo("清空["+oprationNote+"],输入：["+content+"],元素["+elementName+"]");
+			element.clear();
+			element.sendKeys(content);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			Log.logInfo("输入文本发生异常");
+		}
+	}
+	
+	/**
+	 * 清空文本框，将文本字符串拆分成一个个字符输入到文本框中，此方法意在解决数量文本框输入相同数字（999,888）时，被js清空的情况
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param content 输入文本值
+	 * @param interval 输入一个字符后暂停时间
+	 */
+	public  void loopSendText(String elementName ,long waitElementTimeout,String content,int interval){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		try {
+			Log.logInfo("清空["+elementName+"],输入：["+content+"],元素["+elementName+"]");
+			element.clear();
+			char[] ch=content.toCharArray();
+			for(int i=0;i<ch.length;i++){
+				element = findElementAssert(elementName, waitElementTimeout);
+				element.sendKeys(String.valueOf(ch[i]));
+				Pub.sleep(interval);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("输入文本发生异常");
+		}
+	}
+	
+	/**
+	 * 获取元素属性值
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param attributeName 元素属性的名称
+	 */
+	public  String getAttributeValue(String elementName ,long waitElementTimeout,String attributeName){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		String text = null;
+		try {
+			text = element.getAttribute(attributeName);
+			Log.logInfo("获取"+elementName+"属性值:["+text+"],元素["+elementName+"]");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("获取"+elementName+"属性值发生异常");
+		}
+		return text;
+	}
+	
+	/**
+	 * 获取元素属性值
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param attributeName 元素属性的名称
+	 * @param oprationNote 操作说明
+	 */
+	public  String getAttributeValue(String elementName ,long waitElementTimeout,String attributeName,String oprationNote){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		String text = null;
+		try {
+			text = element.getAttribute(attributeName);
+			Log.logInfo("获取"+oprationNote+"属性值:["+text+"],元素["+elementName+"]");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("获取"+oprationNote+"属性值发生异常");
+		}
+		return text;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  String getText(String elementName ,long waitElementTimeout){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		String text = null;
+		try {
+			text = element.getText();
+			Log.logInfo("获取["+elementName+"]值:["+text+"],元素["+elementName+"]");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("获取["+elementName+"]值发生异常");
+		}
+		return text;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param oprationNote 操作说明
+	 */
+	public  String getText(String elementName ,long waitElementTimeout,String oprationNote){
+		WebElement element = findElementAssert(elementName, waitElementTimeout);
+		String text = null;
+		try {
+			text = element.getText();
+			Log.logInfo("获取["+oprationNote+"]值:["+text+"],元素["+elementName+"]");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.logInfo("获取["+oprationNote+"]值发生异常");
+		}
+		return text;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 * @param oprationNote 操作说明
+	 */
+	public  List<String> getTexts(String elementName ,long waitElementTimeout,String oprationNote){
+		List<String> texts =new ArrayList<String>();
+		try {
+			List<WebElement> elements =findElements(elementName, waitElementTimeout);
+			for(int i=0;i<elements.size();i++){
+				String text = elements.get(i).getText();
+				texts.add(text);
+			}
+			Log.logInfo("获取"+oprationNote+"值:"+texts+",元素"+"["+elementName+"]");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return texts;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param text 等待文本
+	 * @param timeout 超时时间(s)
+	 */
+	public  boolean  waitTextToBe(String elementName,String text,long timeout){
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		try {
+			return wait.until(ExpectedConditions.textToBePresentInElementLocated(locator.getBy(elementName),text));
+		} catch (Exception e) {
+			//e.printStackTrace();
+			Log.logInfo("等待目标文本发生异常");
+		}
+		return false;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param text 等待文本
+	 * @param timeout 超时时间(s)
+	 * @throws InterruptedException 
+	 */
+	public  boolean  waitTextContains(String elementName,String text,long timeout){
+		try {
+			WebElement element = null;
+			for (int i = 0; i < (timeout*2); i++) {
+				element = driver.findElement(locator.getBy(elementName));
+				if(element.getText().contains(text)){
+					Log.logInfo("目标元素["+elementName+"]的文本值包含"+text);
+					return true;
+				}
+				Thread.sleep(500);
+			}
+			Log.logInfo("目标元素["+elementName+"]的文本值不包含"+text);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param text 等待文本
+	 * @param timeout 超时时间(s)
+	 */
+	public  boolean  waitAttrValueToBe(String elementName,String text,long timeout){
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		try {
+			return wait.until(ExpectedConditions.textToBePresentInElementValue(locator.getBy(elementName),text));
+		} catch (Exception e) {
+			//e.printStackTrace();
+			//Log.logInfo("等待目标文本发生异常");
+		}
+		return false;
+	}
+	
+	/**
+	 * 获取元素文本值
+	 * @param elepath 元素定位值
+	 * @param text 等待文本
+	 * @param timeout 超时时间(s)
+	 * @throws InterruptedException 
+	 */
+	public  boolean  waitAttrValueContains(String elementName,String text,long timeout) throws InterruptedException{
+		WebElement element = null;
+		for (int i = 0; i < (timeout*2); i++) {
+			try {
+				element = driver.findElement(locator.getBy(elementName));
+				if(element.getAttribute("value").contains(text)){
+					Log.logInfo("目标元素["+elementName+"]的value值包含"+text);
+					return true;
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			Thread.sleep(500);
+		}
+		Log.logInfo("目标元素["+elementName+"]的value值不包含"+text);
+		return false;
+	}
+	
+	/**
+	 * 浏览器后退
+	 * @param pageLoadTimeout 页面加载时间
+	 */
+	public  void browserBack(long pageLoadTimeout ){
+		try {
+			driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
+			driver.navigate().back();
+			driver.manage().timeouts().pageLoadTimeout(defaultPageLoadTimeoutMax, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			Log.logInfo("页面后退刷新超时");
+		}
+	}
+	
+	/**
+	 * 获取元素
+	 * @param elepath 元素定位值
+	 * @param waitElementTimeout 等待元素超时时间
+	 */
+	public  boolean urlToBe(String url ,long timeout,boolean isAssert){
+		WebDriverWait wait = new WebDriverWait(driver, timeout);
+		boolean res = false;
+		try {
+			res = wait.until(ExpectedConditions.urlToBe(url));
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		if(isAssert){
+			if(!res){
+				Log.logError("actualUrl:["+driver.getCurrentUrl()+"],expectUrl:["+url+"],页面跳转错误");
+			} 
+		}
+		Log.logInfo("actualUrl:["+driver.getCurrentUrl()+"],expectUrl:["+url+"]");
+		return res;
+	}
+	
+	public  void srceenShots(String eleName) {
+		File file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		try {
+			//FileUtil.createFile(System.getProperty("user.dir")+"/test-output/elementInvisible/",Tool.format(Tool.CHECK_LOG_FORMAT));
+			FileUtils.copyFile(file, new File(System.getProperty("user.dir")+"/test-output/html-report/screenShot/"+projectName+format(REPORT_CSV_FORMAT)+"_"+eleName+".jpg"));
+			Log.logInfo("未找到的元素截图地址：["+System.getProperty("user.dir")+"/test-output/html-report/screenShot/"+projectName+format(REPORT_CSV_FORMAT)+"_"+eleName+".jpg]");
+		} catch (Exception e) {
+			Log.logInfo("截图失败");
+			e.printStackTrace();
+		}
+	}
+	
+
+
+
+	
+	
+	
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="sammydress">
+    <!-- 配置testng监听器 -->
+	<listeners>
+	     <listener class-name="com.globalegrow.base.TestngListener2" />
+	     <listener class-name="com.globalegrow.base.RetryListener" />
+	</listeners>
+	<parameter name="id"  value="${id}"/>
+	<!-- 运行谷歌浏览器 BW:firefox chrome ie-->
+	<parameter name="browserName"  value="${browserName}"/>
+	<!-- 配置文件名 -->
+	<parameter name="properties"  value="config_test_trunk"/>
+	<test name="version" preserve-order="true">
+		<classes>
+			<class name="com.globalegrow.sammydress.SD_register">
+				<methods>	
+					<include name="register_success_a" />							
+					<include name="register_success_b" />		
+					<include name="register_success_c" />
+					<include name="register_success_b" />
+					<include name="register_success_c" />	
+					<include name="register_success_d" />	
+					<include name="register_success_e" />
+				    <include name="register_fail1" />
+					<include name="register_fail2" />
+					<include name="register_fail3" />
+					<include name="register_fail4" />
+					<include name="register_fail5" />	
+					<include name="register_view_terms" />					
+				</methods>
+			</class>
+			<class name="com.globalegrow.sammydress.SD_login">
+				<methods >																								
+					<include name="Signin_linkClickCorrect" />							     
+					<include name="Signin_Success" />									
+					<include name="Signout_Success" />					
+					<include name="Signin_PasswordError" />	
+					<include name="resetpassword_ErrorMail" />	
+					<include name="resetpassword_CorrectMail" />		
+					<include name="resetpassword_Success" />																	
+					<include name="signinSwitchRegister" />		
+					<include name="registerSwitchSignin" />	 								
+				</methods>	
+			</class>
+		</classes>
+	</test>
+</suite>

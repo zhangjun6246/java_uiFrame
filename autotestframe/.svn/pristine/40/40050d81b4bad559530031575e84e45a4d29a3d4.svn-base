@@ -1,0 +1,513 @@
+package com.globalegrow.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+/**
+ * mysql数据库操作
+ * @@author linchaojiang
+ * 创建时间：2016-08-24
+ * 更新时间：2016-08-24
+ * 
+ */
+public class DBhandle {
+	
+	private static String driver = "";
+	private static String url = "";
+	private static String db = "";
+	private static String character = "";
+	private static String user = "";
+	private static String pass = "";
+	
+	static Connection conn = null;
+	static Statement statement = null;
+	static PreparedStatement ps = null;
+	static ResultSet rs = null;
+	@SuppressWarnings("rawtypes")
+	List<Map> list = new ArrayList<Map>();//返回所有记录
+	
+	/**
+	 * 初始化参数
+	 * @author linchaojiang
+	 * 创建时间:2017-03-16,最后更新时间:2017-03-16
+	 */
+	@SuppressWarnings("static-access")
+	public DBhandle(){
+		PropUtil.GetProperties("config/jdbc.properties");
+		this.driver = PropUtil.get("jdbc.driverClassName");
+		this.url = PropUtil.get("jdbc.url");
+		this.db = PropUtil.get("jdbc.db");
+		this.character = PropUtil.get("jdbc.character");
+		this.user = PropUtil.get("jdbc.username");
+		this.pass = PropUtil.get("jdbc.password");
+	}
+	
+	/**
+	 * 初始化参数
+	 * @param configPath
+	 * @author linchaojiang
+	 * 创建时间:2017-03-16,最后更新时间:2017-03-16
+	 */
+	@SuppressWarnings("static-access")
+	public DBhandle(String configPath){
+		PropUtil.GetProperties(configPath);
+		this.driver = PropUtil.get("jdbc.driverClassName");
+		this.url = PropUtil.get("jdbc.url");
+		this.db = PropUtil.get("jdbc.db");
+		this.character = PropUtil.get("jdbc.character");
+		this.user = PropUtil.get("jdbc.username");
+		this.pass = PropUtil.get("jdbc.password");
+	}
+	
+	/**
+	 * 连接数据库
+	 * @author linchaojiang
+	 */		
+	 public static void connDB() {		 
+		 try {
+		    Class.forName(driver).newInstance();
+		    conn = DriverManager.getConnection(url+db+character, user, pass);
+		    if (!conn.isClosed()) {
+		        Log.logInfo("Succeeded connecting to MySQL!");
+		    }		   
+		    statement = conn.createStatement();
+		 } catch (Exception e) {
+		     e.printStackTrace();
+		 }
+	}
+		
+	/**
+	 * 关闭数据库链接
+	 * @author linchaojiang
+	 */
+	 public static void closeDB() {		 
+		 if(rs != null ){			  
+			 try {
+				rs.close();
+			 } catch (SQLException e) {
+				e.printStackTrace();
+			 }			  
+		  }		  
+		  if(statement != null){			  
+			  try {
+				 statement.close();
+			  } catch (SQLException e) {
+				 e.printStackTrace();
+			  }
+		  }
+		  if(conn != null){
+		     try {
+		         conn.close();
+		         Log.logInfo("Database connection terminated!");
+		     } catch (SQLException e) {
+		         e.printStackTrace();
+		   	 }
+		  }
+	 }	 		
+	 
+
+	/**
+	 * 根据查询sql查询数据
+	 * @param sql
+	 * @return List
+	 * @author linchaojiang
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List query(String sql){
+		connDB();
+		int count;
+        try {
+			rs = statement.executeQuery(sql);
+			ResultSetMetaData rsmd;
+			rsmd = rs.getMetaData();
+			count = rsmd.getColumnCount();
+	        while(rs.next()){
+	        	Map  map = new HashMap();
+	        	for(int i=1;i<=count;i++){
+	            	String label=rsmd.getColumnLabel(i);
+	            	Object object= rs.getObject(i);
+	            	map.put(label.toLowerCase(), object);
+	        	}
+	        	list.add(map);           	            	      	
+	        }	        
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}      
+		return list;		 
+	 }
+	 
+	 /**
+	  * 数据插入
+	  * @param sql
+	  * @author linchaojiang
+	  */
+	 public void insert(String sql){
+		    connDB(); 
+		    try {
+				statement.execute(sql);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+				closeDB();
+			}	 
+	 }
+	 
+	 
+	 /**
+	  * 数据更新
+	  * @author linchaojiang
+	  */
+	 public void update(String sql){		 
+		 connDB();
+	     try {
+			 statement.execute(sql);
+		 } catch (SQLException e) {
+			 e.printStackTrace();
+		 }finally {
+			 closeDB();
+		 }		 
+	 } 
+	 
+	 /**
+	  * 数据删除
+	  */
+	 public void delete(String sql){
+		 connDB();
+	     try {
+			 statement.execute(sql);
+		 } catch (SQLException e) {
+			 e.printStackTrace();
+		 }finally {
+			 closeDB();
+		 }	 
+	 }
+	 
+	
+	/**
+	 * 向auto_project表写入项目数据,如果项目已存在则不写
+	 * @author linchaojiang,创建时间:2016-12-14,更新时间:2012-12-15
+	 */
+	@SuppressWarnings({ "rawtypes", "static-access" })
+	public void wpj(String projectName){
+		DBhandle dBhandle = new DBhandle();
+		//String projectName = "sammydress";
+		String queryProjectSql = "select *  from auto_project where name ="+"'"+projectName+"'";
+		List list = dBhandle.query(queryProjectSql);
+		if(list.size()==0){
+			dBhandle.connDB();
+			String sql = "INSERT INTO `auto_project` (name,createrTime,updateTime`) values ("+"'"+projectName+"'"+", '2016-12-09 13:47:48', '2016-12-09 13:47:53');";
+			dBhandle.insert(sql);
+		}else {
+			Log.logInfo("项目已存在！！！");
+		}
+	}
+		
+	/**
+	 * 把执行结果的数据写入数据库
+	 * @author linchaojiang,创建时间:2016-12-14,更新时间:2012-12-15
+	 */
+	public void insertDataInDb(String filePath,String projectName,String taskid,String jobName,String runPerson,String env){
+		
+		/*String projectName = "sammydress";
+		String taskid = "2";
+		String jobName = "sammydress_test_address";
+		String runPerson = "admin";
+		String env = "config_prd";
+		String filePath = "test-output/html-report/sammydressw/5-sammydress/result.txt";*/
+		List<String> rxt = FileUtil.readTxtFile(filePath);
+		List<String> result = new ArrayList<String>();
+		for(String ss:rxt){
+			String[] re = ss.split(";");
+			if(re[3].equals("Success")||re[3].equals("Failure")){
+				result.add(ss);
+			}
+		}
+		connDB(); 
+	    try {
+	    	ps = conn.prepareStatement("insert into auto_runinfo (projectName,taskid,jobname,module,testName,runTime,runPerson,runResult,env) "
+	    			+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	        for (int i = 0; i < result.size(); i++) {
+	        	String[] runInfo = result.get(i).split(";");
+	            ps.clearParameters();
+	            ps.setString(1, projectName);
+	            ps.setString(2, taskid);
+	            ps.setString(3, jobName);
+	            ps.setString(4, runInfo[1]);
+	            ps.setString(5, runInfo[2]);
+	            ps.setString(6, runInfo[0]);
+	            ps.setString(7, runPerson);
+	            ps.setString(8, runInfo[3]);
+	            ps.setString(9, env);
+	            ps.execute();
+	        }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		}		
+	}
+		
+	/**
+	 * 查询项目所有的场景
+	 * @author linchaojiang
+	 */
+	@SuppressWarnings("rawtypes")
+	public static void testuu(){
+		
+		String projectName = "sammydress";
+		DBhandle dBhandle = new DBhandle();
+		String sql = "select *  from auto_testcase where projectName = "+"'"+projectName+"'";
+		List list = dBhandle.query(sql);
+		System.out.println(list.size());
+		for(int i = 0;i<list.size();i++){
+			Map map = (Map)list.get(i);
+			System.out.println("id = :"+map.get("id"));
+		}
+	}
+	
+	
+	/**
+	 * 把执行结果的数据写入数据库
+	 * @param json
+	 * @author linchaojiang,创建时间:2016-12-14,更新时间:2012-12-15
+	 */
+	@SuppressWarnings("rawtypes")
+	public void insertDataInDb1(String json,Map<String, List> map){					
+		connDB(); 
+		Log.logInfo("开始把测试结果数据写入数据库!!!");
+	    try {
+	    	 ps = conn.prepareStatement("insert into auto_runinfo (id,test_id,test_name,project_code,module_code,"
+	    	 		+ "env,job,taskid,run_person,run_time,run_result,os,environment,imgName,run_finish_time,manual_test_time) "
+	    	 		+ "values (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	    	 try {
+	 			JSONObject ob = JSONObject.fromObject(json);			
+	 			String project_code = ob.getString("project_code");
+	 			String env = ob.getString("env");
+	 			String job = ob.getString("job");
+	 			String taskid = ob.getString("task_id");
+	 			String run_person = ob.getString("run_person");
+	 			String os = ob.getString("os");	
+	 			String environment = ob.getString("environment");	
+	 			JSONArray data = ob.getJSONArray("data");
+	 			Log.logInfo("data:"+data.size());
+	 			for(int i = 0;i<data.size();i++){
+	 				JSONObject info = data.getJSONObject(i);
+	 				String test_name = info.getString("test_name");
+	 				String manual_test_time = "";
+	 				try {
+	 					manual_test_time = map.get(test_name).get(6).toString().trim();
+					} catch (Exception e) {
+						manual_test_time = "";
+						Log.logInfo("读取手工测试时间异常!!!");
+						e.printStackTrace();
+					}
+	 				ps.clearParameters();
+	 				ps.setString(1, getUUID());
+		            ps.setString(2, info.getString("test_id"));
+		            ps.setString(3, info.getString("test_name"));
+		            ps.setString(4, project_code);
+		            ps.setString(5, info.getString("module_code"));
+		            ps.setString(6, env);
+		            ps.setString(7, job);
+		            ps.setString(8, taskid);
+		            ps.setString(9, run_person);
+		            ps.setString(10, info.getString("run_time"));
+		            ps.setString(11, info.getString("run_result"));
+		            ps.setString(12, os);
+		            ps.setString(13, environment);
+		            ps.setString(14, info.getString("imgName"));
+		            ps.setString(15, info.getString("run_finish_time"));
+		            ps.setString(16, manual_test_time);
+		            ps.execute();
+	 			}
+	 			Log.logInfo("数据已成功写入数据库！！！");
+	 		} catch (Exception e) {
+	 			e.printStackTrace();
+	 			Log.logInfo(e.getMessage());
+	 			Log.logInfo("数据库写入数据库异常！！！");
+	 		}
+		} catch (SQLException e) {
+			Log.logInfo("连接数据库异常！！！");
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		}		    
+	}
+	
+	/**
+	 * 把执行结果的数据写入数据库
+	 * @param json
+	 * @author linchaojiang,创建时间:2016-12-14,更新时间:2012-12-15
+	 */
+	@SuppressWarnings("rawtypes")
+	public void insertDataInDb2(HashMap<String,String> headmap,HashMap<String, List<String>> datamap,HashMap<String,Map<String, String >> casemap){ 
+		
+		connDB(); 
+		Log.logInfo("开始把测试结果数据写入数据库!!!");
+		try {
+			 ps = conn.prepareStatement("insert into auto_runinfo (id,test_id,test_name,project_code,module_code,"
+		    	 		+ "env,job,taskid,run_person,run_time,run_result,os,environment,imgName,run_finish_time,manual_test_time,video_path) "
+		    	 		+ "values (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    	 try {
+			Iterator keys = datamap.keySet().iterator();  
+    		
+            while(keys.hasNext()){  
+                String key = (String)keys.next();
+                datamap.get(key).get(0);	                
+                String video_path = "../videoShot/"+datamap.get(key).get(7)+"/"+datamap.get(key).get(3)+".mp4";
+                Map<String, String> cases =casemap.get(key);
+                System.out.println(cases);
+                
+                String   manual_test_time;//手工测试时间
+                if(casemap.get(key)==null){
+                	manual_test_time="0";
+                   }else{
+                	   manual_test_time=cases.get("manual_test_time");
+                	   
+                   } 
+                ps.clearParameters();
+                ps.setString(1, getUUID());
+                ps.setString(2, datamap.get(key).get(6));
+	            ps.setString(3, datamap.get(key).get(3));
+	            ps.setString(4, headmap.get("project_code"));
+	            ps.setString(5, datamap.get(key).get(2));
+	            ps.setString(6, headmap.get("env"));
+	            ps.setString(7, headmap.get("job"));
+	            ps.setString(8, headmap.get("task_id"));
+	            Log.logInfo("run_person:"+headmap.get("run_person"));
+	            ps.setString(9, headmap.get("run_person"));
+	            ps.setString(10, datamap.get(key).get(0));
+	            ps.setString(11, datamap.get(key).get(4));
+	            ps.setString(12, headmap.get("os"));
+	            ps.setString(13, headmap.get("environment"));
+	            ps.setString(14, datamap.get(key).get(5));
+	            ps.setString(15, datamap.get(key).get(1));
+	            ps.setString(16, manual_test_time);
+	            ps.setString(17, video_path);	          
+	            ps.execute();
+            }
+ 			Log.logInfo("数据已成功写入数据库！！！");
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 			Log.logInfo(e.getMessage());
+ 			Log.logInfo("数据库写入数据库异常！！！");
+ 		}
+	} catch (SQLException e) {
+		Log.logInfo("连接数据库异常！！！");
+		e.printStackTrace();
+	}finally {
+		closeDB();
+	}		    
+	}
+	
+	/**
+	 * 把执行结果的数据写入数据库,写入到平台数据库
+	 * @param json
+	 * @author linchaojiang,创建时间:2016-12-14,更新时间:2012-12-15
+	 */
+	@SuppressWarnings("rawtypes")
+	public void insertDataInDb3(HashMap<String,String> headmap,HashMap<String, List<String>> datamap,HashMap<String,Map<String, String >> casemap,DBhandle bhandle){ 
+		
+		bhandle.connDB(); 
+		Log.logInfo("开始把测试结果数据写入数据库!!!");
+		try {
+			 ps = conn.prepareStatement("insert into auto_runinfo (id,test_id,test_name,project_code,module_code,"
+		    	 		+ "env,job,taskid,run_person,run_time,run_result,os,environment,imgName,run_finish_time,manual_test_time,video_path,log_id) "
+		    	 		+ "values (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+    	 try {
+			Iterator keys = datamap.keySet().iterator();  
+    		
+            while(keys.hasNext()){  
+                String key = (String)keys.next();
+                datamap.get(key).get(0);	                
+                String video_path = "../videoShot/"+datamap.get(key).get(7)+"/"+datamap.get(key).get(3)+".mp4";
+                Map<String, String> cases =casemap.get(key);
+                System.out.println(cases);
+                
+                String   manual_test_time;//手工测试时间
+                if(casemap.get(key)==null){
+                	manual_test_time="0";
+                   }else{
+                	   manual_test_time=cases.get("manual_test_time");
+                	   
+                   } 
+                ps.clearParameters();
+                ps.setString(1, getUUID());
+   
+                ps.setString(2, cases.get("id"));
+               
+	            ps.setString(3, datamap.get(key).get(3));
+	            ps.setString(4, headmap.get("project_code"));
+	            ps.setString(5, datamap.get(key).get(2));
+	            ps.setString(6, headmap.get("env"));
+	            ps.setString(7, headmap.get("job"));
+	            ps.setString(8, headmap.get("task_id"));
+	            Log.logInfo("run_person:"+headmap.get("run_person"));
+	            ps.setString(9, headmap.get("run_person"));
+	            ps.setString(10, datamap.get(key).get(0));
+	            ps.setString(11, datamap.get(key).get(4));
+	            ps.setString(12, headmap.get("os"));
+	            ps.setString(13, headmap.get("environment"));
+	            ps.setString(14, datamap.get(key).get(5));
+	            ps.setString(15, datamap.get(key).get(1));
+	            ps.setString(16, manual_test_time);
+	            ps.setString(17, video_path);	
+	            ps.setString(18, datamap.get(key).get(6));
+	            ps.execute();
+            }
+ 			Log.logInfo("数据已成功写入数据库！！！");
+ 		} catch (Exception e) {
+ 			e.printStackTrace();
+ 			Log.logInfo(e.getMessage());
+ 			Log.logInfo("数据库写入数据库异常！！！");
+ 		}
+	} catch (SQLException e) {
+		Log.logInfo("连接数据库异常！！！");
+		e.printStackTrace();
+	}finally {
+		closeDB();
+	}		    
+	}
+	
+	/**
+	   * 随机生成UUID
+	   * @return
+	*/
+	public static synchronized String getUUID(){		
+		Date date=new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+	    UUID uuid=UUID.randomUUID();
+	    String str = uuid.toString(); 
+	    String uuidStr=str.replace("-", "")+sdf.format(date);
+	    return uuidStr;
+	}
+
+	public static void main(String[] args) {
+		DBhandle db = new DBhandle();
+		//db.connDB();
+		//System.out.println(getUUID());
+		Map<String, String> run_id_temp = (Map<String, String>) db.query("SELECT MAX(run_id) as run_id FROM auto_interfacerunresult WHERE jobName = 'zaful_201707229531'").get(0);
+		String run_id = String.valueOf(run_id_temp.get("run_id"));
+		System.out.println(run_id);
+	}
+}

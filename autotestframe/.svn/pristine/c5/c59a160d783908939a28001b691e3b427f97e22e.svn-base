@@ -1,0 +1,156 @@
+package com.globalegrow.interfacetest;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+import com.globalegrow.util.Log;
+
+import net.sf.json.JSONObject;
+
+
+public class InterfaceTestApi {
+
+	public static List<Map<String, String>> allTestData ;
+	public static List<Map<String, String>> preTestData ;
+	public static Map<String, Map<String, String>> allTestReportData = new HashMap<>();
+	public static Map<String, Map<String, String>> preTestReportData = new HashMap<>();
+	public static Map<String, String> allRelateData = new HashMap<>();
+	
+	public InterfaceTestApi() {
+	}
+	
+	public static void  saveRelated(Map<String, String> testData,Map<String, String> testReportData){
+		try {
+			if(testData.get("request_relationparameter") != null && ! ((String) testData.get("request_relationparameter")).trim().equals("")){
+				@SuppressWarnings("unchecked")
+				Map<String, String> relateData = JSONObject.fromObject(testData.get("request_relationparameter"));
+				String responseBody = testReportData.get("responseBody");
+				for (String relatedkey : relateData.keySet()) {
+					//通过正则表达式获取关联值，如果匹配到多个都保存在list中，默认取第一个匹配值赋给关联对象
+					List<String> list = new ArrayList<>();
+					if(responseBody.contains(relateData.get(relatedkey))){
+						String pattern  = "";
+						for (int i = 0; i < 3; i++) {
+							if(i==0){
+								pattern = "\""+relateData.get(relatedkey)+"\":\"(.*?)\"";
+							}else if (i == 1) {
+								pattern = "\""+relateData.get(relatedkey)+"\":(.*?),";
+							}else {
+								pattern = "\""+relateData.get(relatedkey)+"\":(.*?)\\}";
+							}
+							Pattern r = Pattern.compile(pattern);
+							Matcher m = r.matcher(responseBody);
+							while (m.find()) {
+								list.add(m.group(1));
+							}
+							if(list.size()>0){
+								break;
+							}
+						}
+						allRelateData.put(relatedkey, list.get(0));
+					}else{
+						Log.logInfo("没有找到关联的值，请检查关联的键值是否正确,关联的值为："+relatedkey);
+						Log.logInfo("接口实际返回数据为："+responseBody);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+		
+	}
+	
+	public static void  assertResult(Map<String, String> testData,Map<String, String> testReportData){
+		try {
+			if(testData.get("expect_result") != null && !testData.get("expect_result").trim().equals("")){
+				@SuppressWarnings("unchecked")
+				Map<String, String> exceptRes = JSONObject.fromObject(testData.get("expect_result"));
+				String responseBody = testReportData.get("responseBody");
+				for (String exceptReskey : exceptRes.keySet()) {
+					List<String> list = new ArrayList<>();
+					if(responseBody.contains(exceptReskey)){
+						String pattern  = "";
+						for (int i = 0; i < 3; i++) {
+							if(i==0){
+								pattern = "\""+exceptReskey+"\":\"(.*?)\"";
+							}else if (i == 1) {
+								pattern = "\""+exceptReskey+"\":(.*?),";
+							}else {
+								pattern = "\""+exceptReskey+"\":(.*?)\\}";
+							}
+							Pattern r = Pattern.compile(pattern);
+							Matcher m = r.matcher(responseBody);
+							while (m.find()) {
+								list.add(m.group(1));
+							}
+							if(list.size()>0){
+								break;
+							}
+						}
+						if(list.size() == 0){
+							Log.logInfo("接口返回数据中没有找到期望值为："+exceptReskey+"的数据！");
+							Log.logInfo("接口实际返回数据为："+responseBody);
+							myAssert.fail();
+						}else {
+							myAssert.assertEquals(list.get(0), String.valueOf(exceptRes.get(exceptReskey)));
+						}
+					}else{
+						Log.logInfo("接口返回数据中没有找到期望值为："+exceptReskey+":"+exceptRes.get(exceptReskey)+"的数据！");
+						Log.logInfo("接口实际返回数据为："+responseBody);
+						myAssert.fail();
+					}
+				}
+				
+				
+				/*if(testData.get("assertType").equals("contains")){
+					for (String exceptReskey : exceptRes.keySet()) {
+						myAssert.assertInclude(testReportData.get("responseData"), exceptRes.get(exceptReskey), exceptRes.get(exceptReskey));
+					}
+				}else {
+					for (String exceptReskey : exceptRes.keySet()) {
+						List<String> list = new ArrayList<>();
+						String pattern = "\""+testData.get(exceptReskey)+"\":\"(.*?)\"";
+						Pattern r = Pattern.compile(pattern);
+						Matcher m = r.matcher(responseData);
+						while (m.find()) {
+							list.add(m.group(1));
+						}
+						myAssert.assertEquals(list.get(0), exceptRes.get(exceptReskey));
+					}
+				}*/
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void preInterfaceTest(int i) throws Exception {
+		Map<String, String> testReportData = HttpUtils.send(preTestData.get(i));
+		testReportData.put("jobName", preTestData.get(i).get("jobname"));
+		testReportData.put("run_id", preTestData.get(i).get("run_id"));
+		testReportData.put("test_id", preTestData.get(i).get("test_id"));
+		testReportData.put("run_order", preTestData.get(i).get("run_order"));
+		preTestReportData.put(preTestData.get(i).get("test_name"), testReportData);
+		saveRelated(preTestData.get(i),testReportData);
+		assertResult(preTestData.get(i),testReportData);
+	}
+	
+	public static void interfaceTest(int i) throws Exception {
+		Map<String, String> testReportData = HttpUtils.send(allTestData.get(i));
+		testReportData.put("jobName", allTestData.get(i).get("jobname"));
+		testReportData.put("run_id", allTestData.get(i).get("run_id"));
+		testReportData.put("test_id", allTestData.get(i).get("test_id"));
+		testReportData.put("run_order", allTestData.get(i).get("run_order"));
+		allTestReportData.put(allTestData.get(i).get("test_name"), testReportData);
+		saveRelated(allTestData.get(i),testReportData);
+		assertResult(allTestData.get(i),testReportData);
+	}
+}

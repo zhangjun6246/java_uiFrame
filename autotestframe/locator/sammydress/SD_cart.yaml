@@ -1,0 +1,276 @@
+#1 顶部导航栏的购物车
+navBar_MyCart:
+  type: id
+  value: js_topBagWarp
+#2 空购物车页面的CONTINUE SHOPPING
+cartPage_ContinueShopping:
+  type: linkText
+  value: CONTINUE SHOPPING
+#3 空购物车页面的提示语,Your shopping bag is empty.
+cartPage_EmptyCartNote:
+  type: xpath
+  value: "//div[@class='empty']/div[@class='info']/h3"
+#4 主导航标题栏的What's New
+navMain_WhatsNew:
+  type: css
+  value: "li a.nav_t[href='/new-products.html']"
+#5 产品页的SKU
+productPage_ProductSKU:
+  type: xpath
+  value: "//div[@class='pro_grade clearfix']/em"
+#6 产品页的销售价
+productPage_ProductPrice:
+  type: id
+  value: unit_price
+#7 产品页的增加产品数量的按钮
+productPage_AddProductNum:
+  type: css
+  value: div.order_q_box a.c_tagbg.btn_add
+#8 产品页的减少产品数量的按钮
+productPage_ReduceProductNum:
+  type: css
+  value: div.order_q_box a.c_tagbg.btn_reduce
+#9 产品页的产品数量文本框
+productPage_ProductNum:
+  type: id
+  value: js_input_quantity
+#10 产品页的市场价，或者叫产品原价
+productPage_ProductUnitPrice:
+  type: xpath
+  value: "//div/p/span/span[@class='my_shop_price ']"
+#11 添加到购物车按钮
+productPage_AddCart:
+  type: id
+  value: new_addcart
+#12 购物车页面的CLEAR ALL按钮
+cartPage_ClearAllBtn:
+  type: id
+  value: del_all_action
+#13 指定的 购物车中商品条目的标题
+cartPage_ProductItemTitle:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']"
+#14 指定的 购物车中的商品条目
+cartPage_ProductItem:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../.."
+#15 指定的 购物车中的商品条目的数量输入框
+cartPage_ProductItemNumInput:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li2']/input[@class='js_goods_number']"
+#16 指定的 购物车中的商品条目的数量加按钮
+cartPage_ProductItemNumAdd:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li2']/span[@class='js_cart_add']"
+#17 指定的 购物车中的商品条目的数量减按钮
+cartPage_ProductItemNumReduce:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li2']/span[@class='js_cart_reduce']"
+#18 指定的 购物车中的商品条目的原价
+cartPage_ProductItemCostPrice:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li3']/p[@class='costPrice']/span[@class='my_shop_price']"
+#19 指定的 购物车中的商品条目的销售价
+cartPage_ProductItemShopPrice:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li3']/p[2]/span[@class='my_shop_price']"
+#20 指定的 购物车中的商品条目的SUBTOTAL
+cartPage_ProductItemSubTotal:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li5']/span[@class='my_shop_price']"
+#21 购物车页面的Select All复选框
+cartPage_SelectAll:
+  type: id
+  value: selected_allGoods
+#22 购物车页面的库存数量不足提示
+productPage_ErrInfoStockLess:
+  type: id
+  value: action_msg
+#23 产品页的添加到收藏夹的心型按钮
+productPage_AddToFavorites:
+  type: css
+  value: a.addToFavBtn.fl.pt15.on i.c_tagbg
+#24 产品页的己添加到收藏夹的红心标志
+productPage_InFavorites:
+  type: css
+  value: a.addToFavBtn.fl.pt15.on.addToFavBtnOn i.c_tagbg
+#25 收藏夹页面各栏下的商品(如己收藏商品)的添加到购物车按钮
+favoPage_FavoritesToCart:
+  type: xpath
+  value: "//a[@data-goods_id='ProductID']"
+#26 在收藏夹页面点击添加到购物车按钮后，弹出的模态窗口上的 添加到购物车 按钮
+favoPage_PopAddToCart:
+  type: id
+  value: js_popAddTopCart
+#27 在收藏夹页面点击添加到购物车按钮后，再点击添加到购物车按钮后，弹出的模态窗口上的 查看购物车 按钮
+favoPage_PopViewBag:
+  type: xpath
+  value: "//div[@class='btn clearfix']/a[1]"
+#28 指定的 购物车中的商品条目的删除按钮
+cartPage_ProductDeleteBtn:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li4']/p[@class='removeWarp']/a"
+#29 在商品条目上点击删除按钮后，弹出的模态窗口上的 确认 按钮
+cartPage_DeleteYesBtn:
+  type: css
+  value: a.xubox_yes.xubox_botton2
+#30 在商品条目上点击删除按钮后，弹出的模态窗口上的 确认 按钮
+cartPage_CartTotal:
+  type: css
+  value: strong span.my_shop_price
+#31 不勾选或勾选任何商品，点击CLEAR ALL后，弹出的模态窗口上的文字
+cartPage_UncheckCheckPopText:
+  type: css
+  value: span.xubox_msg.xubox_text
+#32 不勾选任何商品，点击CLEAR ALL或SAVE FOR LATER后，弹出的模态窗口上的 确认 按钮
+cartPage_UncheckPopBtn:
+  type: css
+  value: a.xubox_yes.xubox_botton1
+#33 指定的 购物车中商品条目的复选框
+cartPage_ProductCheckbox:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li1']/div[@class='item item1']/input"
+#34 勾选商品，点击CLEAR ALL后，弹出的模态窗口上的 确认 按钮
+cartPage_CheckPopBtn:
+  type: css
+  value: a.xubox_yes.xubox_botton2
+#35 购物车页面的全部勾选复选框
+cartPage_SelectAllCheckbox:
+  type: id
+  value: selected_allGoods
+#36 购物车中任意商品条目的复选框
+cartPage_AnyProductCheckbox:
+  type: css
+  value: input.js_selectGoods
+#37 非空购物车页面的CONTINUE SHOPPING
+cartPage_ContinueShoppingNotEmpty:
+  type: css
+  value: div.continueShopping.fr a
+#38 购物车页面的SAVE FOR LATER按钮
+cartPage_SaveForLaterBtn:
+  type: linkText
+  value: SAVE FOR LATER
+#39 购物车页面的SAVE FOR LATER栏
+cartPage_SaveForLaterColumn:
+  type: xpath
+  value: "//ul/li/a[text()='SAVE FOR LATER']"
+#40 登录页面的登录按钮，重复使用
+loginPage_SigninBtn:
+  type: id
+  value: js_signInBtn
+#41 购物车页面的SAVE FOR LATER栏下的商品,或者FAVORITE下的商品，或者浏览历史栏下的商品(但当只有浏览历史栏显示时，div会没有block属性，所以这种情况下，不要用这个方式定位)
+cartPage_SaveForLaterProduct:
+  type: xpath
+  value: "//div[contains(@style,'display: block;')]/div/ul/li/a[contains(@href,'ProductID')]"
+#42 收藏夹页面各栏下的商品(如己收藏商品)，由该商品的添加到购物车按钮找到
+favoPage_FavoritesProduct:
+  type: xpath
+  value: "//a[@data-goods_id='ProductID']//..//.."
+#43 收藏夹页面的Save For Later栏
+favoPage_SaveForLaterColumn:
+  type: linkText
+  value: Save For Later
+#44 用户页面的 编辑信息 按钮
+userPage_EditBtn:
+  type: linkText
+  value: Edit Profile
+#45 用户页面的 地址栏
+userPage_AddressBookColumn:
+  type: linkText
+  value: Address Book
+#46 用户页面的地址栏下的 删除收货地址 按钮
+userPage_DeleteAddressBtn:
+  type: linkText
+  value: Delete
+#47 购物车页面的 结算 按钮
+cartPage_ProceedToCheckoutBtn:
+  type: linkText
+  value: PROCEED TO CHECKOUT
+#48 确认收货地址页面的 firstname
+conAddrPage_FirstName:
+  type: id
+  value: firstname_0
+#49 确认收货地址页面的 lastname
+conAddrPage_LastName:
+  type: id
+  value: lastname_0
+#50 确认收货地址页面的 电子邮件
+conAddrPage_Email:
+  type: id
+  value: email_0 
+#51 确认收货地址页面的 地址1
+conAddrPage_AddressLine1:
+  type: id
+  value: addressline1_0 
+#52 确认收货地址页面的 地址2
+conAddrPage_AddressLine2:
+  type: id
+  value: addressline2_02  
+#53 确认收货地址页面的 Country/Region
+conAddrPage_CountryRegion:
+  type: xpath
+  value: "//select[@name='country']"
+#54 确认收货地址页面的 Country/Region 下面的 United States
+conAddrPage_UnitedStates:
+  type: xpath
+  value: "//option[@value='41']"
+#55 确认收货地址页面的 State/County
+conAddrPage_StateCounty:
+  type: xpath
+  value: "//select[@name='province']"
+#56 确认收货地址页面的 State/County 下面的 New York
+conAddrPage_NewYork:
+  type: xpath
+  value: "//option[@value='New York']"
+#57 确认收货地址页面的 city
+conAddrPage_City:
+  type: id
+  value: consignee_02 
+#58 确认收货地址页面的 电话号码
+conAddrPage_Tel:
+  type: id
+  value: tel_0
+#59 确认收货地址页面的 邮政编码
+conAddrPage_ZipCode:
+  type: id
+  value: zipcode_0  
+#60 确认收货地址页面的 提交
+conAddrPage_ComfirmBtn:
+  type: xpath
+  value: "//div[@id='consignee0']/p/button"
+#61 结算页面的 下单 按钮
+checkOutPage_PlaceYourOrderBtn:
+  type: id
+  value: js_upFormBtn
+#62 购物车页面的 货运价格
+cartPage_ShippingPrice:
+  type: xpath
+  value: "//dd/strong[text()='TypeOfShipping']/../em/span[@class='my_shop_price']"
+#63 结算页面的 货运价格
+checkOutPage_ShippingPrice:
+  type: xpath
+  value: "//li/label[text()='TypeOfShipping']/../../li[@class='w_col3']/span[@class='my_shop_price fb']"
+#64 购物车页面的 浏览历史 栏名称
+cartPage_HistoryLink:
+  type: linkText
+  value: YOUR RECENT HISTORY
+#65 购物车页面的 浏览历史 栏下的商品
+cartPage_HistoryProduct:
+  type: xpath
+  value: "//div[@class='scrollBox youRecentHistory']/div/ul/li/a[contains(@href,'ProductID')]"
+#66 购物车页面的FAVORITE栏名称
+cartPage_FavoriteLink:
+  type: linkText
+  value: FAVORITE
+#67 指定的 购物车中的商品条目的添加到收藏夹按钮
+cartPage_ProductMoveToFavoBtn:
+  type: xpath
+  value: "//p/a[@href='ProductItemHtml']/../../../../li[@class='li4']/p/a[@title='Move to Favorite']"
+#68 购物车中的商品条目，泛指，如果购物车中有很多件商品，则会返回很多条
+cartPage_AllProductItem:
+  type: xpath
+  value: "//ul[@class='products clearfix ']"
+#69 确认收货地址页面的 Country/Region 下面的 United Kingdom
+conAddrPage_UnitedKingdom:
+  type: xpath
+  value: "//option[@value='40']"

@@ -1,0 +1,12 @@
+server.host=10.40.6.24
+## MySQL
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://10.40.6.24:3306/
+#jdbc.url=jdbc:mysql://10.40.6.131:3306/
+jdbc.character=?useUnicode=true&characterEncoding=gb2312
+jdbc.db=uiautotest
+jdbc.username=root
+jdbc.password=oo4zv~S99R+@4ml0ww?#
+
+
+

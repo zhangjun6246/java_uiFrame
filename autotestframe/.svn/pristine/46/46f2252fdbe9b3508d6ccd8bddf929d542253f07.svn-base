@@ -1,0 +1,28 @@
+#测试URL 正式环境： http://sammydress.com/ 测试环境a分支：http://sammydress.com.a.s1.egomsl.com/
+testUrl=http://sammydress.com.trunk.s1.egomsl.com/
+#报告地址,注意:路径中的\需要用\\表示
+reportPath=test-output\\html-report\\
+#截图地址
+screenShotPath=test-output/html-report/screenShot/
+#资源地址
+resourcesPath=resources/
+#日志地址
+logPath=log/project.log
+#运行环境test,prd
+env=test
+#是否开启PASS截图,1-开启,0-不开启
+screenShotWhilePassFlag=1
+#数据是否写入数据库(true写入,false不写入)
+writeindb=false
+#是否发送邮件(true or false)
+sendresultmail=true
+#接收邮件地址
+receivers=autotest01@globalegrow.com,787035677@qq.com
+#抄送邮件地址
+ccaddress=18666904557@163.com
+#自动化人员地址
+automailaddress=linchaojiang@globalegrow.com
+#接收rtx消息id
+receiverRtxMsgId=10537
+#自动化负责人rtxid
+autoRtxMsgId=10537

@@ -1,0 +1,208 @@
+#1 导航栏的Signin span,即登录链接
+navBar_Signin:
+  type: id
+  value: js_isNotLogin
+#2 登录页面的Meber Sign in标题
+loginPage_MemberSignIn:
+  type: xpath
+  value: "//section/h3"
+#3 首页的注册链接
+navBar_Join:
+  type: linkText
+  value: / Join
+#4 注册页面的注册按钮
+joinPage_RegisterBtn:
+  type: id
+  value: js_registBtn
+#5 登录页面的email输入框
+loginPage_EmailInput:
+  type: id
+  value: email
+#6 登录页面的密码输入框
+loginPage_PasswordInput:
+  type: id
+  value: passwordsign
+#7 登录页面的验证码输入框
+loginPage_CodeInput:
+  type: id
+  value: code
+#8 登录页面的登录按钮
+loginPage_SigninBtn:
+  type: id
+  value: js_signInBtn
+#9 登录后导航栏的Logout链接,即登出链接
+navBar_Logout:
+  type: linkText
+  value: Logout
+#10 注册页面的email输入框
+regPage_EmailInput:
+  type: id
+  value: reg_email
+#11 注册页面的密码输入框
+regPage_PasswordInput:
+  type: id
+  value: password
+#12 注册页面的确认密码输入框
+regPage_ConfirmPasswordInput:
+  type: id
+  value: password_confirm
+#13 注册成功后进入的欢迎页面的主窗口
+congratulationsPage_MainBox:
+  type: id
+  value: mainBox
+#14 注册成功后进入的欢迎页面的欢迎标题
+registerSucPage_RegisterSucCongTitle:
+  type: xpath
+  value: "//div[@class='reg-success']/h4"
+#15 注册成功后进入的欢迎页面的MyCoupon链接
+registerSucPage_MyCoupon:
+  type: linkText
+  value: My Coupon
+#16 注册成功后进入的MyCoupon页面的,赠送的促销码条目
+registerSucCouponPage_CouponCode:
+  type: xpath
+  value: "//table[@class='userTable tc']"
+#17 注册成功后进入的MyCoupon页面的,赠送的促销码的折扣
+registerSucCouponPage_CouponDiscount:
+  type: xpath
+  value: "//table[@class='userTable tc']/tbody/tr[2]/td[@class='f14']/span[@class='colorRed']"
+#18 注册页面的错误提示,提示邮箱己被注册
+regPage_ErrInfoEmailAlreadyInUse:
+  type: xpath
+  value: "//div[@class='ipt_t']/label[@class='error'and@for='reg_email']"
+#19 注册页面的错误提示,提示请输入相同的密码
+regPage_ErrInfoEnterSamePassword:
+  type: xpath
+  value: "//div[@class='ipt_t']/label[@class='error'and@for='password_confirm']"
+#20 注册页面的错误提示,提示请输入有效email
+regPage_ErrInfoEnterValidEmail:
+  type: xpath
+  value: "//div[@class='ipt_t']/label[@class='error'and@for='reg_email']"
+#21 注册页面的错误提示,提示请输入密码
+regPage_ErrInfoProvidePassword:
+  type: xpath
+  value: "//div[@class='ipt_t']/label[@class='error'and@for='password']"
+#22 注册页面的错误提示,提示请输入确认密码
+regPage_ErrInfoRepeatYourPassword:
+  type: xpath
+  value: "//div[@class='ipt_t']/label[@class='error'and@for='password_confirm']"
+#23 注册页面的同意条款复选框
+regPage_AgreementCheckbox:
+  type: id
+  value: agreement
+#24 注册页面的错误提示,提示同意条款
+regPage_ErrInfoAgreeTerms:
+  type: xpath
+  value: "//div[@class='agrrementWarp ']/label[@class='error'and@for='agreement']"
+#25 注册页面查看条款
+regPage_ViewTerms:
+  type: linkText
+  value: Terms and Conditions
+#26 验证邮箱帐户页面的感谢标题
+ConfEmailPage_ThanksConfirmAccountTitle:
+  type: xpath
+  value: "//p[@class='fb pb10 title']"
+#27 验证邮箱帐户页面的返回登录链接
+ConfEmailPage_BackToAccount:
+  type: linkText
+  value: Back to Account
+#28 注册页面的验证码输入框
+regPage_CodeInput:
+  type: id
+  value: code
+#29 导航栏的收藏按钮
+navBar_Favorites:
+  type: css
+  value: span.mywishbg
+#30 收藏夹页面的收藏导航标题
+favoPage_FavoritesNavTitle:
+  type: linkText
+  value: Favorites
+#31 产品页的产品名称
+productPage_ProductTitle:
+  type: xpath
+  value: "//div[@class='pro_m_inner']/h1"
+#32 顶部导航栏的个人帐户按钮
+navBar_UserAccount:
+  type: css
+  value: a.mycoount
+#33 个人帐户页面的 编辑信息 按钮，重复使用
+userPage_EditBtn:
+  type: linkText
+  value: Edit Profile
+#34 用户页面的 地址栏，重复使用
+userPage_AddressBookColumn:
+  type: linkText
+  value: Address Book
+#35 用户页面的地址栏下的 删除收货地址 按钮，重复使用
+userPage_DeleteAddressBtn:
+  type: linkText
+  value: Delete
+#36 用户页面的 添加地址 按钮
+userPage_AddNewAddressBtn:
+  type: linkText
+  value: Add a new Address
+#37 用户页面的 添加地址页面的  firstname
+userPage_FirstName:
+  type: id
+  value: firstname
+#38 用户页面的 添加地址页面的  lastname
+userPage_LastName:
+  type: id
+  value: lastname
+#39 用户页面的 添加地址页面的 电子邮件
+userPage_Email:
+  type: id
+  value: email
+#40 用户页面的 添加地址页面的  地址1
+userPage_AddressLine1:
+  type: id
+  value: addressline1 
+#41 用户页面的 添加地址页面的  地址2
+userPage_AddressLine2:
+  type: id
+  value: addressline2  
+#42 用户页面的 添加地址页面的  Country/Region
+userPage_CountryRegion:
+  type: xpath
+  value: "//select[@name='country']"
+#43 用户页面的 添加地址页面的  Country/Region 下面的 United States
+userPage_UnitedStates:
+  type: xpath
+  value: "//option[@value='41']"
+#44 用户页面的 添加地址页面的  State/County
+userPage_StateCounty:
+  type: xpath
+  value: "//select[@name='province']"
+#45 用户页面的 添加地址页面的  State/County 下面的 New York
+userPage_NewYork:
+  type: xpath
+  value: "//option[@value='New York']"
+#46 用户页面的 添加地址页面的  city
+userPage_City:
+  type: id
+  value: city 
+#47 用户页面的 添加地址页面的  电话号码
+userPage_Tel:
+  type: id
+  value: tel
+#48 用户页面的 添加地址页面的  邮政编码
+userPage_ZipCode:
+  type: id
+  value: zipcode
+#49 用户页面的 添加地址页面的 确认编辑 按钮
+userPage_ConfirmEditBtn:
+  type: css
+  value: form#addressfrom div.btn button
+#50 用户页面的 添加地址页面的 确认编辑 按钮
+userPage_BackToAddressListLink:
+  type: css
+  value: div.systyleMsg_jump p.link a
+#51 PayPal页面导航栏的 登出 按钮
+bluePayPalPage_LogoutBtn:
+  type: css
+  value: a.vx_globalNav-link_logout.nemo_logoutBtn
+#52 PayPal页面导航栏的 登录 按钮
+bluePayPalPage_SigninBtn:
+  type: id
+  value: ul-btn

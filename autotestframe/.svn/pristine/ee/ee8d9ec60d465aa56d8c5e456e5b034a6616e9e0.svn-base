@@ -1,0 +1,239 @@
+package com.globalegrow.util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import com.globalegrow.base.InitAndriodTest;
+import com.globalegrow.base.InitWapTest;
+import com.globalegrow.base.TestngListener2;
+import com.globalegrow.util.Log;
+
+
+/**
+ * 
+ * android 测试过程中录制视频功能
+ * @author Lujun
+ * 2017 03 14
+ */
+public class ScreenRecord {
+
+//	private static String deviceName = InitWapTest.freeDeviceName;
+	private static String deviceName = "";
+	private static String filePath;
+	private static Map<String,String> pathMap = new HashMap<String,String>();
+	private static String projectCode = TestngListener2.projectCode;
+	private static String OS = getOs();
+	private static String ubuntuADB = "/usr/local/android_sdk/platform-tools/adb";
+	private static String windowADB = "adb";
+	
+	public static String getOs(){
+		return System.getProperty("os.name");
+	}
+	
+	public static void judeFileExists(String path,String devices){
+		File file = new File(path);
+		if(devices.equals("android")){
+//			String cmd = "adb -s "+deviceName+" shell mkdir "+path;
+			String cmd = "";
+			if(OS.replace(" ", "").equals("Windows7")){
+				cmd = windowADB+" -s "+deviceName+" shell mkdir "+path;
+			}else{
+				cmd = ubuntuADB+" -s "+deviceName+" shell mkdir "+path;
+			}
+			try{
+				Process process = runCmd(cmd);
+				process.waitFor();
+			}catch(Exception e){
+				Log.logInfo("创建目录失败： "+path);
+			}
+			/*if(checkScreenRecord(runCmd(cmd)).indexOf("File exists") == -1){
+				Log.logInfo(path+" 创建成功");
+			}*/
+		}
+		
+		if(devices.replace(" ", "").equals("Windows7")){
+			if(!file.isDirectory()){
+				try{
+					file.mkdirs();
+//					Log.logInfo(path+" 创建成功");
+				}catch (Exception e){
+					Log.logInfo(path+" 创建失败");
+				}
+			}
+		}
+	}
+	
+	public static String getTime(){
+		Date currentTime = new Date();
+		SimpleDateFormat formats = new SimpleDateFormat("yyyyMMddHHmmss");
+		String picDateSign = formats.format(currentTime);
+		return picDateSign;
+	}
+	
+	/***
+	 * 启动录制视频
+	 * @param project 当前自动化测试项目
+	 * @param methName 当前测试用例名字
+	 * @param module 模块
+	 */
+	public static Process startScreenRecord(String project,String methName,String module,String picDateSign){
+		
+		if(projectCode.contains("wap")){
+			deviceName = InitWapTest.freeDeviceName;
+		}
+		
+		if(projectCode.contains("android")){
+			deviceName = InitAndriodTest.freeDeviceName;
+		}
+		
+		if(!projectCode.contains("wap") && !projectCode.contains("android")){
+			Log.logInfo("抱歉，暂时只支持 wap 和  Android 测试视频录制");
+		}
+		
+		Process runresult = null;
+		
+		String dir = "/sdcard/TestOuTPut/";
+		String dir1 = "/sdcard/TestOuTPut/"+project+"/";
+		String dir2 = dir1+module+picDateSign+"/";
+		pathMap.put(module, dir2);
+		judeFileExists(dir,"android");
+		judeFileExists(dir1,"android");
+		judeFileExists(dir2,"android");
+		filePath = dir2+methName+".mp4";
+		
+		Log.logInfo("开始录制测试用例执行的视频：-----"+methName+""+"-----");
+		Log.logInfo("视频文件的路径存放在：-----"+filePath+""+"-----");
+		String cmd = "";
+		if(OS.equals("Linux")){
+			cmd = ubuntuADB+" -s "+deviceName+" shell screenrecord --size 680x420 "+filePath;
+		}else{
+			cmd = windowADB+" -s "+deviceName+" shell screenrecord --size 680x420 "+filePath;
+		}
+		
+		try{
+			runresult = runCmd(cmd);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return runresult;
+		
+	}
+	
+	/***
+	 * 结束录制视频，并将视频复制到服务器
+	 * @param process 录制视频的进程
+	 * @param project 当前自动化测试项目
+	 * @param methName 当前测试用例名字
+	 */
+	public static void endScreenRecord(Process process){
+		try{
+			process.destroy();
+			Log.logInfo("当前测试用例执行视频录制结束");
+		}catch(Exception e){
+			Log.logInfo("结束录制视频失败：---------------");
+			e.printStackTrace();
+		}
+		}
+	
+	
+	/**
+	 * 将视频复制到指定存放目录
+	 * @param project 当前自动化测试项目
+	 * @param methName 当前测试用例名字
+	 * @throws IOException 
+	 */
+	public static void videoProces(String project,String methName,String module,String time) throws IOException{
+		String cmd = "";
+		String dir = "";
+		String projectName = TestngListener2.getProjectName();
+		File directory = new File("");// 参数为空
+        String courseFile = directory.getCanonicalPath();
+		Log.logInfo("开始处理视频----------------------");
+		if(OS.replace(" ", "").equals("Windows7")){
+			dir = courseFile+"\\test-output\\html-report\\"+projectName+"\\videoShot\\";
+			judeFileExists(dir,"Windows7");
+			for(String key:pathMap.keySet()){
+				String value = pathMap.get(key);
+				cmd = windowADB+" -s "+deviceName+" pull "+value+" "+dir;
+				Process resultProcess = runCmd(cmd);
+				checkVideo(resultProcess,dir);
+			}
+		}
+		
+		if(OS.replace(" ", "").equals("Linux")){
+			dir = courseFile+"/test-output/html-report/"+projectName+"/videoShot/";
+			judeFileExists(dir,"Windows7");
+			for(String key:pathMap.keySet()){
+				String value = pathMap.get(key);
+				cmd = ubuntuADB+" -s "+deviceName+" pull "+value+" "+dir;
+				Process resultProcess = runCmd(cmd);
+				checkVideo(resultProcess,dir);
+			}
+		}
+		
+	}
+	
+	public static void checkVideo(Process process,String dir){
+		try{
+			String v = checkScreenRecord(process);
+			String value = v.replace(" ", "");
+			
+			if(value.indexOf("MB/s") != -1 && value.indexOf("%]") != -1){
+				Log.logInfo("视频复制成功,请于： "+dir+ "目录查看");
+			}else{
+				Log.logInfo(checkScreenRecord(runCmd("adb devices")));
+				Log.logInfo("视频不存在或者adb链接有误："+ v);
+			}
+		}catch(Exception e){
+			Log.logInfo("结束信息失败：---------------");
+		}
+	}
+
+	
+	/**
+	 * 结束进程结束后窗口上显示的内容
+	 * @param process 进程
+	 * @return
+	 */
+	public static String checkScreenRecord(Process process){
+		StringBuffer cmdout = new StringBuffer(); 
+//		process.waitFor();
+		try {
+			InputStream fis = process.getInputStream(); 
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis)); 
+			String line = null;
+			while((line = br.readLine()) != null){
+				cmdout.append(line);
+				}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cmdout.toString();
+	}
+	
+	
+	/**
+	 * 执行命令   
+	 * @param cmd 要执行的命令
+	 * @param project 当前自动化测试项目
+	 * @param methName 当前测试用例名字
+	 * @return Process
+	 */
+	public static Process runCmd(String cmd){
+		Process runprocess = null;
+		Runtime runtime = Runtime.getRuntime();
+		try{
+			runprocess = runtime.exec(cmd); 
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return runprocess;
+	}
+}

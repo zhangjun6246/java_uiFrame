@@ -1,0 +1,43 @@
+package com.globalegrow.interfacetest;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class TestDataUtils {
+
+	public static List<Map<String, Object>> allTestData;
+	public static Map<String, Object> testData;
+	public static List<Map<String, Object>> allTestReportData;
+	public static Map<String, Object> testReportData;
+	public TestDataUtils() {
+		// TODO Auto-generated constructor stub
+	}
+	public static List<Map<String, String>> getAllTestData(){
+		List<Map<String, String>> list = new ArrayList<>();
+		String sql = "";
+		Map<String, String> map1 = new HashMap<>();
+		Map<String, String> map2 = new HashMap<>();
+		Map<String, String> map3 = new HashMap<>();
+		map1.put("testname", "login");
+		map1.put("moduleName", "Login");
+		map1.put("projectName", "gearbest");
+		map2.put("testname", "login1");
+		map3.put("testname", "login2");
+		list.add(map1);
+		list.add(map2);
+		list.add(map3);
+		return list;
+	}
+	public static Map<String, Object> getTestData(int linenum){
+		return null;
+	}
+	public static List<Map<String, Object>> getAllTestReportData(){
+		return null;
+	}
+	public static Map<String, Object> getTestReportData(int linenum){
+		return null;
+	}
+
+}

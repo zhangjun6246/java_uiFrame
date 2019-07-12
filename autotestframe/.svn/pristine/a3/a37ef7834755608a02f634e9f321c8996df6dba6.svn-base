@@ -1,0 +1,45 @@
+package com.globalegrow.util;
+
+import com.globalegrow.code.AndroidAppLocator;
+
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.ios.IOSDriver;
+
+public class OpIos extends OpApp{
+	private static IOSDriver driver;
+	private String projectName;
+	private AndroidAppLocator locator;
+
+	public OpIos(IOSDriver driver,AndroidAppLocator locator, String projectName) {
+		super(driver, locator,projectName);
+		// TODO Auto-generated constructor stub
+		this.driver=driver;
+		this.locator=locator;
+		this.projectName=projectName;
+	}
+
+	@Override
+	public void actionPressKeyCode(int keyCode) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hideKeyboard() {
+		// TODO Auto-generated method stub
+		((AppiumDriver) driver).findElementById("完成").click();
+	}
+
+	@Override
+	public void sendSetKeyValue(String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void checkConnectionReset(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

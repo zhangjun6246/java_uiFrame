@@ -1,0 +1,454 @@
+package com.globalegrow.base;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.Proxy;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import com.globalegrow.code.Locator;
+import com.globalegrow.code.Page;
+import com.globalegrow.util.Log;
+import com.globalegrow.util.Op;
+import com.globalegrow.util.PropUtil;
+import com.globalegrow.util.Pub;
+
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+
+/**
+ *   
+ * @author linchaojiang
+ * 创建时间：2016-08-22
+ * 更新时间：2016-09-06
+ *
+ */
+public class Startbrowser {
+
+	protected static WebDriver driver;
+	protected static JavascriptExecutor jse = null;
+	public Locator locator = null;
+	@SuppressWarnings("rawtypes")
+	public static Map<String, List> testCasemap = new HashMap<String, List>();// 存放excel的数据
+	public static String testBrowserInfo = null;
+	public static boolean screenShotWhilePassFlag = false;
+	public static boolean beforeTestRunFlag = false; // before test class的运行标志，会在afterClass()清除掉
+	public static boolean firstTestRunFlag = true;
+
+	public static String screenShotPath = "";// 截图路径
+	public static String resourcesPath = "";// 资源路径
+	public static String reportPath = "";// 测试报告路径
+	public static String browserName = "";// 浏览器名称
+	public static String projectName = "";// 项目名称
+	public String moduleName = "";// 模块名称
+	protected int pageLoadTimeoutMax = 300;
+	
+	public static String testDescription = ""; //测试描述
+	public static String testCheckpoint = ""; //验证点
+	public static boolean correFail = false; //关联失败标志
+	
+	public static BrowserMobProxyServer proxy;
+	
+	public static Op op=null;
+
+	public void init(String myProjectName, String configName) {
+		PropUtil.GetProperties(myProjectName, configName);
+		projectName = myProjectName;
+		screenShotPath = PropUtil.get("screenShotPath");
+		resourcesPath = PropUtil.get("resourcesPath");
+		reportPath = PropUtil.get("reportPath");
+		screenShotWhilePassFlag = Pub.string2boolean(PropUtil.get("screenShotWhilePassFlag"));
+	}
+		
+	public static void setDriver(WebDriver driver) {
+		Startbrowser.driver = driver;
+	}
+
+	public static WebDriver getDriver() {
+		return driver;
+	}
+
+	/**
+	 * 返回Js driver对象
+	 * @author yuyang 创建时间:2016-09-07 更新时间:2016-09-07
+	 */
+	public static JavascriptExecutor getJsDriver() {
+		return jse;
+	}
+
+	/**
+	 * 启动浏览器
+	 * @param browser
+	 * 创建时间：2016-08-22
+	 * 更新时间：2016-08-22
+	 */
+	private void initialDriver(String browser) {
+		if ("${browserName}".equals(browser)) {
+			browser = "chrome";
+		}
+		
+		if ("firefox".equals(browser)) {
+			System.setProperty("webdriver.gecko.driver", "resources/geckodriver.exe");
+			driver = new FirefoxDriver();
+			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+			driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+		} else if ("ie".equals(browser)) {
+
+			try {
+				System.setProperty("webdriver.ie.driver", "resources/IEDriverServer.exe");
+				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+				capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+				capabilities.setCapability(InternetExplorerDriver.NATIVE_EVENTS, false);
+				driver = new InternetExplorerDriver(capabilities);
+				driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+				driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+			} catch (Exception se) {
+				Log.logInfo(se.getMessage());
+			}
+		} else if ("chrome".equals(browser)) {
+
+			try {
+				System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
+				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+				capabilities.setCapability("chrome.switches", Arrays.asList("--incognito"));
+				ChromeOptions options = new ChromeOptions();
+				options.addArguments("--test-type");
+				options.addArguments("start-maximized");
+				options.addArguments("chrome.switches", "--disable-extensions");
+				capabilities.setCapability("chrome.binary", "resources/chromedriver.exe");
+				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+				driver = new ChromeDriver(capabilities);
+				driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+				driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+			} catch (Exception se) {
+				Log.logInfo(se.getMessage());
+			}
+
+		} else if ("safari".equals(browser)) {
+			driver = new SafariDriver();
+		} else if ("opera".equals(browser)) {
+			System.setProperty("webdriver.opera.driver", "resources/operadriver.exe");
+			driver = new OperaDriver();
+		}else if("chrome-platform".equals(browser)){
+			try {
+				System.out.println("使用的平台进行启动的浏览器");
+				String platform_name = "win7";
+				DesiredCapabilities capabilities = new DesiredCapabilities();
+				if (platform_name.equalsIgnoreCase("win7")) {
+					capabilities.setPlatform(Platform.VISTA);
+				}
+				if (platform_name.equalsIgnoreCase("win8")) {
+					capabilities.setPlatform(Platform.WIN8);
+				}
+				if (platform_name.equalsIgnoreCase("win8_1")) {
+					capabilities.setPlatform(Platform.WIN8_1);
+				}
+				if (platform_name.equalsIgnoreCase("win10")) {
+					capabilities.setPlatform(Platform.WIN10);
+				}
+				if (platform_name.equalsIgnoreCase("linux")) {
+					capabilities.setPlatform(Platform.LINUX);
+				}
+				capabilities.setBrowserName(browser);
+				capabilities.setVersion(browser);
+					ChromeOptions options = new ChromeOptions();
+					options.addArguments("disable-infobars"); 
+					if (platform_name.equalsIgnoreCase("linux")) {
+						options.addArguments(Arrays.asList("--window-position=0,0"));
+						options.addArguments(Arrays.asList("--window-size=1920,1080"));
+					} else {
+						options.addArguments(Arrays.asList("--start-maximized"));
+					}
+					capabilities.setCapability("chrome.switches", Arrays.asList("--incognito"));
+					options.addArguments("--test-type");
+					options.addArguments("start-maximized");
+					options.addArguments("chrome.switches", "--disable-extensions");
+
+					capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+			    //随机获取一个地址
+				String[] doc = {"http://10.40.2.113:5555/wd/hub", "http://10.40.2.114:5555/wd/hub"};
+				int index = (int) (Math.random() * doc.length);
+				String  random = doc[index];					
+				Log.logInfo("运行机器为:"+random);
+				driver = new RemoteWebDriver(new URL(random), capabilities);
+				
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else {
+			Log.logInfo(browser + "的值不正确，请检查！");
+		}
+	}
+	
+	/**
+	 * 通过代理启动浏览器,目前只 做谷歌浏览器设置
+	 * @param browser
+	 * 创建时间：2016-08-22
+	 * 更新时间：2016-08-22
+	 */
+	private void initialDriver(String browser,String ip) {	
+		try {
+			System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
+//			String proxyIpAndPort = "127.0.0.1:8001";
+			proxy = new BrowserMobProxyServer();
+			int port = isPortUsing(8001);
+			proxy.start(port);
+			Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+//			Proxy proxy = new Proxy();
+//			proxy.setHttpProxy(proxyIpAndPort).setFtpProxy(proxyIpAndPort).setSslProxy(proxyIpAndPort);
+						
+			DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+			capabilities.setCapability(CapabilityType.ForSeleniumServer.AVOIDING_PROXY, true);
+			capabilities.setCapability(CapabilityType.ForSeleniumServer.ONLY_PROXYING_SELENIUM_TRAFFIC, true);
+//			System.setProperty("http.nonProxyHosts",ip);
+			capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+			
+			capabilities.setCapability("chrome.switches", Arrays.asList("--incognito"));
+			ChromeOptions options = new ChromeOptions();
+			options.addArguments("--test-type");
+			options.addArguments("start-maximized");
+			options.addArguments("chrome.switches", "--disable-extensions");
+			capabilities.setCapability("chrome.binary", "resources/chromedriver.exe");
+			capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+			driver = new ChromeDriver(capabilities);
+			driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+			driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);			
+		} catch (Exception se) {
+			Log.logInfo(se.getMessage());
+		}
+	}
+
+	
+	public void start(String browser) {
+		initialDriver(browser);
+		projectName = TestngListener2.getProjectName();
+		jse = (JavascriptExecutor) driver;
+		testBrowserInfo = Pub.getBrowserInfo(jse);
+		locator=new Locator(TestngListener2.getProjectCode());
+		op = new Op(driver, locator, projectName);
+	}
+	
+	public void start(String browser,String ip) {
+		initialDriver(browser,ip);
+		projectName = TestngListener2.getProjectName();
+		jse = (JavascriptExecutor) driver;
+		testBrowserInfo = Pub.getBrowserInfo(jse);
+		locator=new Locator(TestngListener2.getProjectCode());
+		op = new Op(driver, locator, projectName);
+	}
+
+	/**
+	 * 判断对象是否存在,最大超时时间10秒
+	 * @param Locator
+	 * @return boolean
+	 * @author linchaojiang
+	 * 创建日期：2016-08-26
+	 * 更新日期：2016-08-26
+	 */
+	public boolean ElementExist(By Locator) {
+		boolean flag = false;
+		int Timeout = 0;
+		String msg = null;
+		while (true) {
+			if (Timeout > 10) {
+				Log.logInfo(msg + "\n元素" + Locator.toString() + "未找到");
+				break;
+			} else {
+				try {
+					driver.findElement(Locator);
+					flag = true;
+					break;
+				} catch (NoSuchElementException ex) {
+					// TODO: handle exception
+					msg = ex.getMessage();
+					Timeout++;
+					Page.pause(1);
+				}
+			}
+		}
+		return flag;
+	}
+
+	/**
+	 * 判断对象是否存在
+	 * @param by 待检查的元素,如id,xpath等
+	 * @return boolean,true-查找到，false-未查找到
+	 * @author yuyang 创建时间:2016-09-05 更新时间:2016-09-05
+	 */
+	public static boolean isElementPresent(By by) {
+		try {
+			driver.findElement(by);
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * 获取当前类名
+	 * @return 以字符串形式，返回当前的类名
+	 * @author yuyang 创建时间:2016-08-31 更新时间:2016-08-31
+	 */
+	protected String GetClassName() {
+		String classnamestr = this.getClass().getName();
+		return classnamestr;
+	}
+
+	/**
+	 * 获取当前测试类的项目名
+	 * @return 以字符串形式，返回当前的测试类的项目名
+	 * @author yuyang 创建时间:2016-09-20 更新时间:2016-09-20
+	 */
+	protected String GetProjectName() {
+		String[] tmpName = GetClassName().split("\\.");
+		String projectName = "";
+		if (tmpName.length > 1) {
+			projectName = tmpName[tmpName.length - 2];
+		}
+
+		return projectName;
+	}
+
+	/**
+	 * 获取上一级的方法名
+	 * @return 以字符串形式，返回上一级的方法名
+	 * @author yuyang 创建时间:2016-08-31 更新时间:2016-08-31
+	 */
+	protected String GetMethodName() {
+		String methodnamestr = Thread.currentThread().getStackTrace()[2].getMethodName();
+		return methodnamestr;
+	}
+
+	/**
+	 * 截取屏幕图片
+	 * @author：linchaojiang
+	 * @Parameters 路径和名称
+	 * 创建时间：2016-08-23 更新时间:2016-09-27
+	 * 更新说明(2016-09-27)：by yuyang,增加重试来解决概率截图失败的问题
+	 */
+	public static String captureScreen(String directory, String captureName) {
+
+		Date currentTime = new Date();
+		SimpleDateFormat formats = new SimpleDateFormat("yyyyMMddHHmmss");
+		String picDateSign = formats.format(currentTime);
+		String screenShotFileName = screenShotPath + directory + "/" + picDateSign + "_" + captureName + ".jpg";
+		File screenShotFile = null;
+		int count = 0;
+
+		while (true) {
+			Log.logInfo("screen shot:" + screenShotFileName);
+			try {
+				Thread.sleep(500);
+				screenShotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(screenShotFile, new File(screenShotFileName));
+				break;
+			} catch (Exception e) {
+				// e.printStackTrace();
+				count++;
+				if (count >= 3) {
+					Log.logInfo("Screenshot failed！");
+					break;
+				}
+			}
+		}
+		return screenShotFileName;
+	}
+
+	/**
+	 * 截取屏幕图片,浏览器多个窗口的
+	 * @author：yuyang
+	 * @Parameters 路径和名称
+	 * 创建时间：2016-09-29 更新时间:2016-09-29
+	 */
+	public static String captureScreenAll(String directory, String captureName) {
+
+		Date currentTime = new Date();
+		SimpleDateFormat formats = new SimpleDateFormat("yyyyMMddHHmmss");
+		String picDateSign = formats.format(currentTime);
+		String screenShotFileNameFirst = "";
+		String screenShotFileName = "";
+		File screenShotFile = null;
+		int count = 0;
+		int picNum = 0;
+
+		screenShotFileNameFirst = screenShotPath + directory + "/" + picDateSign + "_" + captureName + "_1.jpg";
+		String currentHandle = driver.getWindowHandle();
+		Set<String> handles = driver.getWindowHandles();
+		for (String s : handles) {
+			picNum++;
+			screenShotFileName = screenShotPath + directory + "/" + picDateSign + "_" + captureName + "_" + picNum
+					+ ".jpg";
+			driver.switchTo().window(s);
+			while (true) {
+				Log.logInfo("screen shot:" + screenShotFileName);
+				try {
+					Thread.sleep(500);
+					screenShotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+					FileUtils.copyFile(screenShotFile, new File(screenShotFileName));
+					break;
+				} catch (Exception e) {
+					// e.printStackTrace();
+					count++;
+					if (count >= 3) {
+						Log.logInfo("Screenshot failed！");
+						break;
+					}
+				}
+			}
+
+		}
+		driver.switchTo().window(currentHandle);
+		return screenShotFileNameFirst;
+	}
+	
+	/***
+	 * 判断参数中的端口号是否被占用：
+	 * 1. 被占用，将在参数传入的端口号上自动循环，直到找出未被占用的端口号为止
+	 * 2. 未被占用，直接返回传入的端口号
+	 * @param port 
+	 * @return port
+	 * @throws IOException 
+	 */
+	public static int isPortUsing(int port) throws IOException{
+		int sport = port;
+		while(true){
+			ServerSocket server = null;
+			try {
+				server = new ServerSocket(sport);
+				break;
+			} catch (IOException e) {
+				sport++;
+			}finally {
+				if(server!=null)server.close();
+			}
+		}
+		return sport;
+	}
+
+}

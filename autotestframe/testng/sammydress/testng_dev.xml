@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="sammydress">
+    <!-- 配置testng监听器 -->
+	<listeners>
+	     <listener class-name="com.globalegrow.base.TestngListener" />
+	</listeners>
+	<!-- 运行谷歌浏览器 BW:firefox chrome ie-->
+	<parameter name="id"  value="${id}"/>
+	<!-- 运行谷歌浏览器 BW:firefox chrome ie-->
+	<parameter name="browserName"  value="${browserName}"/>
+	<!-- 配置文件名 -->
+	<parameter name="properties"  value="config_dev"/>
+	<test name="version" preserve-order="true">
+		<classes>
+		
+			<!--		
+			<class name="com.globalegrow.sammydress.SD_register">
+				<methods>					
+					<include name="register_success_a" />							
+			-->
+			<!--		
+					<include name="register_success_b" />		
+			-->
+			<!--		
+					<include name="register_success_c" />
+			-->
+			<!--
+					<include name="register_success_inform_email" />
+			-->
+			<!--
+					<include name="register_success_verify_email_a" />	
+					<include name="register_success_verify_email_b" />	
+					<include name="register_success_verify_email_c" />	
+				    <include name="register_fail1" />
+					<include name="register_fail2" />
+					<include name="register_fail3" />
+					<include name="register_fail4" />
+					<include name="register_fail5" />	
+					<include name="register_view_terms" />		
+				</methods>
+			</class>
+			-->
+		<!--	<class name="com.globalegrow.sammydress.SD_login">
+				<methods>																								
+					<include name="Signin_linkClickCorrect" />							     
+					<include name="Signin_Success" />									
+					<include name="Signout_Success" />					
+					<include name="Signin_PasswordError" />	
+					<include name="resetpassword_ErrorMail" />	
+					<include name="resetpassword_CorrectMail" />		
+					<include name="resetpassword_Success" />-->	
+				<!--	<include name="loginPayPal" />	 	只能在线上环境运行-->
+				<!--	<include name="loginFacebook" />	 只能在线上环境运行-->
+				<!--	<include name="loginGoogle" />		只能在线上环境运行-->																		
+		<!--			<include name="signinSwitchRegister" />		
+					<include name="registerSwitchSignin" />	 
+				</methods>	
+			</class>-->	
+			<class name="com.globalegrow.sammydress.SD_cart">
+				<methods>	
+			<!--		
+					<include name="cart_empty_a" />
+					<include name="cart_empty_b" />
+					<include name="cart_empty_c" />	
+					<include name="cart_common_product_a" />	
+					<include name="cart_common_product_b" />	
+					<include name="cart_common_product_c" />	
+					<include name="cart_promotion_product_a" />	
+					<include name="cart_promotion_product_b" />	
+					<include name="cart_promotion_product_c" />	
+					<include name="cart_clearance_product_a" />	
+					<include name="cart_clearance_product_b" />	
+					<include name="cart_clearance_product_c" />	
+					<include name="cart_add_product1_a" />	
+					<include name="cart_add_product1_b" />
+					<include name="cart_add_product1_c" />
+					<include name="cart_add_product2_a" />	
+					<include name="cart_add_product2_b" />	
+					<include name="cart_add_product2_c" />	
+					<include name="cart_add_product3_a" />	
+					<include name="cart_add_product3_b" />	
+					<include name="cart_add_product3_c" />
+					<include name="cart_add_more_product_a" />
+					<include name="cart_add_more_product_b" />
+					<include name="cart_add_more_product_c" />
+					<include name="cart_add_from_favorite_a" />
+					<include name="cart_add_from_favorite_b" />
+					<include name="cart_add_from_favorite_c" />
+					<include name="cart_add_from_favorite_d" />
+					<include name="cart_add_from_favorite_e" />
+					<include name="cart_delete_product_a" />
+					<include name="cart_delete_product_b" />
+					<include name="cart_delete_product_c" />
+					<include name="cart_clear_all1_a" />
+					<include name="cart_clear_all1_b" />
+					<include name="cart_clear_all2_a" />
+					<include name="cart_clear_all2_b" />
+					<include name="cart_clear_all2_c" />
+					<include name="cart_clear_all3_a" />
+					<include name="cart_clear_all3_b" />
+					<include name="cart_clear_all3_c" />
+					<include name="cart_change_product_num1" />
+					<include name="cart_change_product_num2" />
+					<include name="cart_change_product_num3" />
+					<include name="cart_change_product_num4" />
+					<include name="cart_save_for_later1_a" />
+					<include name="cart_save_for_later1_b" />
+					<include name="cart_save_for_later2" />
+			-->
+					<include name="cart_save_for_later3_a" />
+					<include name="cart_save_for_later3_b" />
+			<!--	
+			-->
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>

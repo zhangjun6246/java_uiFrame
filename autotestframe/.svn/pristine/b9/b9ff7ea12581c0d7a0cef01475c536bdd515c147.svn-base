@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.globale</groupId>
+  <artifactId>globalautotest</artifactId>
+  <version>1.5.1</version>
+  <packaging>jar</packaging>
+
+  <name>globalautotest</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <dependencies>
+  	 <!-- 配置selenium依赖 -->
+	 <dependency>
+       <groupId>org.seleniumhq.selenium</groupId>
+       <artifactId>selenium-java</artifactId>
+       <version>3.0.1</version>
+     </dependency>
+     <!-- browserMob 代理 -->
+     <dependency>
+	 <groupId>net.lightbody.bmp</groupId>
+   		<artifactId>browsermob-core</artifactId>
+    	<version>2.1.4</version>
+	 </dependency>
+     <!-- 配置log4j依赖 -->
+     <dependency>
+       <groupId>log4j</groupId>
+       <artifactId>log4j</artifactId>
+       <version>1.2.17</version>
+     </dependency>
+     <!-- 配置mysql依赖 -->
+     <dependency>
+       <groupId>mysql</groupId>
+       <artifactId>mysql-connector-java</artifactId>
+       <version>5.1.33</version>
+     </dependency>
+     <!-- 配置testng依赖 -->
+     <dependency>
+       <groupId>org.testng</groupId>
+       <artifactId>testng</artifactId>
+       <version>6.9.8</version>
+     </dependency>
+     <!-- 配置htmlparser依赖 -->   
+	<dependency>
+	    <groupId>org.htmlparser</groupId>
+	    <artifactId>htmlparser</artifactId>
+	    <version>1.6</version>
+	</dependency>
+
+	<!-- 配置读取excle依赖jxl包-->
+	<dependency>
+	    <groupId>net.sourceforge.jexcelapi</groupId>
+	    <artifactId>jxl</artifactId>
+	    <version>2.6.12</version>
+	</dependency>
+	
+	<!-- 配置net.sf.json-lib依赖 -->
+	<dependency>
+	    <groupId>net.sf.json-lib</groupId>
+	    <artifactId>json-lib</artifactId>
+	    <version>2.4</version>
+	    <classifier>jdk15</classifier>
+	</dependency>
+
+	<!-- 配置javamail依赖 -->
+	<dependency>
+	    <groupId>javax.mail</groupId>
+	    <artifactId>mail</artifactId>
+	    <version>1.4</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+	<dependency>
+	    <groupId>org.jyaml</groupId>
+	    <artifactId>jyaml</artifactId>
+	    <version>1.3</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+	<dependency>
+	    <groupId>org.codehaus.jackson</groupId>
+	    <artifactId>jackson-mapper-asl</artifactId>
+	    <version>1.5.0</version>
+	</dependency>
+	<dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>5.0.0-BETA3</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
+	<dependency>
+	    <groupId>dom4j</groupId>
+	    <artifactId>dom4j</artifactId>
+	    <version>1.6.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-email</artifactId>
+	    <version>1.4</version>
+	</dependency>
+	<dependency>
+    	<groupId>ch.ethz.ganymed</groupId>
+	    <artifactId>ganymed-ssh2</artifactId>
+	    <version>262</version>
+	</dependency>
+	<!-- mongodb -->
+		 <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver</artifactId>
+        <version>3.4.1</version>
+    </dependency>
+    
+     <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>bson</artifactId>
+        <version>3.4.1</version>
+    </dependency>
+  </dependencies>
+  <build>
+		<plugins>	
+  			<plugin>
+  				<groupId>org.apache.maven.plugins</groupId>
+  				<artifactId>maven-compiler-plugin</artifactId>
+  				<version>3.1</version>
+  				<configuration>
+  					<source>1.8</source>
+  					<target>1.8</target>
+  					<encoding>UTF-8</encoding>
+  				</configuration>		
+  			</plugin>		
+		</plugins>
+	</build>
+</project>

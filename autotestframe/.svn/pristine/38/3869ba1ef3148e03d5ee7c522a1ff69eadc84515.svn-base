@@ -1,0 +1,16 @@
+package com.globalegrow.util;
+
+public class DefinitionException{
+	public static void throwsDriverDieException() throws MyExcepiton {
+		throw new MyExcepiton("timeout: cannot determine loading status");
+    } 
+	
+	public static void main(String[] args) {
+		try {
+			throwsDriverDieException();
+		} catch (MyExcepiton e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

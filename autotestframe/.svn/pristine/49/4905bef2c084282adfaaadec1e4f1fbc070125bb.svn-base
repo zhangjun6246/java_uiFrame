@@ -1,0 +1,451 @@
+#首页
+searchFrom:
+  type: name
+  value: searchFrom
+#登录链接
+Signin:
+  type: linkText
+  value: Sign in
+#邮箱输入框
+email:
+  type: id
+  value: email  
+#密码输入框
+passwordsign:
+  type: id
+  value: passwordsign
+#验证码输入框
+code:
+  type: id
+  value: code
+#登录按钮
+loginButton:
+  type: id
+  value: js_signInBtn
+#我的订单
+MyOrders:
+  type: linkText
+  value: My Orders
+#退出链接
+Logout:
+  type: linkText
+  value: Logout
+#提示信息
+PrompMsg:
+  type: xpath
+  value: "//*[@id='xubox_layer1']/div[1]/div/span[2]"
+#商品页面
+#标题
+goodsTittle:
+  type: xpath
+  value: "//*[@id='mainBox']/div[2]/div[1]/div/h1"
+#商品价格
+unitPrice:
+  type: id
+  value: unit_price
+#商品编号ksu
+goodsCode:
+  type: id
+  value: js_goodsCode
+#数量
+quantity:
+  type: id
+  value: js_input_quantity
+#添加至购物车
+addToBag:
+  type: id
+  value: new_addcart
+#购物车页面
+#购物车为空提示语
+bagIsEmpty:
+  type: css
+  value: "#cart_list > div > div.info > h3"
+#产品列表
+goodlist:
+  type: css
+  value: "#cart_list > div.cartList > ul.products.clearfix"
+#商品实际价格
+goodsAcutalPrice:
+  type:css
+  value:"#cart_list > div.cartList > ul[class='products clearfix '] > li.li3 > p:nth-child(2) > span.my_shop_price"
+#清除结算列表的商品按钮
+del_all_action:
+  type: id
+  value: del_all_action
+#确定删除yes链接
+confirm_yes:
+  type: linkText
+  value: yes
+#总金额
+CartTotal:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > div.row3 > strong > span.my_shop_price"
+#跳转结算页面链接
+proceedToCheckout:
+  type: linkText
+  value: PROCEED TO CHECKOUT
+#结算页面
+#地址信息
+adressList:
+  type: css
+  value: "//*[@id='consignee']/div/ul/li"
+#商品总价Subtotal
+items_sub_total:
+  type: id
+  value: items_sub_total
+#快递费Shipping Cost
+shipping_sub_total:
+  type: id
+  value: shipping_sub_total
+#追踪码Tracking number
+Tracking_number:
+  type: id
+  value: Tracking_number
+#保单费Shipping Insurance
+insurance:
+  type: id
+  value: insurance
+#应付总价randTotal 
+price_total:
+  type: id
+  value: price_total
+#总价钱
+walletPriceTotal:
+  type: id
+  value: walletPriceTotal
+#电子钱包支付方式
+wallet_ipt:
+  type: id
+  value: wallet_ipt
+#电子钱包金额
+js_myWallet:
+  type: id
+  value: js_myWallet 
+#电子钱包密码框
+wallet_pass:
+  type:id
+  value:wallet_pass
+#pp支付方式
+paymentlistPayPal:
+  type: id
+  value: paymentlistPayPal
+#信用卡支付方式
+paymentlistCreditCard:
+  type: id
+  value: paymentlistCreditCard
+#西联支付方式
+paymentlistWesternUnion:
+  type: id
+  value: paymentlistWesternUnion
+#电汇支付方式
+paymentlistWiredTransfer:
+  type: id
+  value: paymentlistWiredTransfer
+#google check(gc)支付方式
+paymentlistBraintree:
+  type: id
+  value: paymentlistBraintree
+#邮寄方式列表
+postType:
+  type: css
+  value: "#theForm > div.cart_s_Box.methodShip > ul.clearfix"
+#保单复选框
+insurance_checked:
+  type: id
+  value: insurance_checked
+#保单费
+baofei:
+  type: id
+  value: baofei
+#支付方式列表
+payMethodlist:
+  type: css
+  value: "#js_payMethod > div > dl"
+#进入支付页面按钮 
+placeYourOrder:
+  type: id
+  value: js_upFormBtn  
+#地址编辑页面
+#编辑地址按钮
+EditAdressButton:
+  type: css
+  value: "#consignee > h4 > a"
+#地址数量
+adressAccount:
+  type: css
+  value: "#mainBox > section > div > form.theAddressForm"
+#First name
+FirstName:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(1) > div > input"
+#Last name
+LastName:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(2) > div > input"
+#E-mail address
+EmailAddress:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(3) > div > input"
+#Address Line1
+AddressLine1:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(4) > div > input"
+#Country Region
+CountryRegion:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(6) > div > select"
+#StateCounty
+StateCounty:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(7) > div > select"
+#City
+City:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(8) > div > input"
+#Phone Number
+PhoneNumber:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(9) > div > input"
+#ZIPPostal Code
+PostalCode:
+  type: css
+  value: "div.addressShow > ul[class='i_table'] > li:nth-child(10) > div > input"
+#提交编辑地址按钮
+confirmEditAdress:
+  type:css
+  value:"div.addressShow > p > button > span[class='allBtn']"
+#我的订单页面
+#订单分类
+#我的电子钱包money
+myWalletMoney:
+  type: css
+  value: "#userInfoWrap > div > div.data > ul > li.li0 > a > strong > span.my_shop_price"
+myOrderClassify:
+  type: css
+  value: "#myOrders > div.filter > ul > li"
+#订单列表行数
+ordersListAccout:
+  type: css
+  value: "#myOrders > div.ordersList > table > tbody > tr"
+#订单编号列表
+ordersNumber:
+  type: css
+  value: "#myOrders > div.ordersList > table > tbody > tr.number"
+#订单信息
+ordersInfo:
+  type: css
+  value: "#myOrders > div.ordersList > table > tbody > tr.info"
+#去掉订单ok按钮
+CancelButton:
+  type: linkText
+  value: YES
+#订单详情页面
+#订单编号 
+orderCode:
+  type: xpath
+  value: "//*[@id='js_operation']/ul/li[1]"
+#订单状态 
+orderStute:
+  type: xpath
+  value: "//*[@id='js_operation']/ul/li[2]/strong"
+#订单时间
+orderDate:
+  type: xpath
+  value: "//*[@id='js_operation']/ul/li[3]"
+#Consignee Information列表信息
+orderCI:
+  type: xpath
+  value: "//*[@id='myOrders']/section/div[1]/ul/li"
+#Payment Shipping列表信息
+PS:
+  type: xpath
+  value: ".//*[@id='myOrders']/section/div[2]/ul/li"
+#Invoice信息
+Invoice:
+  type: xpath
+  value: "//*[@id='myOrders']/section/div[3]/ul/li"
+#产品列表信息
+itemList:
+  type: css
+  value: "#myOrders > section > div:nth-child(5) > table > tbody > tr.info"
+#产品列表下面统计信息
+itemListSum:
+  type: css
+  value: "#myOrders > section > div:nth-child(5) > div > ul.prices > li"
+#Commodity信息
+Commodity:
+  type: xpath
+  value: ".//*[@id='myOrders']/section/div[4]/div/"  
+#pp支付登录页面
+#旧版
+#物品金额
+ppPayGoodsMoney:
+  type: css
+  value: "#multiitem1 > ul.item1 > li.dark > span.amount"
+#快递费
+oldPPShippingCost:
+  type: id
+  value: showname1
+#保单费
+oldPPInsurance:
+  type: id
+  value: showname2
+#物品总计
+oldPPGoodsSumMoney:
+  type: css
+  value: "#miniCart > div:nth-child(4) > ul > li > span"
+#总金额
+ppPaySumMoney:
+  type: css
+  value: "#miniCart > div.small.wrap.items.totals.item1 > ul > li > span"
+#账号
+oldePPemail:
+  type: id
+  value: login_email
+#密码
+oldePPpwd:
+  type: id
+  value: login_password
+#登录按钮
+oldePPloginButton:
+  type: id
+  value: submitLogin
+#继续按钮
+oldePPcontinue:
+  type: id
+  value: continue
+#新版
+#总价格
+sumPay:
+  type: css
+  value: "#transactionCart > span:nth-child(2) > format-currency > span"
+#账号
+ppEmail:
+  type: id
+  value: email
+#密码
+ppPassword:
+  type: id
+  value: password
+#登录按钮
+ppLoginButton:
+  type: id
+  value: btnLogin
+#pp支付确认页面
+#支付金额
+sumMoney:
+  type: css
+  value: "#transactionCart > span:nth-child(2) > format-currency"
+#地址信息
+confirmAdress:
+  type: css
+  value: "#shippingAddress > div > div.addressDisplay > div > span.given-name.ng-binding"
+#付款方式下金额
+confirmMoney:
+  type: css
+  value: "#transactionCart > span:nth-child(2) > format-currency > span"
+#继续按钮
+continueButton:
+  type: id
+  value: confirmButtonTop
+#pp支付成功页面
+#提示信息
+ppPromptMsg:
+  type: css
+  value: "#cartWrap > div.orderInfo.orderSuc > p"
+#订单编号
+ppOrderCode:
+  type: css
+  value: "#cartWrap > div.orderInfo.orderSuc > p > strong"
+#付款方式
+payType:
+  type: css
+  value: "#cartWrap > div.userInfo > p:nth-child(1) > strong"
+#付款金额
+payMoney:
+  type: css
+  value: "#cartWrap > div.userInfo > p:nth-child(1) > span.my_shop_price.fb"
+#跳转至首页to Home
+jumpHome:
+  type: css
+  value: "#cartWrap > div.done-notice > a:nth-child(1)"
+#跳转至我的账号to My Account
+jumpMyAccount:
+  type: css
+  value: "#cartWrap > div.done-notice > a:nth-child(2)"
+#信用卡支付页面
+#支付方式
+cctype:
+  type: id
+  value: cctype
+#first_name
+first_name:
+  type: id
+  value: first_name
+#last_name
+last_name:
+  type: id
+  value: last_name
+#新版继续按钮
+guestSubmit:
+  type: id
+  value: guestSubmit
+#电子钱包支付成功页面
+#继续购物链接
+continueShoppingLink:
+  type: css
+  value: "#mainWrap > section > div > div > p:nth-child(1) > a"
+#查看订单链接
+myOrderLink:
+  type: css
+  value: "#mainWrap > section > div > div > p:nth-child(2) > a"
+  
+#促销码处理
+#添加商品到购物车连addcart
+addcart:
+  type: id
+  value: new_addcart
+#购物车商品原价格总和
+cartPrices:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > div.row3 > strong > span.my_shop_price"
+#促销码输入框
+promotion_code:
+  type: id
+  value: promotion_code
+#应用促销码按钮
+applyButton:
+  type: css
+  value: "#js_couponWrap > a"
+#折扣提示消息
+discountMsg:
+  type:css
+  value:"#cart_list > div.toCheckOut > div.code > p"
+#购物需要满的金额
+cartM:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > p > span:nth-child(1)"
+#满减的金额
+cartJ:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > p > span:nth-child(2)"
+#节约价钱
+saveMoney:
+  type: css
+  value: "#cart_list > div.toCheckOut > div.code > div.row2 > ul > li:nth-child(2) > em > span.my_shop_price"
+#进入结算页面链接
+enterBalance:
+  type: linkText
+  value: PROCEED TO CHECKOUT
+#商品总价格
+goodsPrices:
+  type: id
+  value: items_sub_total
+#统计支付各个项列表
+balanceTjList:
+  type: css
+  value: "#theForm > section.total > div.calc > ul > li"
+#支付总价格
+balancePaySumMoney:
+  type: id
+  value: price_total
